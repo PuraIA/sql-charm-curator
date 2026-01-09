@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/select';
 import { Copy, Check, Trash2, Database, FileCode, FileCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
@@ -22,7 +24,17 @@ interface FormatterOptions {
   indentStyle: 'standard' | 'tabularLeft' | 'tabularRight';
   tabWidth: number;
   expressionWidth: number;
+  compactParentheses: boolean;
 }
+
+// Pós-processamento para compactar parênteses
+const compactParenthesesFormat = (sql: string): string => {
+  // Remove quebra de linha após parêntese de abertura seguido de espaços/indentação
+  let result = sql.replace(/\(\s*\n\s+/g, '(');
+  // Remove quebra de linha e espaços antes de parêntese de fechamento
+  result = result.replace(/\n\s+\)/g, ')');
+  return result;
+};
 
 const dialectLabels: Record<Dialect, string> = {
   postgresql: 'PostgreSQL',
@@ -56,6 +68,7 @@ export function SQLFormatter() {
     indentStyle: 'standard',
     tabWidth: 2,
     expressionWidth: 60,
+    compactParentheses: true,
   });
 
   const formatSQL = useCallback(() => {
@@ -92,7 +105,8 @@ export function SQLFormatter() {
         newlineBeforeSemicolon: false,
         paramTypes: getParamTypes(options.dialect),
       });
-      setOutputSQL(formatted);
+      const result = options.compactParentheses ? compactParenthesesFormat(formatted) : formatted;
+      setOutputSQL(result);
     } catch (error) {
       console.error('Format error:', error);
       // Fallback: tenta formatar com configurações mínimas
@@ -103,7 +117,8 @@ export function SQLFormatter() {
           tabWidth: options.tabWidth,
           paramTypes: getParamTypes(options.dialect),
         });
-        setOutputSQL(fallbackFormatted);
+        const result = options.compactParentheses ? compactParenthesesFormat(fallbackFormatted) : fallbackFormatted;
+        setOutputSQL(result);
       } catch (fallbackError) {
         console.error('Fallback format error:', fallbackError);
         // Último recurso: formatar como SQL genérico
@@ -113,7 +128,8 @@ export function SQLFormatter() {
             keywordCase: options.keywordCase,
             tabWidth: options.tabWidth,
           });
-          setOutputSQL(genericFormatted);
+          const result = options.compactParentheses ? compactParenthesesFormat(genericFormatted) : genericFormatted;
+          setOutputSQL(result);
           toast.warning('Formatado como SQL genérico. Algumas sintaxes específicas podem não ser reconhecidas.');
         } catch {
           toast.error('Erro ao formatar SQL. Verifique a sintaxe.');
@@ -249,6 +265,17 @@ export function SQLFormatter() {
                   <SelectItem value="120">120</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                id="compact-parentheses"
+                checked={options.compactParentheses}
+                onCheckedChange={(checked) => setOptions(prev => ({ ...prev, compactParentheses: checked }))}
+              />
+              <Label htmlFor="compact-parentheses" className="text-sm text-muted-foreground cursor-pointer">
+                () Compactos
+              </Label>
             </div>
             
             <div className="ml-auto flex items-center gap-2">
