@@ -21,6 +21,7 @@ interface FormatterOptions {
   keywordCase: KeywordCase;
   indentStyle: 'standard' | 'tabularLeft' | 'tabularRight';
   tabWidth: number;
+  expressionWidth: number;
 }
 
 const dialectLabels: Record<Dialect, string> = {
@@ -54,6 +55,7 @@ export function SQLFormatter() {
     keywordCase: 'upper',
     indentStyle: 'standard',
     tabWidth: 2,
+    expressionWidth: 60,
   });
 
   const formatSQL = useCallback(() => {
@@ -84,6 +86,7 @@ export function SQLFormatter() {
         keywordCase: options.keywordCase,
         indentStyle: options.indentStyle,
         tabWidth: options.tabWidth,
+        expressionWidth: options.expressionWidth,
         linesBetweenQueries: 2,
         denseOperators: false,
         newlineBeforeSemicolon: false,
@@ -225,6 +228,25 @@ export function SQLFormatter() {
                   <SelectItem value="standard">Padrão</SelectItem>
                   <SelectItem value="tabularLeft">Tabular Esq.</SelectItem>
                   <SelectItem value="tabularRight">Tabular Dir.</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Largura Exp.:</span>
+              <Select
+                value={String(options.expressionWidth)}
+                onValueChange={(value) => setOptions(prev => ({ ...prev, expressionWidth: Number(value) }))}
+              >
+                <SelectTrigger className="w-24 bg-secondary border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="40">40</SelectItem>
+                  <SelectItem value="60">60</SelectItem>
+                  <SelectItem value="80">80</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                  <SelectItem value="120">120</SelectItem>
                 </SelectContent>
               </Select>
             </div>
