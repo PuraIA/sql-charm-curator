@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Copy, Check, Trash2, Database, FileCode, FileCheck, Settings2, X } from 'lucide-react';
+import { Copy, Check, Trash2, Database, FileCode, FileCheck, Settings2, X, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -21,6 +21,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { useTranslation } from 'react-i18next';
 
 type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
@@ -99,6 +100,7 @@ const sampleQueries: Record<Dialect, string> = {
 };
 
 export function SQLFormatter() {
+  const { t, i18n } = useTranslation();
   const [inputSQL, setInputSQL] = useState('');
   const [outputSQL, setOutputSQL] = useState('');
   const [copied, setCopied] = useState(false);
@@ -188,13 +190,13 @@ export function SQLFormatter() {
           });
           const result = options.compactParentheses ? compactWhereClauses(genericFormatted) : genericFormatted;
           setOutputSQL(result);
-          toast.warning('Formatado como SQL genérico. Algumas sintaxes específicas podem não ser reconhecidas.');
+          toast.warning(t('toastGeneric'));
         } catch {
-          toast.error('Erro ao formatar SQL. Verifique a sintaxe.');
+          toast.error(t('toastError'));
         }
       }
     }
-  }, [inputSQL, options]);
+  }, [inputSQL, options, t]);
 
   // Auto-format when switching to formatted tab or when options change while on formatted tab
   useEffect(() => {
@@ -209,12 +211,12 @@ export function SQLFormatter() {
     try {
       await navigator.clipboard.writeText(outputSQL);
       setCopied(true);
-      toast.success('Copiado para a área de transferência!');
+      toast.success(t('toastCopied'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error('Erro ao copiar');
     }
-  }, [outputSQL]);
+  }, [outputSQL, t]);
 
   const clearAll = useCallback(() => {
     setInputSQL('');
@@ -234,14 +236,37 @@ export function SQLFormatter() {
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <header className="text-center mb-10 animate-fade-in">
+          <div className="flex justify-end mb-4">
+            <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              <Select
+                value={i18n.language}
+                onValueChange={(value) => i18n.changeLanguage(value)}
+              >
+                <SelectTrigger className="h-8 w-[140px] border-none bg-transparent focus:ring-0 shadow-none text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English (US)</SelectItem>
+                  <SelectItem value="pt">Português (BR)</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="zh">中文</SelectItem>
+                  <SelectItem value="ja">日本語</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-3 mb-4">
             <Database className="w-10 h-10 text-primary" />
             <h1 className="text-4xl md:text-5xl font-bold text-gradient">
-              SQL Formatter
+              {t('title')}
             </h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
-            Formate suas consultas SQL de forma elegante. Suporte para PostgreSQL, MySQL, Oracle e SQL Server.
+            {t('subtitle')}
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
@@ -252,7 +277,7 @@ export function SQLFormatter() {
                 onValueChange={(value: Dialect) => setOptions(prev => ({ ...prev, dialect: value }))}
               >
                 <SelectTrigger className="h-9 w-[180px] border-none bg-transparent focus:ring-0 shadow-none">
-                  <SelectValue placeholder="Selecione o Dialeto" />
+                  <SelectValue placeholder={t('selectDialect')} />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(dialectLabels).map(([key, label]) => (
@@ -273,12 +298,12 @@ export function SQLFormatter() {
                 onValueChange={(value: KeywordCase) => setOptions(prev => ({ ...prev, keywordCase: value }))}
               >
                 <SelectTrigger className="h-9 w-[140px] border-none bg-transparent focus:ring-0 shadow-none">
-                  <SelectValue placeholder="Casing" />
+                  <SelectValue placeholder={t('casing')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="upper">MAIÚSCULAS</SelectItem>
-                  <SelectItem value="lower">minúsculas</SelectItem>
-                  <SelectItem value="preserve">Preservar</SelectItem>
+                  <SelectItem value="upper">{t('uppercase')}</SelectItem>
+                  <SelectItem value="lower">{t('lowercase')}</SelectItem>
+                  <SelectItem value="preserve">{t('preserve')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -289,19 +314,19 @@ export function SQLFormatter() {
                 onValueChange={(value: IndentStyle) => setOptions(prev => ({ ...prev, indentStyle: value }))}
               >
                 <SelectTrigger className="h-9 w-[140px] border-none bg-transparent focus:ring-0 shadow-none">
-                  <SelectValue placeholder="Identação" />
+                  <SelectValue placeholder={t('indentation')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="standard">Padrão</SelectItem>
-                  <SelectItem value="tabularLeft">Tabular Esq.</SelectItem>
-                  <SelectItem value="tabularRight">Tabular Dir.</SelectItem>
+                  <SelectItem value="standard">{t('indentation')}</SelectItem>
+                  <SelectItem value="tabularLeft">Tabular Left</SelectItem>
+                  <SelectItem value="tabularRight">Tabular Right</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-[50px]">
               <div className="flex items-center gap-2">
-                <Label htmlFor="compact-parentheses-main" className="text-sm cursor-pointer whitespace-nowrap">Compactar ()</Label>
+                <Label htmlFor="compact-parentheses-main" className="text-sm cursor-pointer whitespace-nowrap">{t('compactParentheses')}</Label>
                 <Switch
                   id="compact-parentheses-main"
                   checked={options.compactParentheses}
@@ -318,7 +343,7 @@ export function SQLFormatter() {
               className="gap-2 border-primary/20 hover:bg-primary/10"
             >
               <Database className="w-4 h-4" />
-              Carregar Exemplo
+              {t('loadExample')}
             </Button>
             <Button
               variant="outline"
@@ -326,7 +351,7 @@ export function SQLFormatter() {
               className="gap-2 border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
             >
               <Trash2 className="w-4 h-4" />
-              Limpar
+              {t('clear')}
             </Button>
 
             <Button
@@ -335,7 +360,7 @@ export function SQLFormatter() {
               onClick={() => setIsSidebarOpen(true)}
             >
               <Settings2 className="w-4 h-4" />
-              Avançado
+              {t('advanced')}
             </Button>
 
             {/* Sidebar Overlay */}
@@ -352,7 +377,7 @@ export function SQLFormatter() {
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-6 border-b border-border">
-                  <h2 className="text-xl font-bold text-gradient">Opções Avançadas</h2>
+                  <h2 className="text-xl font-bold text-gradient">{t('advancedOptions')}</h2>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -368,10 +393,10 @@ export function SQLFormatter() {
                   <Accordion type="single" collapsible defaultValue="general" className="w-full">
                     {/* Section 1: General Options (Reduced) */}
                     <AccordionItem value="general">
-                      <AccordionTrigger>Geral</AccordionTrigger>
+                      <AccordionTrigger>{t('general')}</AccordionTrigger>
                       <AccordionContent className="space-y-4 pt-2">
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Quebra Op. Lógico</Label>
+                          <Label className="text-xs text-muted-foreground">{t('logicalOperatorNewline')}</Label>
                           <Select
                             value={options.logicalOperatorNewline}
                             onValueChange={(value: LogicalOperatorNewline) => setOptions(prev => ({ ...prev, logicalOperatorNewline: value }))}
@@ -380,8 +405,8 @@ export function SQLFormatter() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="before">Antes</SelectItem>
-                              <SelectItem value="after">Depois</SelectItem>
+                              <SelectItem value="before">{t('before')}</SelectItem>
+                              <SelectItem value="after">{t('after')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -390,10 +415,10 @@ export function SQLFormatter() {
 
                     {/* Section 2: Casing (Reduced) */}
                     <AccordionItem value="casing">
-                      <AccordionTrigger>Outros Casing</AccordionTrigger>
+                      <AccordionTrigger>{t('otherCasing')}</AccordionTrigger>
                       <AccordionContent className="space-y-4 pt-2">
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Tipos de Dados</Label>
+                          <Label className="text-xs text-muted-foreground">{t('dataTypes')}</Label>
                           <Select
                             value={options.dataTypeCase}
                             onValueChange={(value: KeywordCase) => setOptions(prev => ({ ...prev, dataTypeCase: value }))}
@@ -402,15 +427,15 @@ export function SQLFormatter() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="upper">MAIÚSCULAS</SelectItem>
-                              <SelectItem value="lower">minúsculas</SelectItem>
-                              <SelectItem value="preserve">Preservar</SelectItem>
+                              <SelectItem value="upper">{t('uppercase')}</SelectItem>
+                              <SelectItem value="lower">{t('lowercase')}</SelectItem>
+                              <SelectItem value="preserve">{t('preserve')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Funções</Label>
+                          <Label className="text-xs text-muted-foreground">{t('functions')}</Label>
                           <Select
                             value={options.functionCase}
                             onValueChange={(value: KeywordCase) => setOptions(prev => ({ ...prev, functionCase: value }))}
@@ -419,15 +444,15 @@ export function SQLFormatter() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="upper">MAIÚSCULAS</SelectItem>
-                              <SelectItem value="lower">minúsculas</SelectItem>
-                              <SelectItem value="preserve">Preservar</SelectItem>
+                              <SelectItem value="upper">{t('uppercase')}</SelectItem>
+                              <SelectItem value="lower">{t('lowercase')}</SelectItem>
+                              <SelectItem value="preserve">{t('preserve')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Identificadores</Label>
+                          <Label className="text-xs text-muted-foreground">{t('identifiers')}</Label>
                           <Select
                             value={options.identifierCase}
                             onValueChange={(value: IdentifierCase) => setOptions(prev => ({ ...prev, identifierCase: value }))}
@@ -436,9 +461,9 @@ export function SQLFormatter() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="upper">MAIÚSCULAS</SelectItem>
-                              <SelectItem value="lower">minúsculas</SelectItem>
-                              <SelectItem value="preserve">Preservar</SelectItem>
+                              <SelectItem value="upper">{t('uppercase')}</SelectItem>
+                              <SelectItem value="lower">{t('lowercase')}</SelectItem>
+                              <SelectItem value="preserve">{t('preserve')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -447,11 +472,11 @@ export function SQLFormatter() {
 
                     {/* Section 3: Indentation & Spacing (Reduced) */}
                     <AccordionItem value="indentation">
-                      <AccordionTrigger>Espaçamento</AccordionTrigger>
+                      <AccordionTrigger>{t('spacing')}</AccordionTrigger>
                       <AccordionContent className="space-y-4 pt-2">
                         <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-2">
-                            <Label className="text-xs text-muted-foreground">Largura Tab</Label>
+                            <Label className="text-xs text-muted-foreground">{t('tabWidth')}</Label>
                             <Input
                               type="number"
                               min={1}
@@ -462,7 +487,7 @@ export function SQLFormatter() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label className="text-xs text-muted-foreground">Linhas/Query</Label>
+                            <Label className="text-xs text-muted-foreground">{t('linesPerQuery')}</Label>
                             <Input
                               type="number"
                               min={1}
@@ -475,7 +500,7 @@ export function SQLFormatter() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Largura da Expressão</Label>
+                          <Label className="text-xs text-muted-foreground">{t('expressionWidth')}</Label>
                           <Select
                             value={String(options.expressionWidth)}
                             onValueChange={(value) => setOptions(prev => ({ ...prev, expressionWidth: Number(value) }))}
@@ -484,12 +509,12 @@ export function SQLFormatter() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="40">40 caracteres</SelectItem>
-                              <SelectItem value="50">50 caracteres</SelectItem>
-                              <SelectItem value="60">60 caracteres</SelectItem>
-                              <SelectItem value="80">80 caracteres</SelectItem>
-                              <SelectItem value="100">100 caracteres</SelectItem>
-                              <SelectItem value="120">120 caracteres</SelectItem>
+                              <SelectItem value="40">40 {t('characters')}</SelectItem>
+                              <SelectItem value="50">50 {t('characters')}</SelectItem>
+                              <SelectItem value="60">60 {t('characters')}</SelectItem>
+                              <SelectItem value="80">80 {t('characters')}</SelectItem>
+                              <SelectItem value="100">100 {t('characters')}</SelectItem>
+                              <SelectItem value="120">120 {t('characters')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -498,11 +523,11 @@ export function SQLFormatter() {
 
                     {/* Section 4: Flags (Reduced) */}
                     <AccordionItem value="advanced">
-                      <AccordionTrigger>Outros</AccordionTrigger>
+                      <AccordionTrigger>{t('others')}</AccordionTrigger>
                       <AccordionContent className="space-y-4 pt-2">
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="use-tabs" className="text-xs cursor-pointer">Usar Tabs</Label>
+                            <Label htmlFor="use-tabs" className="text-xs cursor-pointer">{t('useTabs')}</Label>
                             <Switch
                               id="use-tabs"
                               checked={options.useTabs}
@@ -511,7 +536,7 @@ export function SQLFormatter() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="dense-operators" className="text-xs cursor-pointer">Op. Densos</Label>
+                            <Label htmlFor="dense-operators" className="text-xs cursor-pointer">{t('denseOperators')}</Label>
                             <Switch
                               id="dense-operators"
                               checked={options.denseOperators}
@@ -520,7 +545,7 @@ export function SQLFormatter() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="newline-semicolon" className="text-xs cursor-pointer">Nova linha antes ;</Label>
+                            <Label htmlFor="newline-semicolon" className="text-xs cursor-pointer">{t('newlineBeforeSemicolon')}</Label>
                             <Switch
                               id="newline-semicolon"
                               checked={options.newlineBeforeSemicolon}
@@ -543,24 +568,24 @@ export function SQLFormatter() {
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="original" className="flex items-center gap-2">
                 <FileCode className="w-4 h-4" />
-                SQL Original
+                {t('originalSql')}
               </TabsTrigger>
               <TabsTrigger value="formatted" className="flex items-center gap-2">
                 <FileCheck className="w-4 h-4" />
-                SQL Formatado
+                {t('formattedSql')}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="original" className="mt-0">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs text-muted-foreground">
-                  {inputSQL.length} caracteres
+                  {inputSQL.length} {t('characters')}
                 </span>
               </div>
               <Textarea
                 value={inputSQL}
                 onChange={(e) => setInputSQL(e.target.value)}
-                placeholder="Cole sua consulta SQL aqui..."
+                placeholder={t('pastePlaceholder')}
                 className="min-h-[450px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
               />
             </TabsContent>
@@ -568,7 +593,7 @@ export function SQLFormatter() {
             <TabsContent value="formatted" className="mt-0">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs text-muted-foreground">
-                  {outputSQL.length} caracteres
+                  {outputSQL.length} {t('characters')}
                 </span>
                 <Button
                   variant="ghost"
@@ -582,7 +607,7 @@ export function SQLFormatter() {
                   ) : (
                     <Copy className="w-4 h-4 mr-1" />
                   )}
-                  {copied ? 'Copiado!' : 'Copiar'}
+                  {copied ? t('copied') : t('copy')}
                 </Button>
               </div>
 
@@ -590,7 +615,7 @@ export function SQLFormatter() {
               <div className="min-h-[450px] code-editor overflow-auto scrollbar-thin whitespace-pre-wrap">
                 {outputSQL || (
                   <span className="text-muted-foreground italic">
-                    {inputSQL.trim() ? 'Formatando...' : 'Insira uma consulta SQL na aba "SQL Original"'}
+                    {inputSQL.trim() ? t('formatting') : t('emptyPlaceholder')}
                   </span>
                 )}
               </div>
@@ -601,7 +626,7 @@ export function SQLFormatter() {
         {/* Footer */}
         <footer className="text-center mt-12 text-muted-foreground text-sm">
           <p>
-            Suporte para{' '}
+            {t('support')}{' '}
             {Object.entries(dialectLabels).map(([key, label], index, arr) => (
               <span key={key}>
                 <span className="text-foreground">{dialectIcons[key as Dialect]} {label}</span>
