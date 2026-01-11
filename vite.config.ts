@@ -14,4 +14,16 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query'],
+          'formatter': ['sql-formatter'],
+          'ui': ['@radix-ui/react-accordion', '@radix-ui/react-label', '@radix-ui/react-select', '@radix-ui/react-switch', '@radix-ui/react-tabs', '@radix-ui/react-tooltip'],
+          'syntax-highlighter': ['react-syntax-highlighter'],
+        },
+      },
+    },
+  },
 }));
