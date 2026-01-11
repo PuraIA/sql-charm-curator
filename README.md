@@ -104,6 +104,11 @@ docker build -t sql-charm-curator .
 docker run -p 8080:80 sql-charm-curator
 ```
 
+### 3. Use Docker Compose (Recommended)
+```sh
+docker-compose up -d
+```
+
 The application will be available at `http://localhost:8080`.
 
 ## 📄 License
