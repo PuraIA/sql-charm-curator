@@ -688,6 +688,7 @@ export function SQLFormatter() {
         {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-border/50 text-muted-foreground">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Coluna 1: Sobre o SQL Formatter */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Database className="w-6 h-6 text-primary" />
@@ -698,6 +699,7 @@ export function SQLFormatter() {
               </p>
             </div>
 
+            {/* Coluna 2: Documentação dos Bancos de Dados */}
             <div className="space-y-4">
               <h3 className="font-bold text-foreground">{t('databaseDocs')}</h3>
               <ul className="space-y-2 text-sm">
@@ -728,11 +730,12 @@ export function SQLFormatter() {
               </ul>
             </div>
 
+            {/* Coluna 3: Links Úteis */}
             <div className="space-y-4">
               <h3 className="font-bold text-foreground">Links</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="https://github.com/jfmaia/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
+                  <a href="https://github.com/jfnandopr/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
                     <Github className="w-4 h-4" />
                     {t('sourceCode')}
                   </a>
@@ -751,8 +754,6 @@ export function SQLFormatter() {
                 </li>
               </ul>
             </div>
-
-
           </div>
 
           <div className="text-center text-xs pb-8">
