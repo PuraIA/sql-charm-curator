@@ -7,6 +7,7 @@
     "keywordCase": "关键字大小写",
     "indentation": "缩进",
     "indentStyle": "缩进样式",
+    "compactMode": "紧凑模式",
     "compactParentheses": "紧凑 ()",
     "loadExample": "加载示例",
     "clear": "清除",

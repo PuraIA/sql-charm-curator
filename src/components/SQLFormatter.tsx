@@ -25,7 +25,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import { superCompactSQL } from '@/utils/sql-utils';
 type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
 type IdentifierCase = 'preserve' | 'upper' | 'lower';
@@ -82,6 +82,7 @@ export function SQLFormatter() {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState('original');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [compactMode, setCompactMode] = useState(false);
 
   const [options, setOptions] = useState<FormatterOptions>({
     dialect: 'postgresql',
@@ -148,7 +149,8 @@ export function SQLFormatter() {
         newlineBeforeSemicolon: options.newlineBeforeSemicolon,
         paramTypes: getParamTypes(options.dialect),
       });
-      setOutputSQL(formatted);
+      const result = compactMode ? superCompactSQL(formatted) : formatted;
+      setOutputSQL(result);
 
     } catch (error) {
       console.error('Format error:', error);
@@ -160,7 +162,8 @@ export function SQLFormatter() {
           tabWidth: options.tabWidth,
           paramTypes: getParamTypes(options.dialect),
         });
-        setOutputSQL(fallbackFormatted);
+        const result = compactMode ? superCompactSQL(fallbackFormatted) : fallbackFormatted;
+        setOutputSQL(result);
       } catch (fallbackError) {
         console.error('Fallback format error:', fallbackError);
         // Último recurso: formatar como SQL genérico
@@ -170,7 +173,8 @@ export function SQLFormatter() {
             keywordCase: options.keywordCase,
             tabWidth: options.tabWidth,
           });
-          setOutputSQL(genericFormatted);
+          const result = compactMode ? superCompactSQL(genericFormatted) : genericFormatted;
+          setOutputSQL(result);
           toast.warning(t('toastGeneric'));
         } catch {
           toast.error(t('toastError'));
@@ -208,6 +212,29 @@ export function SQLFormatter() {
     setInputSQL(sampleQueries[options.dialect]);
     setOutputSQL('');
   }, [options.dialect]);
+
+  const toggleCompactMode = useCallback((enabled: boolean) => {
+    setCompactMode(enabled);
+    if (enabled) {
+      // Modo compacto: ajusta configurações para SQL mais compacto
+      setOptions(prev => ({
+        ...prev,
+        tabWidth: 2,
+        denseOperators: true,
+        linesBetweenQueries: 1,
+        expressionWidth: 150,
+      }));
+    } else {
+      // Modo normal: restaura configurações padrão
+      setOptions(prev => ({
+        ...prev,
+        tabWidth: 2,
+        denseOperators: false,
+        linesBetweenQueries: 2,
+        expressionWidth: 120,
+      }));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -305,6 +332,16 @@ export function SQLFormatter() {
               </Select>
             </div>
 
+            <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-[50px]">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="compact-mode" className="text-sm cursor-pointer whitespace-nowrap">{t('compactMode')}</Label>
+                <Switch
+                  id="compact-mode"
+                  checked={compactMode}
+                  onCheckedChange={toggleCompactMode}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-center gap-2 mb-8">

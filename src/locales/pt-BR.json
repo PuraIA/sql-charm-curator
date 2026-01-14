@@ -7,6 +7,7 @@
     "keywordCase": "Casing Palavras-chave",
     "indentation": "Identação",
     "indentStyle": "Estilo Identação",
+    "compactMode": "Modo Compacto",
     "compactParentheses": "Compactar ()",
     "loadExample": "Carregar Exemplo",
     "clear": "Limpar",
