@@ -24,8 +24,10 @@ import {
 } from '@/components/ui/accordion';
 import { useTranslation } from 'react-i18next';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vs, atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { superCompactSQL } from '@/utils/sql-utils';
+import { ModeToggle } from './ModeToggle';
+import { useTheme } from './theme-provider';
 type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
 type IdentifierCase = 'preserve' | 'upper' | 'lower';
@@ -83,6 +85,7 @@ export function SQLFormatter() {
   const [activeTab, setActiveTab] = useState('original');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [compactMode, setCompactMode] = useState(false);
+  const { theme } = useTheme();
 
   const [options, setOptions] = useState<FormatterOptions>({
     dialect: 'postgresql',
@@ -244,14 +247,15 @@ export function SQLFormatter() {
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <header className="text-center mb-10 animate-fade-in">
-          <div className="flex justify-end mb-4">
-            <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
-              <Globe className="w-4 h-4 text-muted-foreground" />
+          <div className="flex justify-end mb-4 gap-2">
+            <ModeToggle />
+            <div className="flex items-center gap-2 bg-secondary/50 px-3 h-10 rounded-lg border border-border/50">
+              <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
               <Select
                 value={i18n.language?.split('-')[0]}
                 onValueChange={(value) => i18n.changeLanguage(value)}
               >
-                <SelectTrigger className="h-8 w-[140px] border-none bg-transparent focus:ring-0 shadow-none text-xs">
+                <SelectTrigger className="h-full w-[140px] border-none bg-transparent focus:ring-0 shadow-none text-xs p-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -625,11 +629,11 @@ export function SQLFormatter() {
                 {outputSQL ? (
                   <SyntaxHighlighter
                     language="sql"
-                    style={vs}
+                    style={theme === 'dark' ? atomDark : vs}
                     customStyle={{
                       margin: 0,
                       padding: '1.5rem',
-                      background: '#fff',
+                      background: 'transparent',
                       fontSize: '1.2em',
                       lineHeight: '1.5',
                       minHeight: '450px',

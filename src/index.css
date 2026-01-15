@@ -78,6 +78,70 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 4%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 222 47% 11%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 222 47% 11%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 25%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 35%;
+    --warning-foreground: 210 40% 98%;
+
+    --border: 222 47% 11%;
+    --input: 222 47% 11%;
+    --ring: 199 89% 48%;
+
+    /* SQL Syntax Highlighting - Optimized for Dark Mode */
+    --syntax-keyword: 199 89% 48%;
+    /* Bright Cyan/Blue */
+    --syntax-string: 142 71% 45%;
+    /* Vibrant Green */
+    --syntax-number: 38 92% 50%;
+    /* Vibrant Orange */
+    --syntax-function: 262 83% 65%;
+    /* Vibrant Purple */
+    --syntax-comment: 215 20% 45%;
+    /* Muted Gray */
+    --syntax-operator: 0 84% 60%;
+    /* Vibrant Red */
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(217 91% 60%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 4%) 100%);
+    --gradient-glow: radial-gradient(ellipse at top, hsl(199 89% 48% / 0.15) 0%, transparent 70%);
+
+    --sidebar-background: 222 47% 4%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
 @layer base {
