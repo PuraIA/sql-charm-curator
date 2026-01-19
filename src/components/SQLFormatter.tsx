@@ -773,7 +773,7 @@ export function SQLFormatter() {
                   </a>
                 </li>
                 <li>
-                  <Link to="/privacy-policy" className="hover:text-primary flex items-center gap-2">
+                  <Link to="/privacy" className="hover:text-primary flex items-center gap-2">
                     <ExternalLink className="w-4 h-4" />
                     {t('privacy')}
                   </Link>

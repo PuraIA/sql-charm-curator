@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function PrivacyPolicy() {
+export default function Privacy() {
     const { t } = useTranslation();
 
     return (
