@@ -15,15 +15,32 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    // Optimize build output
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    // Increase chunk size warning limit (we're handling large chunks intentionally)
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query'],
           'formatter': ['sql-formatter'],
           'ui': ['@radix-ui/react-accordion', '@radix-ui/react-label', '@radix-ui/react-select', '@radix-ui/react-switch', '@radix-ui/react-tabs', '@radix-ui/react-tooltip'],
-          'syntax-highlighter': ['react-syntax-highlighter'],
+          // Syntax highlighter is now lazy loaded, so it will be in a separate chunk automatically
         },
+        // Optimize chunk file names for better caching
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
   },
 }));
+

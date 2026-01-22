@@ -46,9 +46,19 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
-  <!-- Preconnect to improve performance -->
+  <!-- Preconnect and DNS prefetch to improve performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+  <!-- Preload critical fonts -->
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    as="style" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    media="print" onload="this.media='all'" />
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -151,6 +161,15 @@
 </head>
 
 <body>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: system-ui, sans-serif;">
+      <h1>SQL Formatter - JavaScript Required</h1>
+      <p>This application requires JavaScript to be enabled. Please enable JavaScript in your browser settings to use
+        the SQL Formatter.</p>
+      <p>Our free online SQL formatter helps you beautify and format SQL queries for PostgreSQL, MySQL, Oracle (PL/SQL),
+        SQL Server (T-SQL), and BigQuery.</p>
+    </div>
+  </noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

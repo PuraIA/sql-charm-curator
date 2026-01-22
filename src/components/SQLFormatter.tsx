@@ -23,11 +23,10 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useTranslation } from 'react-i18next';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vs, atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { superCompactSQL } from '@/utils/sql-utils';
 import { ModeToggle } from './ModeToggle';
 import { useTheme } from './theme-provider';
+import { LazySyntaxHighlighter } from './LazySyntaxHighlighter';
 type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
 type IdentifierCase = 'preserve' | 'upper' | 'lower';
@@ -574,7 +573,40 @@ export function SQLFormatter() {
           </div>
         </header>
 
-        {/* Main Content with Tabs */}
+        {/* Detailed Guide Section */}
+        <section className="mb-16 animate-fade-in" style={{ animationDelay: '0.15s' }}>
+          <div className="glass-card p-8 md:p-12 bg-primary/5 border-primary/10">
+            <h2 className="text-3xl font-bold mb-6 text-gradient">{t('detailedGuideTitle')}</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+              {t('detailedGuideIntro')}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="space-y-3">
+                <h3 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm">1</span>
+                  {t('sqlTip1Title')}
+                </h3>
+                <p className="text-sm text-muted-foreground">{t('sqlTip1Desc')}</p>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm">2</span>
+                  {t('sqlTip2Title')}
+                </h3>
+                <p className="text-sm text-muted-foreground">{t('sqlTip2Desc')}</p>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm">3</span>
+                  {t('sqlTip3Title')}
+                </h3>
+                <p className="text-sm text-muted-foreground">{t('sqlTip3Desc')}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Existing Content Sections */}
         <div className="glass-card p-5 animate-slide-up transition-opacity duration-300 opacity-100 mb-12" style={{ animationDelay: '0.1s' }}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -627,23 +659,7 @@ export function SQLFormatter() {
               {/* Formatted Output */}
               <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30">
                 {outputSQL ? (
-                  <SyntaxHighlighter
-                    language="sql"
-                    style={theme === 'dark' ? atomDark : vs}
-                    customStyle={{
-                      margin: 0,
-                      padding: '1.5rem',
-                      background: 'transparent',
-                      fontSize: '1.2em',
-                      lineHeight: '1.5',
-                      minHeight: '450px',
-                      fontFamily: 'JetBrains Mono, ui-monospace, monospace',
-                    }}
-                    wrapLines={true}
-                    wrapLongLines={true}
-                  >
-                    {outputSQL}
-                  </SyntaxHighlighter>
+                  <LazySyntaxHighlighter code={outputSQL} theme={theme === 'dark' ? 'dark' : 'light'} />
                 ) : (
                   <div className="p-6 text-muted-foreground italic min-h-[450px]">
                     {inputSQL.trim() ? t('formatting') : t('emptyPlaceholder')}
@@ -711,6 +727,25 @@ export function SQLFormatter() {
           </div>
         </section>
 
+        <section className="mb-16 animate-fade-in" style={{ animationDelay: '0.35s' }}>
+          <h2 className="text-3xl font-bold mb-8 text-center">{t('faqTitle')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="bg-secondary/20 p-6 rounded-xl border border-border/50">
+              <h3 className="font-bold mb-2 text-lg">{t('faq1Question')}</h3>
+              <p className="text-muted-foreground">{t('faq1Answer')}</p>
+            </div>
+            <div className="bg-secondary/20 p-6 rounded-xl border border-border/50">
+              <h3 className="font-bold mb-2 text-lg">{t('faq2Question')}</h3>
+              <p className="text-muted-foreground">{t('faq2Answer')}</p>
+            </div>
+            <div className="bg-secondary/20 p-6 rounded-xl border border-border/50">
+              <h3 className="font-bold mb-2 text-lg">{t('faq3Question')}</h3>
+              <p className="text-muted-foreground">{t('faq3Answer')}</p>
+            </div>
+          </div>
+        </section>
+
+
         {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-border/50 text-muted-foreground">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -771,6 +806,18 @@ export function SQLFormatter() {
                     <Globe className="w-4 h-4" />
                     {t('developer')}
                   </a>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:text-primary flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4" />
+                    {t('terms')}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="hover:text-primary flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4" />
+                    {t('contact')}
+                  </Link>
                 </li>
                 <li>
                   <Link to="/privacy" className="hover:text-primary flex items-center gap-2">
