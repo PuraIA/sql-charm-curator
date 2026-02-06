@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { ModeToggle } from './ModeToggle';
 import { useTranslation } from 'react-i18next';
 import { AdPlaceholder } from './AdPlaceholder';
+import { ScrollToTop } from './ScrollToTop';
 
 interface ToolLayoutProps {
     children: ReactNode;
@@ -156,6 +157,7 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
                     </div>
                 </div>
             </footer >
+            <ScrollToTop />
         </div>
     );
 };
