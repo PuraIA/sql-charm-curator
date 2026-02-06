@@ -141,5 +141,13 @@
     "sqlTip3Title": "Meaningful Aliases",
     "sqlTip3Desc": "Use descriptive aliases for tables when joining multiple sources to avoid confusion.",
     "detailedGuideTitle": "The Ultimate Guide to SQL Formatting",
-    "detailedGuideIntro": "Writing clean SQL is a superpower. It makes your code easier to read, debug, and maintain. This tool helps you achieve that instantly by applying industry-standard formatting rules to your raw queries."
+    "detailedGuideIntro": "Writing clean SQL is a superpower. It makes your code easier to read, debug, and maintain. This tool helps you achieve that instantly by applying industry-standard formatting rules to your raw queries.",
+    "about": "About Us",
+    "aboutTitle": "About SQL Formatter",
+    "aboutIntroTitle": "Our Mission",
+    "aboutIntroContent": "SQL Formatter was created to help developers write better, cleaner SQL code. We believe that readable code is maintainable code.",
+    "aboutStoryTitle": "Our Story",
+    "aboutStoryContent": "Started as a small project to automate SQL beautification, we have grown to support multiple dialects and serve thousands of developers daily.",
+    "aboutTeamTitle": "The Team",
+    "aboutTeamContent": "We are a group of passionate developers who love open source and database technologies."
 }

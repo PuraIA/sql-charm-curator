@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Mail, Github, Twitter } from 'lucide-react';
 
+import { SEO } from '@/components/SEO';
+
 const Contact = () => {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen bg-background p-6 md:p-12">
+            <SEO title={`${t('contactTitle')} - SQL Formatter`} description={t('contactSubtitle')} />
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
                     <Link to="/">

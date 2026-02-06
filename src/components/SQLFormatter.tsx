@@ -9,21 +9,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Copy, Check, Trash2, Database, FileCode, FileCheck, Settings2, X, Globe, ExternalLink, Github, BookOpen } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Copy, Check, Trash2, Database, FileCode, FileCheck, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { superCompactSQL } from '@/utils/sql-utils';
-import { ModeToggle } from './ModeToggle';
 import { useTheme } from './theme-provider';
+import { ToolLayout } from './ToolLayout';
+import { AdPlaceholder } from './AdPlaceholder';
+
 // Lazy load components that are not needed for initial interaction
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 const FormatterGuide = lazy(() => import('./FormatterGuide').then(module => ({ default: module.FormatterGuide })));
 const FormatterFAQ = lazy(() => import('./FormatterFAQ').then(module => ({ default: module.FormatterFAQ })));
 const SQLInfo = lazy(() => import('./SQLInfo').then(module => ({ default: module.SQLInfo })));
 const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
+const TechnicalGuide = lazy(() => import('./TechnicalGuide').then(module => ({ default: module.TechnicalGuide })));
 
 export type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
@@ -240,336 +242,219 @@ export function SQLFormatter() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Background gradient effect */}
-      <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
+    <ToolLayout
+      title={t('title')}
+      subtitle={t('subtitle')}
+      toolContent={
+        <div className="space-y-16">
+          <AdPlaceholder slotId="content-top" className="my-8" />
 
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <header className="text-center mb-10 animate-fade-in will-change-opacity">
-          <div className="flex justify-end mb-4 gap-2">
-            <ModeToggle />
-            <div className="flex items-center gap-2 bg-secondary/50 px-3 h-10 rounded-lg border border-border/50">
-              <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-              <Select
-                value={i18n.language?.split('-')[0]}
-                onValueChange={(value) => i18n.changeLanguage(value)}
-              >
-                <SelectTrigger
-                  aria-label={t('selectLanguage', 'Select Language')}
-                  className="h-full w-[140px] border-none bg-transparent focus:ring-0 shadow-none text-xs p-0"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English (US)</SelectItem>
-                  <SelectItem value="pt">Português (BR)</SelectItem>
-                  <SelectItem value="de">Deutsch</SelectItem>
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="zh">中文</SelectItem>
-                  <SelectItem value="ja">日本語</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="inline-flex items-center gap-3 mb-4">
-            <Database className="w-10 h-10 text-primary" />
-            <h1 className="text-4xl md:text-5xl font-bold text-gradient">
-              {t('title')}
-            </h1>
-          </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
-            {t('subtitle')}
-          </p>
-        </header>
-
-        <main id="main-content">
-          <div className="flex flex-wrap justify-center gap-4 mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            {/* Main Controls row */}
-            <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
-              <Select
-                value={options.dialect}
-                onValueChange={(value: Dialect) => setOptions(prev => ({ ...prev, dialect: value }))}
-              >
-                <SelectTrigger
-                  aria-label={t('selectDialect')}
-                  className="h-9 w-[180px] border-none bg-transparent focus:ring-0 shadow-none"
-                >
-                  <SelectValue placeholder={t('selectDialect')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(dialectLabels).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>
-                      <span className="flex items-center gap-2">
-                        <span>{dialectIcons[key as Dialect]}</span>
-                        <span>{label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
-              <Select
-                value={options.keywordCase}
-                onValueChange={(value: KeywordCase) => setOptions(prev => ({ ...prev, keywordCase: value }))}
-              >
-                <SelectTrigger
-                  aria-label={t('casing')}
-                  className="h-9 w-[140px] border-none bg-transparent focus:ring-0 shadow-none"
-                >
-                  <SelectValue placeholder={t('casing')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="upper">{t('uppercase')}</SelectItem>
-                  <SelectItem value="lower">{t('lowercase')}</SelectItem>
-                  <SelectItem value="preserve">{t('preserve')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
-              <Select
-                value={options.indentStyle}
-                onValueChange={(value: IndentStyle) => setOptions(prev => ({ ...prev, indentStyle: value }))}
-              >
-                <SelectTrigger
-                  aria-label={t('indentation')}
-                  className="h-9 w-[140px] border-none bg-transparent focus:ring-0 shadow-none"
-                >
-                  <SelectValue placeholder={t('indentation')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="standard">{t('indentation')}</SelectItem>
-                  <SelectItem value="tabularLeft">Tabular Left</SelectItem>
-                  <SelectItem value="tabularRight">Tabular Right</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-[50px]">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="compact-mode" className="text-sm cursor-pointer whitespace-nowrap">{t('compactMode')}</Label>
-                <Switch
-                  id="compact-mode"
-                  checked={compactMode}
-                  onCheckedChange={toggleCompactMode}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-center gap-2 mb-8">
-            <Button
-              variant="outline"
-              onClick={loadSample}
-              className="gap-2 border-primary/20 hover:bg-primary/10"
-            >
-              <Database className="w-4 h-4" />
-              {t('loadExample')}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={clearAll}
-              className="gap-2 border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
-            >
-              <Trash2 className="w-4 h-4" />
-              {t('clear')}
-            </Button>
-
-            <Button
-              variant="outline"
-              className="gap-2 border-primary/20 hover:bg-primary/10"
-              onClick={() => setIsSidebarOpen(true)}
-            >
-              <Settings2 className="w-4 h-4" />
-              {t('advanced')}
-            </Button>
-
-            <Suspense fallback={null}>
-              <FormatterSidebar
-                isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
-                options={options}
-                setOptions={setOptions}
-              />
-            </Suspense>
-          </div>
-
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl mb-16" />}>
-            <FormatterGuide />
-          </Suspense>
-
-          {/* Main Formatter area with layout isolation */}
-          <div className="glass-card p-5 animate-slide-up transition-opacity duration-300 opacity-100 mb-12 will-change-transform contain-layout" style={{ animationDelay: '0.1s' }}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full contain-paint">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="original" className="flex items-center gap-2">
-                  <FileCode className="w-4 h-4" />
-                  <h2 className="text-sm font-medium">{t('originalSql')}</h2>
-                </TabsTrigger>
-                <TabsTrigger value="formatted" className="flex items-center gap-2">
-                  <FileCheck className="w-4 h-4" />
-                  <h2 className="text-sm font-medium">{t('formattedSql')}</h2>
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="original" className="mt-0">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-muted-foreground">
-                    {inputSQL.length} {t('characters')}
-                  </span>
-                </div>
-                <Textarea
-                  value={inputSQL}
-                  onChange={(e) => setInputSQL(e.target.value)}
-                  placeholder={t('pastePlaceholder')}
-                  className="min-h-[450px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
-                  aria-label={t('originalSql')}
-                />
-              </TabsContent>
-
-              <TabsContent value="formatted" className="mt-0">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-muted-foreground">
-                    {outputSQL.length} {t('characters')}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={copyToClipboard}
-                    disabled={!outputSQL}
-                    className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
-                  >
-                    {copied ? (
-                      <Check className="w-4 h-4 mr-1 text-success" />
-                    ) : (
-                      <Copy className="w-4 h-4 mr-1" />
-                    )}
-                    {copied ? t('copied') : t('copy')}
-                  </Button>
-                </div>
-
-                {/* Formatted Output */}
-                <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30 contain-content">
-                  {outputSQL ? (
-                    <Suspense fallback={
-                      <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
-                        <div className="text-muted-foreground">{t('formatting', 'Beautifying...')}</div>
-                      </div>
-                    }>
-                      <LazySyntaxHighlighter code={outputSQL} theme={theme === 'dark' ? 'dark' : 'light'} />
-                    </Suspense>
-                  ) : (
-                    <div className="p-6 text-muted-foreground italic min-h-[450px]">
-                      {inputSQL.trim() ? t('formatting') : t('emptyPlaceholder')}
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl mb-12" />}>
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
             <SQLInfo />
           </Suspense>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl mb-16" />}>
+          <AdPlaceholder slotId="content-middle" className="my-8" />
+
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
+            <FormatterGuide />
+          </Suspense>
+
+          <AdPlaceholder slotId="content-technical" className="my-8" />
+
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
+            <TechnicalGuide />
+          </Suspense>
+
+          <AdPlaceholder slotId="content-bottom" className="my-8" />
+
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
             <FormatterFAQ />
           </Suspense>
-        </main>
+        </div>
+      }
+    >
+      <div className="flex flex-wrap justify-center gap-4 mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+        {/* Main Controls row */}
+        <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
+          <Select
+            value={options.dialect}
+            onValueChange={(value: Dialect) => setOptions(prev => ({ ...prev, dialect: value }))}
+          >
+            <SelectTrigger
+              aria-label={t('selectDialect')}
+              className="h-9 w-[180px] border-none bg-transparent focus:ring-0 shadow-none"
+            >
+              <SelectValue placeholder={t('selectDialect')} />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(dialectLabels).map(([key, label]) => (
+                <SelectItem key={key} value={key}>
+                  <span className="flex items-center gap-2">
+                    <span>{dialectIcons[key as Dialect]}</span>
+                    <span>{label}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-border/50 text-muted-foreground">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {/* Coluna 1: Sobre o SQL Formatter */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Database className="w-6 h-6 text-primary" />
-                <span className="font-bold text-foreground">SQL Formatter</span>
-              </div>
-              <p className="text-sm">
-                {t('seoDescription')}
-              </p>
-            </div>
+        <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
+          <Select
+            value={options.keywordCase}
+            onValueChange={(value: KeywordCase) => setOptions(prev => ({ ...prev, keywordCase: value }))}
+          >
+            <SelectTrigger
+              aria-label={t('casing')}
+              className="h-9 w-[140px] border-none bg-transparent focus:ring-0 shadow-none"
+            >
+              <SelectValue placeholder={t('casing')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="upper">{t('uppercase')}</SelectItem>
+              <SelectItem value="lower">{t('lowercase')}</SelectItem>
+              <SelectItem value="preserve">{t('preserve')}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-            {/* Coluna 2: Documentação dos Bancos de Dados */}
-            <div className="space-y-4">
-              <h3 className="font-bold text-foreground">{t('databaseDocs')}</h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="https://www.postgresql.org/docs/" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
-                    <BookOpen className="w-4 h-4" />
-                    {t('postgresqlDocs')}
-                  </a>
-                </li>
-                <li>
-                  <a href="https://dev.mysql.com/doc/" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
-                    <BookOpen className="w-4 h-4" />
-                    {t('mysqlDocs')}
-                  </a>
-                </li>
-                <li>
-                  <a href="https://docs.oracle.com/en/database/" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
-                    <BookOpen className="w-4 h-4" />
-                    {t('oracleDocs')}
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cloud.google.com/bigquery/docs" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
-                    <BookOpen className="w-4 h-4" />
-                    {t('bigqueryDocs')}
-                  </a>
-                </li>
-              </ul>
-            </div>
+        <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
+          <Select
+            value={options.indentStyle}
+            onValueChange={(value: IndentStyle) => setOptions(prev => ({ ...prev, indentStyle: value }))}
+          >
+            <SelectTrigger
+              aria-label={t('indentation')}
+              className="h-9 w-[140px] border-none bg-transparent focus:ring-0 shadow-none"
+            >
+              <SelectValue placeholder={t('indentation')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="standard">{t('indentation')}</SelectItem>
+              <SelectItem value="tabularLeft">Tabular Left</SelectItem>
+              <SelectItem value="tabularRight">Tabular Right</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-            {/* Coluna 3: Links Úteis */}
-            <div className="space-y-4">
-              <h3 className="font-bold text-foreground">Links</h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="https://github.com/jfnandopr/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
-                    <Github className="w-4 h-4" />
-                    {t('sourceCode')}
-                  </a>
-                </li>
-                <li>
-                  <a href="https://jfmaia.site" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    {t('developer')}
-                  </a>
-                </li>
-                <li>
-                  <Link to="/terms" className="hover:text-primary flex items-center gap-2">
-                    <ExternalLink className="w-4 h-4" />
-                    {t('terms')}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-primary flex items-center gap-2">
-                    <ExternalLink className="w-4 h-4" />
-                    {t('contact')}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className="hover:text-primary flex items-center gap-2">
-                    <ExternalLink className="w-4 h-4" />
-                    {t('privacy')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
+        <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-[50px]">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="compact-mode" className="text-sm cursor-pointer whitespace-nowrap">{t('compactMode')}</Label>
+            <Switch
+              id="compact-mode"
+              checked={compactMode}
+              onCheckedChange={toggleCompactMode}
+            />
           </div>
+        </div>
+      </div>
 
-          <div className="text-center text-xs pb-8">
-            <p>© {new Date().getFullYear()} SQL Formatter. Made with ❤️ for developers.</p>
-          </div>
-        </footer >
-      </div >
-    </div >
+      <div className="flex justify-center gap-2 mb-8">
+        <Button
+          variant="outline"
+          onClick={loadSample}
+          className="gap-2 border-primary/20 hover:bg-primary/10"
+        >
+          <Database className="w-4 h-4" />
+          {t('loadExample')}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={clearAll}
+          className="gap-2 border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
+        >
+          <Trash2 className="w-4 h-4" />
+          {t('clear')}
+        </Button>
+
+        <Button
+          variant="outline"
+          className="gap-2 border-primary/20 hover:bg-primary/10"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          <Settings2 className="w-4 h-4" />
+          {t('advanced')}
+        </Button>
+
+        <Suspense fallback={null}>
+          <FormatterSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            options={options}
+            setOptions={setOptions}
+          />
+        </Suspense>
+      </div>
+
+      {/* Main Formatter area with layout isolation */}
+      <div className="glass-card p-5 animate-slide-up transition-opacity duration-300 opacity-100 mb-12 will-change-transform contain-layout" style={{ animationDelay: '0.1s' }}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full contain-paint">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="original" className="flex items-center gap-2">
+              <FileCode className="w-4 h-4" />
+              <h2 className="text-sm font-medium">{t('originalSql')}</h2>
+            </TabsTrigger>
+            <TabsTrigger value="formatted" className="flex items-center gap-2">
+              <FileCheck className="w-4 h-4" />
+              <h2 className="text-sm font-medium">{t('formattedSql')}</h2>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="original" className="mt-0">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs text-muted-foreground">
+                {inputSQL.length} {t('characters')}
+              </span>
+            </div>
+            <Textarea
+              value={inputSQL}
+              onChange={(e) => setInputSQL(e.target.value)}
+              placeholder={t('pastePlaceholder')}
+              className="min-h-[450px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
+              aria-label={t('originalSql')}
+            />
+          </TabsContent>
+
+          <TabsContent value="formatted" className="mt-0">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs text-muted-foreground">
+                {outputSQL.length} {t('characters')}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={copyToClipboard}
+                disabled={!outputSQL}
+                className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 mr-1 text-success" />
+                ) : (
+                  <Copy className="w-4 h-4 mr-1" />
+                )}
+                {copied ? t('copied') : t('copy')}
+              </Button>
+            </div>
+
+            {/* Formatted Output */}
+            <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30 contain-content">
+              {outputSQL ? (
+                <Suspense fallback={
+                  <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
+                    <div className="text-muted-foreground">{t('formatting', 'Beautifying...')}</div>
+                  </div>
+                }>
+                  <LazySyntaxHighlighter code={outputSQL} theme={theme === 'dark' ? 'dark' : 'light'} />
+                </Suspense>
+              ) : (
+                <div className="p-6 text-muted-foreground italic min-h-[450px]">
+                  {inputSQL.trim() ? t('formatting') : t('emptyPlaceholder')}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </ToolLayout>
   );
 }
