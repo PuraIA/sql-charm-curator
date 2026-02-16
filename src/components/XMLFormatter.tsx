@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
+import { SEO } from './SEO';
 
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
@@ -49,14 +50,6 @@ export function XMLFormatter() {
     const [activeTab, setActiveTab] = useState('original');
     const [isValid, setIsValid] = useState(true);
     const { theme } = useTheme();
-
-    useEffect(() => {
-        document.title = t('xmlSeoTitle', 'XML Formatter Online - Beautify and Validate XML');
-        const metaDescription = document.querySelector('meta[name="description"]');
-        if (metaDescription) {
-            metaDescription.setAttribute('content', t('xmlSeoDescription', 'Free online XML formatter and validator. Beautify and validate your XML data instantly.'));
-        }
-    }, [t]);
 
     const formatXMLString = (xml: string) => {
         let formatted = '';
@@ -171,6 +164,7 @@ export function XMLFormatter() {
             subtitle={t('xmlSubtitle', 'Formate, valide e organize seus arquivos XML de forma elegante.')}
             toolContent={
                 <div className="space-y-16">
+                    <SEO title={t('xmlSeoTitle')} description={t('xmlSeoDescription')} />
                     <AdPlaceholder slotId="content-top" className="my-8" />
 
                     <div className="glass-card p-8">

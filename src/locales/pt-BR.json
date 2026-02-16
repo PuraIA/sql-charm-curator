@@ -173,5 +173,22 @@
     "xmlToastSuccess": "XML formatado com sucesso!",
     "xmlToastError": "Erro ao formatar XML. Verifique a sintaxe.",
     "xmlWhatIs": "O que é XML?",
-    "xmlWhatIsDesc": "XML (Extensible Markup Language) é uma linguagem de marcação que define um conjunto de regras para codificar documentos em um formato que é legível tanto por humanos quanto por máquinas."
+    "xmlWhatIsDesc": "XML (Extensible Markup Language) é uma linguagem de marcação que define um conjunto de regras para codificar documentos em um formato que é legível tanto por humanos quanto por máquinas.",
+    "homeTitle": "Ferramentas de Formatação",
+    "homeSubtitle": "Ferramentas gratuitas, rápidas e seguras para embelezer seu código. Tudo acontece no seu navegador.",
+    "homeSeoTitle": "Pretty Format - Ferramentas de Formatação Online para Desenvolvedores",
+    "homeSeoDescription": "Ferramentas profissionais de formatação de código, incluindo SQL, JSON e XML. Seguro, privado e funciona inteiramente no seu navegador.",
+    "sqlCardTitle": "Formatador SQL",
+    "sqlCardDesc": "Formate consultas SQL para PostgreSQL, MySQL, Oracle, SQL Server e mais com customização avançada.",
+    "jsonCardTitle": "Formatador JSON",
+    "jsonCardDesc": "Valide, embeleze e minifique dados JSON. Suporte para ordenação de chaves e visualização em árvore.",
+    "xmlCardTitle": "Formatador XML",
+    "xmlCardDesc": "Embeleze arquivos XML e garanta que estejam bem formados. Indentação limpa e destaque de sintaxe.",
+    "openTool": "Abrir Ferramenta",
+    "highlight1Title": "Privado e Seguro",
+    "highlight1Desc": "Todo o processamento acontece 100% no seu navegador. Seus dados nunca saem da sua máquina.",
+    "highlight2Title": "Relâmpago Rápido",
+    "highlight2Desc": "Resultados instantâneos conforme você digita ou cola. Otimizado para desempenho e rapidez.",
+    "highlight3Title": "Foco no Desenvolvedor",
+    "highlight3Desc": "Opções avançadas para cada ferramenta para combinar com o guia de estilo específico da sua equipe."
 }

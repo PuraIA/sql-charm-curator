@@ -181,5 +181,22 @@
     "xmlToastSuccess": "XML formatted successfully!",
     "xmlToastError": "Error formatting XML. Check syntax.",
     "xmlWhatIs": "What is XML?",
-    "xmlWhatIsDesc": "XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable."
+    "xmlWhatIsDesc": "XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.",
+    "homeTitle": "Developer Formatting Tools",
+    "homeSubtitle": "Free, fast, and secure tools to beautify your code. Everything happens in your browser.",
+    "homeSeoTitle": "Pretty Format - Free Online Formatting Tools for Developers",
+    "homeSeoDescription": "Professional code formatting tools including SQL, JSON, and XML beautifiers. Secure, private, and runs entirely in your browser.",
+    "sqlCardTitle": "SQL Formatter",
+    "sqlCardDesc": "Format SQL queries for PostgreSQL, MySQL, Oracle, SQL Server, and more with advanced customization.",
+    "jsonCardTitle": "JSON Formatter",
+    "jsonCardDesc": "Validate, beautify, and minify JSON data. Support for sorting keys and tree view visualization.",
+    "xmlCardTitle": "XML Formatter",
+    "xmlCardDesc": "Beautify XML files and ensure they are well-formed. Clean indentation and syntax highlighting.",
+    "openTool": "Open Tool",
+    "highlight1Title": "Private & Secure",
+    "highlight1Desc": "All processing happens 100% in your browser. Your data never leaves your machine.",
+    "highlight2Title": "Lightning Fast",
+    "highlight2Desc": "Instant results as you type or paste. Optimized for performance and responsiveness.",
+    "highlight3Title": "Developer First",
+    "highlight3Desc": "Advanced options for every tool to match your team's specific style guide."
 }

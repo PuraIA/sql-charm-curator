@@ -18,6 +18,7 @@ import { superCompactSQL } from '@/utils/sql-utils';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
+import { SEO } from './SEO';
 
 // Lazy load components that are not needed for initial interaction
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
@@ -101,14 +102,6 @@ export function SQLFormatter() {
     denseOperators: false,
     newlineBeforeSemicolon: false,
   });
-
-  useEffect(() => {
-    document.title = t('seoTitle');
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', t('seoDescription'));
-    }
-  }, [t]);
 
   const formatSQL = useCallback(async () => {
     if (!inputSQL.trim()) {
@@ -247,6 +240,7 @@ export function SQLFormatter() {
       subtitle={t('subtitle')}
       toolContent={
         <div className="space-y-16">
+          <SEO title={t('seoTitle')} description={t('seoDescription')} />
           <AdPlaceholder slotId="content-top" className="my-8" />
 
           <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>

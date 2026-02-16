@@ -1,7 +1,7 @@
 import { SQLFormatter } from '@/components/SQLFormatter';
 
-const Index = () => {
+const SQLPage = () => {
   return <SQLFormatter />;
 };
 
-export default Index;
+export default SQLPage;

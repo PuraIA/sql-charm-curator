@@ -36,6 +36,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
+import { SEO } from './SEO';
 
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
@@ -289,14 +290,6 @@ export function JSONFormatter() {
         escapeUnicode: false,
     });
 
-    useEffect(() => {
-        document.title = t('jsonSeoTitle', 'JSON Formatter Online - Beautify and Validate JSON');
-        const metaDescription = document.querySelector('meta[name="description"]');
-        if (metaDescription) {
-            metaDescription.setAttribute('content', t('jsonSeoDescription', 'Free online JSON formatter and validator. Beautify, minify, sort and validate your JSON data instantly.'));
-        }
-    }, [t]);
-
     const sortObjectKeys = (obj: any): any => {
         if (Array.isArray(obj)) {
             return obj.map(sortObjectKeys);
@@ -403,6 +396,7 @@ export function JSONFormatter() {
             subtitle={t('jsonSubtitle', 'Formate, valide e organize seus dados JSON de forma elegante.')}
             toolContent={
                 <div className="space-y-16">
+                    <SEO title={t('jsonSeoTitle')} description={t('jsonSeoDescription')} />
                     <AdPlaceholder slotId="content-top" className="my-8" />
 
                     <div className="glass-card p-8">
