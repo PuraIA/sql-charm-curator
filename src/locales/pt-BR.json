@@ -159,5 +159,19 @@
     "jsonToastSuccess": "JSON formatado com sucesso!",
     "jsonToastError": "JSON inválido",
     "jsonWhatIs": "O que é JSON?",
-    "jsonWhatIsDesc": "JSON (JavaScript Object Notation) é um formato leve de troca de dados. É fácil para humanos lerem e escreverem, e fácil para máquinas parsearem e gerarem."
+    "jsonWhatIsDesc": "JSON (JavaScript Object Notation) é um formato leve de troca de dados. É fácil para humanos lerem e escreverem, e fácil para máquinas parsearem e gerarem.",
+    "xmlTitle": "XML Formatter",
+    "xmlSubtitle": "Formate, valide e organize seus arquivos XML de forma elegante.",
+    "xmlSeoTitle": "Formatador XML Online Grátis - Embeleze seu código XML",
+    "xmlSeoDescription": "O melhor formatador e validador de XML online gratuito. Torne seus arquivos XML elegantes e legíveis instantaneamente.",
+    "xmlOriginal": "XML Original",
+    "xmlFormatted": "XML Formatado",
+    "xmlPastePlaceholder": "Cole seu XML aqui...",
+    "xmlEmptyPlaceholder": "Insira um XML na aba \"XML Original\"",
+    "xmlValid": "XML válido",
+    "xmlInvalid": "XML inválido",
+    "xmlToastSuccess": "XML formatado com sucesso!",
+    "xmlToastError": "Erro ao formatar XML. Verifique a sintaxe.",
+    "xmlWhatIs": "O que é XML?",
+    "xmlWhatIsDesc": "XML (Extensible Markup Language) é uma linguagem de marcação que define um conjunto de regras para codificar documentos em um formato que é legível tanto por humanos quanto por máquinas."
 }

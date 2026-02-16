@@ -8,7 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Database, Globe, ExternalLink, Github, BookOpen, Braces } from 'lucide-react';
+import { Database, Globe, ExternalLink, Github, BookOpen, Braces, Code2 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ModeToggle } from './ModeToggle';
 import { useTranslation } from 'react-i18next';
@@ -40,8 +40,8 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
                             <Link
                                 to="/"
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${location.pathname === '/'
-                                        ? 'bg-primary text-primary-foreground border-primary'
-                                        : 'bg-secondary/50 border-border/50 hover:bg-secondary hover:border-border'
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-secondary/50 border-border/50 hover:bg-secondary hover:border-border'
                                     }`}
                             >
                                 <Database className="w-4 h-4" />
@@ -50,12 +50,22 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
                             <Link
                                 to="/json"
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${location.pathname === '/json'
-                                        ? 'bg-primary text-primary-foreground border-primary'
-                                        : 'bg-secondary/50 border-border/50 hover:bg-secondary hover:border-border'
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-secondary/50 border-border/50 hover:bg-secondary hover:border-border'
                                     }`}
                             >
                                 <Braces className="w-4 h-4" />
                                 <span className="text-sm font-medium">JSON</span>
+                            </Link>
+                            <Link
+                                to="/xml"
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${location.pathname === '/xml'
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-secondary/50 border-border/50 hover:bg-secondary hover:border-border'
+                                    }`}
+                            >
+                                <Code2 className="w-4 h-4" />
+                                <span className="text-sm font-medium">XML</span>
                             </Link>
                         </div>
 
