@@ -12,9 +12,10 @@ const loadStyles = () =>
 interface LazySyntaxHighlighterProps {
     code: string;
     theme: 'light' | 'dark';
+    language?: 'sql' | 'json';
 }
 
-export function LazySyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
+export function LazySyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxHighlighterProps) {
     return (
         <Suspense
             fallback={
@@ -23,13 +24,13 @@ export function LazySyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProp
                 </div>
             }
         >
-            <DynamicSyntaxHighlighter code={code} theme={theme} />
+            <DynamicSyntaxHighlighter code={code} theme={theme} language={language} />
         </Suspense>
     );
 }
 
 
-function DynamicSyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
+function DynamicSyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxHighlighterProps) {
     const [styles, setStyles] = useState<any>(null);
 
     useEffect(() => {
@@ -74,7 +75,7 @@ function DynamicSyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
 
     return (
         <SyntaxHighlighter
-            language="sql"
+            language={language}
             style={theme === 'dark' ? styles.atomDark : styles.vs}
             customStyle={{
                 margin: 0,
@@ -87,7 +88,7 @@ function DynamicSyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
             }}
             wrapLines={true}
             wrapLongLines={true}
-            renderer={customRenderer}
+            renderer={language === 'sql' ? customRenderer : undefined}
         >
             {code}
         </SyntaxHighlighter>
