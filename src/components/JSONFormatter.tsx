@@ -9,7 +9,26 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Copy, Check, Trash2, FileCode, FileCheck, Settings2, Braces } from 'lucide-react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import {
+    Copy,
+    Check,
+    Trash2,
+    FileCode,
+    FileCheck,
+    Settings2,
+    Braces,
+    ChevronRight,
+    ChevronDown,
+    Table as TableIcon
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -21,7 +40,7 @@ import { AdPlaceholder } from './AdPlaceholder';
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 
-type FormatStyle = 'pretty' | 'compact' | 'sorted' | 'minified';
+type FormatStyle = 'pretty' | 'compact' | 'sorted' | 'minified' | 'table' | 'tree';
 type IndentSize = 2 | 4 | 8;
 
 export interface JSONFormatterOptions {
@@ -37,6 +56,8 @@ export const formatStyleLabels: Record<FormatStyle, string> = {
     compact: 'Compacto',
     sorted: 'Ordenado',
     minified: 'Minificado',
+    table: 'Tabela',
+    tree: 'Árvore Interativa',
 };
 
 export const formatStyleIcons: Record<FormatStyle, string> = {
@@ -44,6 +65,8 @@ export const formatStyleIcons: Record<FormatStyle, string> = {
     compact: '📋',
     sorted: '🔤',
     minified: '🗜️',
+    table: '📊',
+    tree: '🌲',
 };
 
 const sampleJSON = {
@@ -70,10 +93,189 @@ const sampleJSON = {
     ]
 };
 
+function JSONTableView({ data }: { data: any }) {
+    if (!data) return null;
+
+    if (Array.isArray(data)) {
+        if (data.length === 0) return <div className="p-4 text-muted-foreground italic">Array vazio</div>;
+
+        const firstItem = data[0];
+        if (typeof firstItem === 'object' && firstItem !== null) {
+            const headers = Array.from(new Set(data.flatMap(item => Object.keys(item))));
+            return (
+                <div className="overflow-auto max-h-[450px]">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-12 bg-muted/50 sticky top-0 z-10">#</TableHead>
+                                {headers.map(header => (
+                                    <TableHead key={header} className="bg-muted/50 sticky top-0 z-10">{header}</TableHead>
+                                ))}
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {data.map((row, i) => (
+                                <TableRow key={i}>
+                                    <TableCell className="font-mono text-xs text-muted-foreground">{i + 1}</TableCell>
+                                    {headers.map(header => (
+                                        <TableCell key={header}>
+                                            {typeof row[header] === 'object' && row[header] !== null ? (
+                                                <span className="text-xs text-muted-foreground italic font-mono">
+                                                    {Array.isArray(row[header]) ? '[...]' : '{...}'}
+                                                </span>
+                                            ) : (
+                                                String(row[header] ?? '')
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+            );
+        } else {
+            return (
+                <div className="overflow-auto max-h-[450px]">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-12 bg-muted/50 sticky top-0 z-10">#</TableHead>
+                                <TableHead className="bg-muted/50 sticky top-0 z-10">Valor</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {data.map((item, i) => (
+                                <TableRow key={i}>
+                                    <TableCell className="font-mono text-xs text-muted-foreground">{i + 1}</TableCell>
+                                    <TableCell>{String(item)}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+            );
+        }
+    } else if (typeof data === 'object' && data !== null) {
+        const entries = Object.entries(data);
+        return (
+            <div className="overflow-auto max-h-[450px]">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="bg-muted/50 sticky top-0 z-10">Chave</TableHead>
+                            <TableHead className="bg-muted/50 sticky top-0 z-10">Valor</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {entries.map(([key, value]) => (
+                            <TableRow key={key}>
+                                <TableCell className="font-medium">{key}</TableCell>
+                                <TableCell>
+                                    {typeof value === 'object' && value !== null ? (
+                                        <span className="text-xs text-muted-foreground italic font-mono">
+                                            {Array.isArray(value) ? '[...]' : '{...}'}
+                                        </span>
+                                    ) : (
+                                        String(value ?? '')
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        );
+    }
+
+    return <div className="p-4 text-muted-foreground italic">Dado primitivo: {String(data)}</div>;
+}
+
+function JSONTreeNode({ label, value, depth = 0 }: { label?: string; value: any; depth?: number }) {
+    const [isExpanded, setIsExpanded] = useState(depth < 2);
+
+    const isObject = value !== null && typeof value === 'object';
+    const isEmpty = isObject && (Array.isArray(value) ? value.length === 0 : Object.keys(value).length === 0);
+
+    const toggle = (e: React.MouseEvent) => {
+        if (isObject && !isEmpty) {
+            e.stopPropagation();
+            setIsExpanded(!isExpanded);
+        }
+    };
+
+    const renderValue = () => {
+        if (value === null) return <span className="text-gray-500 italic">null</span>;
+        if (typeof value === 'string') return <span className="text-green-600 dark:text-green-400">"{value}"</span>;
+        if (typeof value === 'number') return <span className="text-amber-600 dark:text-amber-400">{value}</span>;
+        if (typeof value === 'boolean') return <span className="text-blue-600 dark:text-blue-400">{value.toString()}</span>;
+
+        if (Array.isArray(value)) {
+            if (isEmpty) return <span className="text-muted-foreground">[]</span>;
+            return <span className="text-muted-foreground">{`Array [${value.length}]`}</span>;
+        }
+
+        if (typeof value === 'object') {
+            if (isEmpty) return <span className="text-muted-foreground">{"{}"}</span>;
+            return <span className="text-muted-foreground">{`Object {${Object.keys(value).length}}`}</span>;
+        }
+
+        return String(value);
+    };
+
+    return (
+        <div className="select-none py-0.5">
+            <div
+                className={`flex items-start gap-1 p-1 rounded-md transition-colors ${isObject && !isEmpty ? 'cursor-pointer hover:bg-secondary/50' : ''}`}
+                onClick={toggle}
+                style={{ paddingLeft: `${depth === 0 ? 0.25 : 0.5}rem` }}
+            >
+                {isObject && !isEmpty ? (
+                    <span className="mt-1">
+                        {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                    </span>
+                ) : (
+                    <span className="w-3 h-3" />
+                )}
+
+                <div className="flex flex-wrap items-baseline gap-2 font-mono text-sm">
+                    {label && <span className="font-semibold text-primary/80">{label}:</span>}
+                    {renderValue()}
+                </div>
+            </div>
+
+            {isExpanded && isObject && !isEmpty && (
+                <div className="ml-4 border-l border-border/50 pl-2">
+                    {Array.isArray(value) ? (
+                        value.map((item, i) => (
+                            <JSONTreeNode key={i} label={i.toString()} value={item} depth={depth + 1} />
+                        ))
+                    ) : (
+                        Object.entries(value).map(([key, val]) => (
+                            <JSONTreeNode key={key} label={key} value={val} depth={depth + 1} />
+                        ))
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function JSONTreeView({ data }: { data: any }) {
+    if (data === null || data === undefined) return <div className="p-4 text-muted-foreground italic">Nenhum dado</div>;
+
+    return (
+        <div className="p-4 overflow-auto max-h-[450px] bg-secondary/10 rounded-lg">
+            <JSONTreeNode value={data} />
+        </div>
+    );
+}
+
 export function JSONFormatter() {
     const { t } = useTranslation();
     const [inputJSON, setInputJSON] = useState('');
     const [outputJSON, setOutputJSON] = useState('');
+    const [parsedData, setParsedData] = useState<any>(null);
     const [copied, setCopied] = useState(false);
     const [activeTab, setActiveTab] = useState('original');
     const [isValid, setIsValid] = useState(true);
@@ -119,6 +321,7 @@ export function JSONFormatter() {
         try {
             let parsed = JSON.parse(inputJSON);
             setIsValid(true);
+            setParsedData(parsed);
 
             // Apply sorting if enabled or if format style is 'sorted'
             if (options.sortKeys || options.formatStyle === 'sorted') {
@@ -136,10 +339,9 @@ export function JSONFormatter() {
                     formatted = JSON.stringify(parsed, null, 1);
                     break;
                 case 'sorted':
-                    // Pretty format with sorted keys
-                    formatted = JSON.stringify(parsed, null, options.indentSize);
-                    break;
                 case 'pretty':
+                case 'table':
+                case 'tree':
                 default:
                     formatted = JSON.stringify(parsed, null, options.indentSize);
                     break;
@@ -379,13 +581,19 @@ export function JSONFormatter() {
                         {/* Formatted Output */}
                         <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30">
                             {outputJSON ? (
-                                <Suspense fallback={
-                                    <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
-                                        <div className="text-muted-foreground">{t('formatting', 'Formatando...')}</div>
-                                    </div>
-                                }>
-                                    <LazySyntaxHighlighter code={outputJSON} theme={theme === 'dark' ? 'dark' : 'light'} language="json" />
-                                </Suspense>
+                                options.formatStyle === 'table' ? (
+                                    <JSONTableView data={parsedData} />
+                                ) : options.formatStyle === 'tree' ? (
+                                    <JSONTreeView data={parsedData} />
+                                ) : (
+                                    <Suspense fallback={
+                                        <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
+                                            <div className="text-muted-foreground">{t('formatting', 'Formatando...')}</div>
+                                        </div>
+                                    }>
+                                        <LazySyntaxHighlighter code={outputJSON} theme={theme === 'dark' ? 'dark' : 'light'} language="json" />
+                                    </Suspense>
+                                )
                             ) : (
                                 <div className="p-6 text-muted-foreground italic min-h-[450px]">
                                     {inputJSON.trim() ? t('formatting', 'Formatando...') : t('jsonEmptyPlaceholder', 'Insira um JSON na aba "JSON Original"')}
