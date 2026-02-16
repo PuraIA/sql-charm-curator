@@ -1,5 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import createElement from 'react-syntax-highlighter/dist/esm/create-element';
 
 // Lazy load the styles
 const loadStyles = () =>
@@ -27,6 +28,7 @@ export function LazySyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProp
     );
 }
 
+
 function DynamicSyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
     const [styles, setStyles] = useState<any>(null);
 
@@ -44,6 +46,32 @@ function DynamicSyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
         );
     }
 
+    const customRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
+        rows.forEach((row: any) => {
+            if (row.children) {
+                row.children.forEach((child: any) => {
+                    if (child.children && child.children[0] && child.children[0].value) {
+                        const text = child.children[0].value.trim();
+                        if (text.toUpperCase() === 'AND') {
+                            if (child.properties && child.properties.className && child.properties.className.includes('operator')) {
+                                child.properties.className = child.properties.className.map((c: string) => c === 'operator' ? 'keyword' : c);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        return rows.map((node: any, i: number) => {
+            return createElement({
+                node,
+                stylesheet,
+                useInlineStyles,
+                key: `code-segment-${i}`,
+            });
+        });
+    };
+
     return (
         <SyntaxHighlighter
             language="sql"
@@ -59,6 +87,7 @@ function DynamicSyntaxHighlighter({ code, theme }: LazySyntaxHighlighterProps) {
             }}
             wrapLines={true}
             wrapLongLines={true}
+            renderer={customRenderer}
         >
             {code}
         </SyntaxHighlighter>
