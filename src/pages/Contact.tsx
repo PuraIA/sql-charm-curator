@@ -31,15 +31,15 @@ const Contact = () => {
                         <div className="flex flex-col items-center p-6 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 transition-colors">
                             <Mail className="w-8 h-8 mb-4 text-primary" />
                             <h3 className="font-semibold mb-2">{t('contactEmail')}</h3>
-                            <a href="mailto:contato@jfmaia.site" className="text-sm text-primary hover:underline">
-                                contato@jfmaia.site
+                            <a href="mailto:contato@pura.ia.br" className="text-sm text-primary hover:underline">
+                                contato@pura.ia.br
                             </a>
                         </div>
 
                         <div className="flex flex-col items-center p-6 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 transition-colors">
                             <Github className="w-8 h-8 mb-4 text-primary" />
                             <h3 className="font-semibold mb-2">{t('contactGithub')}</h3>
-                            <a href="https://github.com/jfnandopr/sql-charm-curator/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                            <a href="https://github.com/PuraIA/sql-charm-curator/issues" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
                                 View Issues
                             </a>
                         </div>
@@ -47,8 +47,8 @@ const Contact = () => {
                         <div className="flex flex-col items-center p-6 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 transition-colors">
                             <Twitter className="w-8 h-8 mb-4 text-primary" />
                             <h3 className="font-semibold mb-2">{t('contactTwitter')}</h3>
-                            <a href="https://twitter.com/jfnandopr" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
-                                @jfnandopr
+                            <a href="https://twitter.com/PuraIA" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                                @PuraIA
                             </a>
                         </div>
                     </div>

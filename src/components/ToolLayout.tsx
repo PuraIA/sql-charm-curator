@@ -119,7 +119,7 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
                             <h3 className="font-bold text-foreground">Links</h3>
                             <ul className="space-y-2 text-sm">
                                 <li>
-                                    <a href="https://github.com/jfnandopr/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
+                                    <a href="https://github.com/PuraIA/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
                                         <Github className="w-4 h-4" />
                                         {t('sourceCode')}
                                     </a>
