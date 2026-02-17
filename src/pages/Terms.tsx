@@ -2,12 +2,18 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 const Terms = () => {
   const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background p-6 md:p-12">
+      <SEO
+        title={`${t('termsTitle')} - SQL Formatter`}
+        description={t('termsIntroContent')}
+        keywords={t('termsKeywords')}
+      />
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <Link to="/">

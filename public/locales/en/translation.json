@@ -183,7 +183,7 @@
     "xmlWhatIs": "What is XML?",
     "xmlWhatIsDesc": "XML (Extensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.",
     "homeTitle": "Developer Formatting Tools",
-    "homeSubtitle": "Free, fast, and secure tools to beautify your code. Everything happens in your browser.",
+    "homeSubtitle": "Free, fast, and secure tools to format your code. Everything happens in your browser.",
     "homeSeoTitle": "Pretty Format - Free Online Formatting Tools for Developers",
     "homeSeoDescription": "Professional code formatting tools including SQL, JSON, and XML beautifiers. Secure, private, and runs entirely in your browser.",
     "sqlCardTitle": "SQL Formatter",
@@ -198,5 +198,10 @@
     "highlight2Title": "Lightning Fast",
     "highlight2Desc": "Instant results as you type or paste. Optimized for performance and responsiveness.",
     "highlight3Title": "Developer First",
-    "highlight3Desc": "Advanced options for every tool to match your team's specific style guide."
+    "highlight3Desc": "Advanced options for every tool to match your team's specific style guide.",
+    "footerDesc": "Professional code formatting tools for the modern developer. Secure, private, and 100% browser-based.",
+    "jsonDocs": "JSON Specification",
+    "xmlDocs": "XML Specification",
+    "usefulLinks": "Useful Links",
+    "madeWith": "Made with ❤️ for developers."
 }

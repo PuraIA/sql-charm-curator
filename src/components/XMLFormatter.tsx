@@ -19,6 +19,7 @@ import { SEO } from './SEO';
 
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
+import { XMLContent } from './XMLContent';
 
 const sampleXML = `<?xml version="1.0" encoding="UTF-8"?>
 <bookstore>
@@ -163,9 +164,16 @@ export function XMLFormatter() {
             title={t('xmlTitle', 'XML Formatter')}
             subtitle={t('xmlSubtitle', 'Formate, valide e organize seus arquivos XML de forma elegante.')}
             toolContent={
-                <div className="space-y-16">
-                    <SEO title={t('xmlSeoTitle')} description={t('xmlSeoDescription')} />
-                    <AdPlaceholder slotId="content-top" className="my-8" />
+                <div className="space-y-12">
+                    <SEO
+                        title={t('xmlSeoTitle')}
+                        description={t('xmlSeoDescription')}
+                        keywords={t('xmlSeoKeywords')}
+                        ogTitle={t('xmlOgTitle')}
+                        ogDescription={t('xmlOgDescription')}
+                        twitterTitle={t('xmlTwitterTitle')}
+                        twitterDescription={t('xmlTwitterDescription')}
+                    />
 
                     <div className="glass-card p-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -177,7 +185,15 @@ export function XMLFormatter() {
                         </p>
                     </div>
 
-                    <AdPlaceholder slotId="content-bottom" className="my-8" />
+                    <div className="my-12 py-8 border-y border-border/50">
+                        <AdPlaceholder slotId="content-middle" />
+                    </div>
+
+                    <XMLContent />
+
+                    <div className="my-12 py-8 border-y border-border/50">
+                        <AdPlaceholder slotId="content-bottom" />
+                    </div>
                 </div>
             }
         >

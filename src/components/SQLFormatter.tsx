@@ -22,11 +22,10 @@ import { SEO } from './SEO';
 
 // Lazy load components that are not needed for initial interaction
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
-const FormatterGuide = lazy(() => import('./FormatterGuide').then(module => ({ default: module.FormatterGuide })));
 const FormatterFAQ = lazy(() => import('./FormatterFAQ').then(module => ({ default: module.FormatterFAQ })));
 const SQLInfo = lazy(() => import('./SQLInfo').then(module => ({ default: module.SQLInfo })));
 const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
-const TechnicalGuide = lazy(() => import('./TechnicalGuide').then(module => ({ default: module.TechnicalGuide })));
+import { SQLContent } from './SQLContent';
 
 export type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
@@ -239,29 +238,34 @@ export function SQLFormatter() {
       title={t('title')}
       subtitle={t('subtitle')}
       toolContent={
-        <div className="space-y-16">
-          <SEO title={t('seoTitle')} description={t('seoDescription')} />
-          <AdPlaceholder slotId="content-top" className="my-8" />
+        <div className="space-y-12">
+          <SEO
+            title={t('seoTitle')}
+            description={t('seoDescription')}
+            keywords={t('seoKeywords')}
+            ogTitle={t('ogTitle')}
+            ogDescription={t('ogDescription')}
+            twitterTitle={t('twitterTitle')}
+            twitterDescription={t('twitterDescription')}
+          />
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <SQLInfo />
           </Suspense>
 
-          <AdPlaceholder slotId="content-middle" className="my-8" />
+          <div className="my-12 py-8 border-y border-border/50">
+            <AdPlaceholder slotId="content-middle" />
+          </div>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
-            <FormatterGuide />
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
+            <SQLContent />
           </Suspense>
 
-          <AdPlaceholder slotId="content-technical" className="my-8" />
+          <div className="my-12 py-8 border-y border-border/50">
+            <AdPlaceholder slotId="content-bottom" />
+          </div>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
-            <TechnicalGuide />
-          </Suspense>
-
-          <AdPlaceholder slotId="content-bottom" className="my-8" />
-
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/20 rounded-xl" />}>
+          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <FormatterFAQ />
           </Suspense>
         </div>
@@ -449,6 +453,6 @@ export function SQLFormatter() {
           </TabsContent>
         </Tabs>
       </div>
-    </ToolLayout>
+    </ToolLayout >
   );
 }

@@ -40,6 +40,7 @@ import { SEO } from './SEO';
 
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
+import { JSONContent } from './JSONContent';
 
 type FormatStyle = 'pretty' | 'compact' | 'sorted' | 'minified' | 'table' | 'tree';
 type IndentSize = 2 | 4 | 8;
@@ -395,9 +396,16 @@ export function JSONFormatter() {
             title={t('jsonTitle', 'JSON Formatter')}
             subtitle={t('jsonSubtitle', 'Formate, valide e organize seus dados JSON de forma elegante.')}
             toolContent={
-                <div className="space-y-16">
-                    <SEO title={t('jsonSeoTitle')} description={t('jsonSeoDescription')} />
-                    <AdPlaceholder slotId="content-top" className="my-8" />
+                <div className="space-y-12">
+                    <SEO
+                        title={t('jsonSeoTitle')}
+                        description={t('jsonSeoDescription')}
+                        keywords={t('jsonSeoKeywords')}
+                        ogTitle={t('jsonOgTitle')}
+                        ogDescription={t('jsonOgDescription')}
+                        twitterTitle={t('jsonTwitterTitle')}
+                        twitterDescription={t('jsonTwitterDescription')}
+                    />
 
                     <div className="glass-card p-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -409,7 +417,15 @@ export function JSONFormatter() {
                         </p>
                     </div>
 
-                    <AdPlaceholder slotId="content-bottom" className="my-8" />
+                    <div className="my-12 py-8 border-y border-border/50">
+                        <AdPlaceholder slotId="content-middle" />
+                    </div>
+
+                    <JSONContent />
+
+                    <div className="my-12 py-8 border-y border-border/50">
+                        <AdPlaceholder slotId="content-bottom" />
+                    </div>
                 </div>
             }
         >

@@ -54,7 +54,15 @@ const Home = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            <SEO title={t('homeSeoTitle')} description={t('homeSeoDescription')} />
+            <SEO
+                title={t('homeSeoTitle')}
+                description={t('homeSeoDescription')}
+                keywords={t('homeSeoKeywords')}
+                ogTitle={t('homeOgTitle')}
+                ogDescription={t('homeOgDescription')}
+                twitterTitle={t('homeTwitterTitle')}
+                twitterDescription={t('homeTwitterDescription')}
+            />
 
             {/* Background gradient effect */}
             <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />

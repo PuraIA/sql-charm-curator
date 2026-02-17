@@ -34,17 +34,21 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
                     </p>
                 </header>
 
-                <main id="main-content">
+                <main id="main-content" className="flex flex-col gap-12">
                     {/* Tool Area */}
-                    {children}
+                    <section className="tool-section">
+                        {children}
+                    </section>
 
                     {/* Ad between Tool and Content */}
-                    <AdPlaceholder slotId="tool-bottom" />
+                    <div className="my-8">
+                        <AdPlaceholder slotId="tool-bottom" />
+                    </div>
 
                     {/* Content Area (Guide, FAQ, Context) */}
-                    <div className="mt-16">
+                    <article className="prose prose-slate dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground">
                         {toolContent}
-                    </div>
+                    </article>
                 </main>
             </div>
 

@@ -17,7 +17,7 @@ export const Footer = () => {
                             <span className="font-bold text-foreground">Pretty Format</span>
                         </Link>
                         <p className="text-sm">
-                            {t('seoDescription')}
+                            {t('footerDesc')}
                         </p>
                     </div>
 
@@ -40,13 +40,13 @@ export const Footer = () => {
                             <li>
                                 <a href="https://www.json.org/" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
                                     <BookOpen className="w-4 h-4" />
-                                    JSON Specification
+                                    {t('jsonDocs')}
                                 </a>
                             </li>
                             <li>
                                 <a href="https://www.w3.org/XML/" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
                                     <BookOpen className="w-4 h-4" />
-                                    XML Specification
+                                    {t('xmlDocs')}
                                 </a>
                             </li>
                         </ul>
@@ -54,7 +54,7 @@ export const Footer = () => {
 
                     {/* Coluna 3: Links Úteis */}
                     <div className="space-y-4">
-                        <h3 className="font-bold text-foreground">Links</h3>
+                        <h3 className="font-bold text-foreground">{t('usefulLinks')}</h3>
                         <ul className="space-y-2 text-sm">
                             <li>
                                 <a href="https://github.com/PuraIA/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-2">
@@ -65,7 +65,7 @@ export const Footer = () => {
                             <li>
                                 <Link to="/about" className="hover:text-primary flex items-center gap-2">
                                     <ExternalLink className="w-4 h-4" />
-                                    About
+                                    {t('about')}
                                 </Link>
                             </li>
                             <li>
@@ -90,8 +90,8 @@ export const Footer = () => {
                     </div>
                 </div>
 
-                <div className="text-center text-xs pb-8">
-                    <p>© {new Date().getFullYear()} Pretty Format. Made with ❤️ for developers.</p>
+                <div className="text-center text-xs pb-8 border-t border-border/30 pt-8">
+                    <p>© {new Date().getFullYear()} Pretty Format. {t('madeWith')}</p>
                 </div>
             </div>
         </footer>

@@ -10,7 +10,11 @@ export default function Privacy() {
 
     return (
         <div className="min-h-screen bg-background">
-            <SEO title={`${t('privacyPolicyTitle')} - SQL Formatter`} description={t('privacyIntroContent').substring(0, 160)} />
+            <SEO
+                title={`${t('privacyPolicyTitle')} - SQL Formatter`}
+                description={t('privacyIntroContent').substring(0, 160)}
+                keywords={t('privacyKeywords')}
+            />
             {/* Background gradient effect */}
             <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
 
