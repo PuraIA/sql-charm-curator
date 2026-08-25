@@ -1,4 +1,4 @@
-# https://www.pura.ia.br robots.txt
+# https://www.prettyformat.com robots.txt
 
 User-agent: Googlebot
 Allow: /
@@ -30,7 +30,7 @@ Allow: /
 Crawl-delay: 2
 
 # Sitemap location
-Sitemap: https://www.pura.ia.br/sitemap.xml
+Sitemap: https://www.prettyformat.com/sitemap.xml
 
 # Host
-Host: https://www.pura.ia.br
+Host: https://www.prettyformat.com
