@@ -220,11 +220,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+  <!-- Google AdSense — loaded immediately for crawler detection -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4026555335042993" crossorigin="anonymous"></script>
+
   <!-- Third-party scripts lazy loader to reduce unused JS and block-time -->
   <script>
     (function () {
       const lazyScripts = [
-        { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4026555335042993', attr: { crossorigin: 'anonymous', defer: '' } },
         { src: 'https://www.googletagmanager.com/gtag/js?id=G-EV2WK1EQNE', attr: { async: '' } }
       ];
 

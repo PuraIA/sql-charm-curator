@@ -2,6 +2,7 @@
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
+import { AdPlaceholder } from '@/components/AdPlaceholder';
 import { useTranslation } from 'react-i18next';
 import { Database, Braces, Code2, ArrowRight, ShieldCheck, Zap, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -107,6 +108,11 @@ const Home = () => {
                         </Link>
                     ))}
                 </section>
+
+                {/* Ad between Tools Grid and Why Section */}
+                <div className="mb-12">
+                    <AdPlaceholder />
+                </div>
 
                 {/* Why Section */}
                 <section className="bg-secondary/20 rounded-3xl border border-border/40 p-12 md:p-16 mb-20">

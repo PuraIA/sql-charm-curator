@@ -1,23 +1,39 @@
+import { useEffect } from 'react';
 
-import React from 'react';
-
-interface AdPlaceholderProps {
-    slotId?: string;
-    format?: 'auto' | 'fluid' | 'rectangle';
-    className?: string;
-    label?: string;
+declare global {
+    interface Window {
+        adsbygoogle: unknown[];
+    }
 }
 
-export const AdPlaceholder: React.FC<AdPlaceholderProps> = ({ slotId, format = 'auto', className = '', label = 'Advertisement' }) => {
+interface AdBannerProps {
+    className?: string;
+}
+
+/**
+ * Real Google AdSense banner component.
+ * Slot: 5322374741 / Publisher: ca-pub-4026555335042993
+ * The adsbygoogle.js script is loaded in index.html <head>.
+ */
+export const AdPlaceholder: React.FC<AdBannerProps> = ({ className = '' }) => {
+    useEffect(() => {
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch {
+            // Silently fail if AdSense is not loaded (e.g. dev, ad blockers)
+        }
+    }, []);
+
     return (
-        <div className={`my-8 flex justify-center items-center bg-secondary/10 border border-border/50 rounded-lg p-4 min-h-[100px] ${className}`}>
-            <div className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">{label}</p>
-                {/* In production, this would be the Google AdSense script */}
-                <div className="w-full h-full min-w-[300px] min-h-[100px] bg-muted/20 animate-pulse flex items-center justify-center rounded">
-                    <span className="text-muted-foreground/50 text-sm">Ad Space {slotId ? `(${slotId})` : ''}</span>
-                </div>
-            </div>
+        <div className={`my-6 overflow-hidden w-full ${className}`}>
+            <ins
+                className="adsbygoogle"
+                style={{ display: 'block' }}
+                data-ad-client="ca-pub-4026555335042993"
+                data-ad-slot="5322374741"
+                data-ad-format="auto"
+                data-full-width-responsive="true"
+            />
         </div>
     );
 };

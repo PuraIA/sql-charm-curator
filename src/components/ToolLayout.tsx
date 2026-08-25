@@ -42,7 +42,7 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
 
                     {/* Ad between Tool and Content */}
                     <div className="my-8">
-                        <AdPlaceholder slotId="tool-bottom" />
+                        <AdPlaceholder />
                     </div>
 
                     {/* Content Area (Guide, FAQ, Context) */}
