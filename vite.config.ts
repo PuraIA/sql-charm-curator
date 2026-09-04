@@ -31,12 +31,20 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query', 'i18next', 'react-i18next', 'i18next-browser-languagedetector', 'i18next-http-backend'],
-          'icons': ['lucide-react'],
-          'formatter': ['sql-formatter'],
-          'ui': ['@radix-ui/react-accordion', '@radix-ui/react-label', '@radix-ui/react-select', '@radix-ui/react-switch', '@radix-ui/react-tabs', '@radix-ui/react-tooltip'],
-          // Syntax highlighter is now lazy loaded, so it will be in a separate chunk automatically
+        // Vite 8 (rolldown) requires manualChunks as a function, not a plain object
+        manualChunks: (id: string) => {
+          if (id.includes('node_modules')) {
+            if (
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('react-router') ||
+              id.includes('@tanstack') ||
+              id.includes('i18next')
+            ) return 'vendor';
+            if (id.includes('lucide-react')) return 'icons';
+            if (id.includes('sql-formatter')) return 'formatter';
+            if (id.includes('@radix-ui')) return 'ui';
+          }
         },
         // Optimize chunk file names for better caching
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -46,4 +54,3 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
-
