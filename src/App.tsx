@@ -18,6 +18,7 @@ const queryClient = new QueryClient();
 const Sonner = lazy(() => import('@/components/ui/sonner').then(module => ({ default: module.Toaster })));
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { CookieBanner } from "@/components/CookieBanner";
 
 const App = () => (
   <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -40,6 +41,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+        <CookieBanner />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
