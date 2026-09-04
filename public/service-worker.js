@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sql-formatter-v1';
+const CACHE_NAME = 'prettyformat-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',

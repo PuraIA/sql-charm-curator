@@ -284,5 +284,12 @@
     "cookieTypeAnalyticsDesc": "Help us understand how visitors interact with our site (Google Analytics). No personally identifiable information is collected.",
     "cookieTypeAdsTitle": "Advertising Cookies",
     "cookieTypeAdsDesc": "Used by Google AdSense to display relevant ads based on your browsing history. Includes DoubleClick cookies from Google.",
-    "cookieOptOut": "Opt out of personalized ads →"
+    "cookieOptOut": "Opt out of personalized ads →",
+    "selectLanguage": "Select Language",
+    "toggleTheme": "Toggle theme",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "systemMode": "System",
+    "close": "Close",
+    "scrollToTop": "Scroll to top"
 }
