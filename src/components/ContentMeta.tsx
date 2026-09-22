@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { CalendarDays, PenLine } from 'lucide-react';
 
 interface ContentMetaProps {
@@ -13,7 +14,8 @@ interface ContentMetaProps {
  * date reflects when someone actually reviewed the text.
  */
 export const ContentMeta = ({ updated, author = 'Pura IA' }: ContentMetaProps) => {
-    const formatted = new Date(`${updated}T00:00:00Z`).toLocaleDateString('en-US', {
+    const { t, i18n } = useTranslation();
+    const formatted = new Date(`${updated}T00:00:00Z`).toLocaleDateString(i18n.language, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -24,11 +26,11 @@ export const ContentMeta = ({ updated, author = 'Pura IA' }: ContentMetaProps) =
         <div className="not-prose flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground border-y border-border/50 py-3 my-8">
             <span className="flex items-center gap-2">
                 <PenLine className="w-4 h-4 text-primary" />
-                Written and maintained by {author}
+                {t('guideWrittenBy', { author })}
             </span>
             <span className="flex items-center gap-2">
                 <CalendarDays className="w-4 h-4 text-primary" />
-                Last reviewed <time dateTime={updated}>{formatted}</time>
+                {t('guideLastReviewed')} <time dateTime={updated}>{formatted}</time>
             </span>
         </div>
     );

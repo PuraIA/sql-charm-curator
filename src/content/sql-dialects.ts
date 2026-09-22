@@ -12,9 +12,41 @@
  */
 import type { Dialect } from '@/components/SQLFormatter';
 import type { GuideSection } from './guide-shared';
+import {
+    EXTRA_LOCALES,
+    toExtraLocale,
+    mergeArray,
+    mergeSections,
+    mergeFaq,
+    type ExtraLocale,
+    type SectionTranslation,
+    type FaqTranslation,
+} from './i18n-guide';
+import { DIALECT_TRANSLATIONS_PT } from './i18n/sql-dialects.pt';
+import { DIALECT_TRANSLATIONS_ES } from './i18n/sql-dialects.es';
+import { DIALECT_TRANSLATIONS_DE } from './i18n/sql-dialects.de';
+import { DIALECT_TRANSLATIONS_FR } from './i18n/sql-dialects.fr';
+import { DIALECT_TRANSLATIONS_ZH } from './i18n/sql-dialects.zh';
+import { DIALECT_TRANSLATIONS_JA } from './i18n/sql-dialects.ja';
 
 export const DIALECT_SLUGS = ['postgresql', 'mysql', 't-sql', 'oracle-plsql', 'bigquery'] as const;
 export type DialectSlug = (typeof DIALECT_SLUGS)[number];
+
+/**
+ * Translatable prose for one dialect guide. Deliberately excludes seoTitle/
+ * seoDescription/seoKeywords (the prerendered <head> is always English; see
+ * src/content/i18n-guide.ts) and anything code (sample, quirk.code) — only what a
+ * reader sees as running text.
+ */
+export interface DialectGuideTranslation {
+    h1?: string;
+    tagline?: string;
+    intro?: string[];
+    quirks?: SectionTranslation[];
+    limitations?: string[];
+    conventions?: SectionTranslation[];
+    faq?: FaqTranslation[];
+}
 
 export interface DialectGuide {
     slug: DialectSlug;
@@ -710,3 +742,37 @@ export const DIALECT_GUIDE_LIST: DialectGuide[] = DIALECT_SLUGS.map(slug => DIAL
 export function getDialectGuide(slug: string): DialectGuide | undefined {
     return DIALECT_GUIDES[slug as DialectSlug];
 }
+
+const DIALECT_TRANSLATIONS: Record<ExtraLocale, Partial<Record<DialectSlug, DialectGuideTranslation>>> = {
+    pt: DIALECT_TRANSLATIONS_PT,
+    es: DIALECT_TRANSLATIONS_ES,
+    de: DIALECT_TRANSLATIONS_DE,
+    fr: DIALECT_TRANSLATIONS_FR,
+    zh: DIALECT_TRANSLATIONS_ZH,
+    ja: DIALECT_TRANSLATIONS_JA,
+};
+
+/**
+ * Overlays `language`'s translation (if any) onto the English base. Falls back to the
+ * base guide unchanged for English itself, an unsupported language, or any field a
+ * translation doesn't cover — never renders an empty string. Code (sample, quirk.code)
+ * always comes from `guide`; it has no translated counterpart.
+ */
+export function localizeDialectGuide(guide: DialectGuide, language: string): DialectGuide {
+    const locale = toExtraLocale(language);
+    const t = locale ? DIALECT_TRANSLATIONS[locale][guide.slug] : undefined;
+    if (!t) return guide;
+    return {
+        ...guide,
+        h1: t.h1 ?? guide.h1,
+        tagline: t.tagline ?? guide.tagline,
+        intro: mergeArray(guide.intro, t.intro),
+        quirks: mergeSections(guide.quirks, t.quirks),
+        limitations: mergeArray(guide.limitations, t.limitations),
+        conventions: mergeSections(guide.conventions, t.conventions),
+        faq: mergeFaq(guide.faq, t.faq),
+    };
+}
+
+/** Every dialect covered in every supported language — i18n-guide-coverage.test.ts's contract. */
+export { EXTRA_LOCALES };
