@@ -1,11 +1,12 @@
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { XMLFormatter } from '@/components/XMLFormatter';
 import { XMLGuideContent } from '@/components/XMLGuideContent';
 import { FormatConverter } from '@/components/FormatConverter';
 import { ConverterGuideContent } from '@/components/ConverterGuideContent';
 import { XPathTester } from '@/components/XPathTester';
 import { XmlToolGuideContent } from '@/components/XmlToolGuideContent';
-import { getXmlGuide } from '@/content/xml-guides';
+import { getXmlGuide, localizeXmlGuide } from '@/content/xml-guides';
 import { getConverterGuide } from '@/content/converter-guides';
 import { getXmlToolGuide } from '@/content/xml-tools';
 import NotFound from './NotFound';
@@ -16,9 +17,13 @@ import NotFound from './NotFound';
  * specific example (minify, validate). Each lookup is checked in turn since the slug
  * sets are disjoint but share this one route — the same layered pattern
  * SQLDialectPage uses for /sql/diff.
+ *
+ * The prerendered HTML is always English; `localizeXmlGuide` only affects what a
+ * visitor sees post-hydration after picking another language.
  */
 const XMLGuidePage = () => {
     const { guide: slug } = useParams();
+    const { i18n } = useTranslation();
 
     const toolGuide = slug ? getXmlToolGuide(slug) : undefined;
     if (toolGuide) {
@@ -51,15 +56,16 @@ const XMLGuidePage = () => {
 
     const guide = slug ? getXmlGuide(slug) : undefined;
     if (!guide) return <NotFound />;
+    const localized = localizeXmlGuide(guide, i18n.language);
 
     return (
         <XMLFormatter
             key={guide.slug}
             initialXml={guide.tool.input}
             initialFormattedOutput={guide.tool.input}
-            title={guide.h1}
-            subtitle={guide.tagline}
-            content={<XMLGuideContent guide={guide} />}
+            title={localized.h1}
+            subtitle={localized.tagline}
+            content={<XMLGuideContent guide={localized} />}
         />
     );
 };
