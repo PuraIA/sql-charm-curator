@@ -17,7 +17,7 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useTranslation } from 'react-i18next';
-import { FormatterOptions } from './SQLFormatter';
+import { FormatterOptions, IdentifierCase, KeywordCase, LogicalOperatorNewline } from './SQLFormatter';
 
 interface FormatterSidebarProps {
     isOpen: boolean;
@@ -67,7 +67,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                         <Label className="text-xs text-muted-foreground">{t('logicalOperatorNewline')}</Label>
                                         <Select
                                             value={options.logicalOperatorNewline}
-                                            onValueChange={(value: any) => setOptions((prev: any) => ({ ...prev, logicalOperatorNewline: value }))}
+                                            onValueChange={(value: LogicalOperatorNewline) => setOptions((prev: FormatterOptions) => ({ ...prev, logicalOperatorNewline: value }))}
                                         >
                                             <SelectTrigger aria-label={t('logicalOperatorNewline')} className="h-8 text-sm bg-secondary border-border">
                                                 <SelectValue />
@@ -89,7 +89,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                         <Label className="text-xs text-muted-foreground">{t('dataTypes')}</Label>
                                         <Select
                                             value={options.dataTypeCase}
-                                            onValueChange={(value: any) => setOptions((prev: any) => ({ ...prev, dataTypeCase: value }))}
+                                            onValueChange={(value: KeywordCase) => setOptions((prev: FormatterOptions) => ({ ...prev, dataTypeCase: value }))}
                                         >
                                             <SelectTrigger aria-label={t('dataTypes')} className="h-8 text-sm bg-secondary border-border">
                                                 <SelectValue />
@@ -106,7 +106,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                         <Label className="text-xs text-muted-foreground">{t('functions')}</Label>
                                         <Select
                                             value={options.functionCase}
-                                            onValueChange={(value: any) => setOptions((prev: any) => ({ ...prev, functionCase: value }))}
+                                            onValueChange={(value: KeywordCase) => setOptions((prev: FormatterOptions) => ({ ...prev, functionCase: value }))}
                                         >
                                             <SelectTrigger aria-label={t('functions')} className="h-8 text-sm bg-secondary border-border">
                                                 <SelectValue />
@@ -123,7 +123,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                         <Label className="text-xs text-muted-foreground">{t('identifiers')}</Label>
                                         <Select
                                             value={options.identifierCase}
-                                            onValueChange={(value: any) => setOptions((prev: any) => ({ ...prev, identifierCase: value }))}
+                                            onValueChange={(value: IdentifierCase) => setOptions((prev: FormatterOptions) => ({ ...prev, identifierCase: value }))}
                                         >
                                             <SelectTrigger aria-label={t('identifiers')} className="h-8 text-sm bg-secondary border-border">
                                                 <SelectValue />
@@ -151,7 +151,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                                 max={8}
                                                 className="h-8 text-sm bg-secondary border-border"
                                                 value={options.tabWidth}
-                                                onChange={(e) => setOptions((prev: any) => ({ ...prev, tabWidth: parseInt(e.target.value) || 2 }))}
+                                                onChange={(e) => setOptions((prev: FormatterOptions) => ({ ...prev, tabWidth: parseInt(e.target.value) || 2 }))}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -162,7 +162,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                                 max={5}
                                                 className="h-8 text-sm bg-secondary border-border"
                                                 value={options.linesBetweenQueries}
-                                                onChange={(e) => setOptions((prev: any) => ({ ...prev, linesBetweenQueries: parseInt(e.target.value) || 2 }))}
+                                                onChange={(e) => setOptions((prev: FormatterOptions) => ({ ...prev, linesBetweenQueries: parseInt(e.target.value) || 2 }))}
                                             />
                                         </div>
                                     </div>
@@ -171,7 +171,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                         <Label className="text-xs text-muted-foreground">{t('expressionWidth')}</Label>
                                         <Select
                                             value={String(options.expressionWidth)}
-                                            onValueChange={(value) => setOptions((prev: any) => ({ ...prev, expressionWidth: Number(value) }))}
+                                            onValueChange={(value) => setOptions((prev: FormatterOptions) => ({ ...prev, expressionWidth: Number(value) }))}
                                         >
                                             <SelectTrigger aria-label={t('expressionWidth')} className="h-8 text-sm bg-secondary border-border">
                                                 <SelectValue />
@@ -199,7 +199,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                             <Switch
                                                 id="use-tabs"
                                                 checked={options.useTabs}
-                                                onCheckedChange={(checked) => setOptions((prev: any) => ({ ...prev, useTabs: checked }))}
+                                                onCheckedChange={(checked) => setOptions((prev: FormatterOptions) => ({ ...prev, useTabs: checked }))}
                                             />
                                         </div>
 
@@ -208,7 +208,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                             <Switch
                                                 id="dense-operators"
                                                 checked={options.denseOperators}
-                                                onCheckedChange={(checked) => setOptions((prev: any) => ({ ...prev, denseOperators: checked }))}
+                                                onCheckedChange={(checked) => setOptions((prev: FormatterOptions) => ({ ...prev, denseOperators: checked }))}
                                             />
                                         </div>
 
@@ -217,7 +217,7 @@ export const FormatterSidebar = ({ isOpen, onClose, options, setOptions }: Forma
                                             <Switch
                                                 id="newline-semicolon"
                                                 checked={options.newlineBeforeSemicolon}
-                                                onCheckedChange={(checked) => setOptions((prev: any) => ({ ...prev, newlineBeforeSemicolon: checked }))}
+                                                onCheckedChange={(checked) => setOptions((prev: FormatterOptions) => ({ ...prev, newlineBeforeSemicolon: checked }))}
                                             />
                                         </div>
                                     </div>

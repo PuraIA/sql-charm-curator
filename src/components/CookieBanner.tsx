@@ -34,8 +34,7 @@ export function CookieBanner() {
         setVisible(false);
         // Reload adsbygoogle for the newly accepted session
         try {
-            (window as any).adsbygoogle = (window as any).adsbygoogle || [];
-            (window as any).adsbygoogle.push({});
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
         } catch {
             //
         }

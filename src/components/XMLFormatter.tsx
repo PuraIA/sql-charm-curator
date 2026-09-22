@@ -83,7 +83,7 @@ export function XMLFormatter({
                 indent = indent.substring(tab.length);
             }
             formatted += indent + '<' + node + '>\r\n';
-            if (node.match(/^<?\w[^>]*[^\/]$/)) {
+            if (node.match(/^<?\w[^>]*[^/]$/)) {
                 indent += tab;
             }
         });
@@ -109,9 +109,43 @@ export function XMLFormatter({
 
             setIsValid(true);
 
+<<<<<<< Updated upstream
             const formatted = prettyPrintXml(inputXML);
             const result = compactMode ? minifyXml(formatted) : formatted;
             setOutputXML(result);
+=======
+            // Simple robust formatting logic
+            let formatted = '';
+            let pad = 0;
+            const PADDING = '  ';
+
+            // Clean the XML first
+            const cleanXml = inputXML.replace(/>\s*</g, '><').trim();
+
+            // Add newlines
+            const reg = /(>)(<)(\/*)/g;
+            const xmlWithNewlines = cleanXml.replace(reg, '$1\r\n$2$3');
+
+            const lines = xmlWithNewlines.split('\r\n');
+
+            lines.forEach((node) => {
+                let indent = 0;
+                if (node.match(/.+<\/\w[^>]*>$/)) {
+                    indent = 0;
+                } else if (node.match(/^<\/\w/)) {
+                    if (pad !== 0) pad -= 1;
+                } else if (node.match(/^<\w[^>]*[^/]>.*$/)) {
+                    indent = 1;
+                } else {
+                    indent = 0;
+                }
+
+                formatted += PADDING.repeat(pad) + node + '\r\n';
+                pad += indent;
+            });
+
+            setOutputXML(formatted.trim());
+>>>>>>> Stashed changes
             toast.success(t('xmlToastSuccess', 'XML formatado com sucesso!'));
         } catch (error) {
             setIsValid(false);

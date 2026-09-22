@@ -12,12 +12,12 @@ export const compactParenthesesFormat = (sql: string): string => {
 
 // Advanced compactor to reduce line count
 export const superCompactSQL = (sql: string): string => {
-  let lines = sql.split('\n');
-  let resultLines: string[] = [];
+  const lines = sql.split('\n');
+  const resultLines: string[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    let line = lines[i].trimEnd();
-    let nextLine = lines[i + 1]?.trim() || '';
+    const line = lines[i].trimEnd();
+    const nextLine = lines[i + 1]?.trim() || '';
 
     // 1. Join comma-separated lists (SELECT, GROUP BY, etc.)
     // If current line ends with a comma and the result isn't too long

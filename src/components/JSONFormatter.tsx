@@ -98,7 +98,7 @@ const sampleJSON = {
     ]
 };
 
-function JSONTableView({ data }: { data: any }) {
+function JSONTableView({ data }: { data: unknown }) {
     if (!data) return null;
 
     if (Array.isArray(data)) {
@@ -196,11 +196,11 @@ function JSONTableView({ data }: { data: any }) {
     return <div className="p-4 text-muted-foreground italic">Dado primitivo: {String(data)}</div>;
 }
 
-function JSONTreeNode({ label, value, depth = 0 }: { label?: string; value: any; depth?: number }) {
+function JSONTreeNode({ label, value, depth = 0 }: { label?: string; value: unknown; depth?: number }) {
     const [isExpanded, setIsExpanded] = useState(depth < 2);
 
     const isObject = value !== null && typeof value === 'object';
-    const isEmpty = isObject && (Array.isArray(value) ? value.length === 0 : Object.keys(value).length === 0);
+    const isEmpty = isObject && (Array.isArray(value) ? value.length === 0 : Object.keys(value as Record<string, unknown>).length === 0);
 
     const toggle = (e: React.MouseEvent) => {
         if (isObject && !isEmpty) {
@@ -222,7 +222,7 @@ function JSONTreeNode({ label, value, depth = 0 }: { label?: string; value: any;
 
         if (typeof value === 'object') {
             if (isEmpty) return <span className="text-muted-foreground">{"{}"}</span>;
-            return <span className="text-muted-foreground">{`Object {${Object.keys(value).length}}`}</span>;
+            return <span className="text-muted-foreground">{`Object {${Object.keys(value as Record<string, unknown>).length}}`}</span>;
         }
 
         return String(value);
@@ -256,7 +256,7 @@ function JSONTreeNode({ label, value, depth = 0 }: { label?: string; value: any;
                             <JSONTreeNode key={i} label={i.toString()} value={item} depth={depth + 1} />
                         ))
                     ) : (
-                        Object.entries(value).map(([key, val]) => (
+                        Object.entries(value as Record<string, unknown>).map(([key, val]) => (
                             <JSONTreeNode key={key} label={key} value={val} depth={depth + 1} />
                         ))
                     )}
@@ -266,7 +266,7 @@ function JSONTreeNode({ label, value, depth = 0 }: { label?: string; value: any;
     );
 }
 
-function JSONTreeView({ data }: { data: any }) {
+function JSONTreeView({ data }: { data: unknown }) {
     if (data === null || data === undefined) return <div className="p-4 text-muted-foreground italic">Nenhum dado</div>;
 
     return (
@@ -300,6 +300,7 @@ export function JSONFormatter({
     content,
 }: JSONFormatterProps = {}) {
     const { t } = useTranslation();
+<<<<<<< Updated upstream
     const [inputJSON, setInputJSON] = useState(initialData);
     const [outputJSON, setOutputJSON] = useState(initialFormattedOutput);
     const [parsedData, setParsedData] = useState<any>(() => {
@@ -309,6 +310,11 @@ export function JSONFormatter({
             return null;
         }
     });
+=======
+    const [inputJSON, setInputJSON] = useState('');
+    const [outputJSON, setOutputJSON] = useState('');
+    const [parsedData, setParsedData] = useState<unknown>(null);
+>>>>>>> Stashed changes
     const [copied, setCopied] = useState(false);
     const [activeTab, setActiveTab] = useState(initialData ? 'formatted' : 'original');
     const [isValid, setIsValid] = useState(true);
@@ -322,14 +328,15 @@ export function JSONFormatter({
         escapeUnicode: false,
     });
 
-    const sortObjectKeys = (obj: any): any => {
+    const sortObjectKeys = (obj: unknown): unknown => {
         if (Array.isArray(obj)) {
             return obj.map(sortObjectKeys);
         } else if (obj !== null && typeof obj === 'object') {
-            return Object.keys(obj)
+            const record = obj as Record<string, unknown>;
+            return Object.keys(record)
                 .sort()
-                .reduce((sorted: any, key) => {
-                    sorted[key] = sortObjectKeys(obj[key]);
+                .reduce((sorted: Record<string, unknown>, key) => {
+                    sorted[key] = sortObjectKeys(record[key]);
                     return sorted;
                 }, {});
         }

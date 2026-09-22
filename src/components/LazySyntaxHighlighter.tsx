@@ -16,6 +16,9 @@ interface LazySyntaxHighlighterProps {
     language?: 'sql' | 'json' | 'xml' | 'typescript' | 'yaml';
 }
 
+type PrismStyle = { [key: string]: React.CSSProperties };
+type LoadedStyles = { vs: PrismStyle; atomDark: PrismStyle };
+
 export function LazySyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxHighlighterProps) {
     return (
         <Suspense fallback={<PlainCode code={code} />}>
@@ -26,7 +29,7 @@ export function LazySyntaxHighlighter({ code, theme, language = 'sql' }: LazySyn
 
 
 function DynamicSyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxHighlighterProps) {
-    const [styles, setStyles] = useState<any>(null);
+    const [styles, setStyles] = useState<LoadedStyles | null>(null);
 
     useEffect(() => {
         loadStyles().then((loadedStyles) => {
@@ -37,12 +40,12 @@ function DynamicSyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxH
     // Styles arrive in a separate chunk; show the code unstyled until they do.
     if (!styles) return <PlainCode code={code} />;
 
-    const customRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
-        rows.forEach((row: any) => {
+    const customRenderer = ({ rows, stylesheet, useInlineStyles }: rendererProps) => {
+        rows.forEach((row) => {
             if (row.children) {
-                row.children.forEach((child: any) => {
-                    if (child.children && child.children[0] && child.children[0].value) {
-                        const text = child.children[0].value.trim();
+                row.children.forEach((child) => {
+                    if (child.children && child.children[0] && child.children[0].value !== undefined) {
+                        const text = String(child.children[0].value).trim();
                         if (text.toUpperCase() === 'AND') {
                             if (child.properties && child.properties.className && child.properties.className.includes('operator')) {
                                 child.properties.className = child.properties.className.map((c: string) => c === 'operator' ? 'keyword' : c);
@@ -53,7 +56,7 @@ function DynamicSyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxH
             }
         });
 
-        return rows.map((node: any, i: number) => {
+        return rows.map((node, i) => {
             return createElement({
                 node,
                 stylesheet,

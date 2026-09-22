@@ -1,0 +1,162 @@
+name: Release on Merge
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Tipo de incremento de versão (caso manual)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+      custom_tag:
+        description: 'Tag customizada explícita (ex: v1.0.0 - substitui o cálculo automático)'
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript Typecheck
+        run: npx tsc -b --noEmit
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Determine Next Version Tag
+        id: versioning
+        env:
+          MANUAL_BUMP: ${{ github.event.inputs.bump || 'auto' }}
+          CUSTOM_TAG: ${{ github.event.inputs.custom_tag || '' }}
+        run: |
+          node -e '
+          const { execSync } = require("child_process");
+          const fs = require("fs");
+
+          const customTag = (process.env.CUSTOM_TAG || "").trim();
+          if (customTag) {
+            console.log(`Using custom tag: ${customTag}`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `new_tag=${customTag}\n`);
+            process.exit(0);
+          }
+
+          let latestTag = null;
+          try {
+            execSync("git fetch --tags --force", { stdio: "pipe" });
+            const rawTags = execSync("git tag -l \"v*\"", { encoding: "utf8" })
+              .trim()
+              .split("\n")
+              .map(t => t.trim())
+              .filter(t => /^v\d+\.\d+\.\d+$/.test(t))
+              .sort((a, b) => {
+                const [ma1, mi1, pa1] = a.slice(1).split(".").map(Number);
+                const [ma2, mi2, pa2] = b.slice(1).split(".").map(Number);
+                if (ma1 !== ma2) return ma1 - ma2;
+                if (mi1 !== mi2) return mi1 - mi2;
+                return pa1 - pa2;
+              });
+
+            if (rawTags.length > 0) {
+              latestTag = rawTags[rawTags.length - 1];
+            }
+          } catch (e) {
+            console.warn("Could not fetch tags, starting from scratch:", e.message);
+          }
+
+          let major = 0, minor = 1, patch = 0;
+
+          if (latestTag) {
+            const parts = latestTag.slice(1).split(".").map(Number);
+            major = parts[0];
+            minor = parts[1];
+            patch = parts[2];
+
+            let bump = process.env.MANUAL_BUMP || "auto";
+            if (bump === "auto") {
+              try {
+                const commits = execSync(`git log ${latestTag}..HEAD --oneline`, { encoding: "utf8" });
+                if (/BREAKING CHANGE|feat!|fix!/i.test(commits)) {
+                  bump = "major";
+                } else if (/feat(\([^\)]+\))?:/i.test(commits)) {
+                  bump = "minor";
+                } else {
+                  bump = "patch";
+                }
+              } catch (e) {
+                bump = "patch";
+              }
+            }
+
+            if (bump === "major") {
+              major += 1;
+              minor = 0;
+              patch = 0;
+            } else if (bump === "minor") {
+              minor += 1;
+              patch = 0;
+            } else {
+              patch += 1;
+            }
+          }
+
+          const newTag = `v${major}.${minor}.${patch}`;
+          console.log(`Release calculation: ${latestTag || "none"} -> ${newTag}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `new_tag=${newTag}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `previous_tag=${latestTag || ""}\n`);
+          '
+
+      - name: Package build artifacts
+        run: |
+          NEW_TAG="${{ steps.versioning.outputs.new_tag }}"
+          echo "Packaging dist for $NEW_TAG"
+          cd dist && zip -r "../sql-charm-curator-${NEW_TAG}-dist.zip" . && cd ..
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_TAG: ${{ steps.versioning.outputs.new_tag }}
+        run: |
+          echo "Creating release $NEW_TAG..."
+          gh release create "$NEW_TAG" \
+            --title "SQL Charm Curator $NEW_TAG" \
+            --generate-notes \
+            "sql-charm-curator-${NEW_TAG}-dist.zip"

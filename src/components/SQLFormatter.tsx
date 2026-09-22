@@ -29,10 +29,10 @@ const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(
 const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
 
 export type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
-type KeywordCase = 'preserve' | 'upper' | 'lower';
-type IdentifierCase = 'preserve' | 'upper' | 'lower';
-type LogicalOperatorNewline = 'before' | 'after';
-type IndentStyle = 'standard' | 'tabularLeft' | 'tabularRight';
+export type KeywordCase = 'preserve' | 'upper' | 'lower';
+export type IdentifierCase = 'preserve' | 'upper' | 'lower';
+export type LogicalOperatorNewline = 'before' | 'after';
+export type IndentStyle = 'standard' | 'tabularLeft' | 'tabularRight';
 
 export interface FormatterOptions {
   dialect: Dialect;
