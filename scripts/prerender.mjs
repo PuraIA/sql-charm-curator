@@ -125,15 +125,19 @@ function escapeHtml(value) {
 
 async function writeSitemap(outDir, routes, siteUrl) {
     const today = new Date().toISOString().slice(0, 10);
-    const priority = { '/': '1.0', '/sql': '0.9', '/json': '0.9', '/xml': '0.9' };
-    const changefreq = route => (priority[route] ? 'weekly' : 'monthly');
+    const toolPriority = { '/': '1.0', '/sql': '0.9', '/json': '0.9', '/xml': '0.9' };
+    // Dialect pages rank between the tool hubs and the boilerplate pages.
+    const priorityFor = route =>
+        toolPriority[route] ?? (route.startsWith('/sql/') ? '0.8' : '0.6');
+    const changefreqFor = route =>
+        toolPriority[route] ? 'weekly' : 'monthly';
 
     const urls = routes.map(route => [
         '  <url>',
         `    <loc>${siteUrl}${route}</loc>`,
         `    <lastmod>${today}</lastmod>`,
-        `    <changefreq>${changefreq(route)}</changefreq>`,
-        `    <priority>${priority[route] ?? '0.6'}</priority>`,
+        `    <changefreq>${changefreqFor(route)}</changefreq>`,
+        `    <priority>${priorityFor(route)}</priority>`,
         '  </url>',
     ].join('\n'));
 

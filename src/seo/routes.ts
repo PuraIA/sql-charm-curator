@@ -10,6 +10,8 @@
  * route shipped the homepage's title and canonical.
  */
 
+import { DIALECT_GUIDE_LIST, DIALECT_SLUGS, getDialectGuide } from '@/content/sql-dialects';
+
 export const SITE_URL = 'https://www.prettyformat.com';
 
 /** Minimal shape of i18next's `t`, so this module stays framework-agnostic. */
@@ -30,16 +32,17 @@ export interface PageSeo {
 }
 
 /** Routes that get a static HTML file at build time, in sitemap order. */
-export const PRERENDER_ROUTES = [
+export const PRERENDER_ROUTES: string[] = [
     '/',
     '/sql',
+    ...DIALECT_SLUGS.map(slug => `/sql/${slug}`),
     '/json',
     '/xml',
     '/about',
     '/contact',
     '/privacy',
     '/terms',
-] as const;
+];
 
 const ORGANIZATION = {
     '@type': 'Organization',
@@ -97,6 +100,51 @@ function webApplication(name: string, description: string, featureList: string[]
 export function getPageSeo(pathname: string, t: Translate): PageSeo {
     const path = normalize(pathname);
     const canonical = `${SITE_URL}${path === '/' ? '/' : path}`;
+
+    // /sql/<dialect> pages are driven by the content module rather than by a case here.
+    if (path.startsWith('/sql/')) {
+        const guide = getDialectGuide(path.slice('/sql/'.length));
+        if (guide) {
+            return {
+                title: guide.seoTitle,
+                description: guide.seoDescription,
+                keywords: guide.seoKeywords,
+                ogTitle: guide.seoTitle,
+                ogDescription: guide.seoDescription,
+                twitterTitle: guide.seoTitle,
+                twitterDescription: guide.seoDescription,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    webApplication(guide.h1, guide.seoDescription, [
+                        `${guide.name} grammar`,
+                        'Configurable keyword and identifier casing',
+                        'Adjustable indentation and expression width',
+                        'Runs entirely in the browser',
+                    ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'TechArticle',
+                        headline: guide.h1,
+                        description: guide.seoDescription,
+                        url: canonical,
+                        datePublished: guide.updated,
+                        dateModified: guide.updated,
+                        author: ORGANIZATION,
+                        publisher: ORGANIZATION,
+                        // Mirrors the "Known limitations" and "What is specific to" headings.
+                        articleSection: guide.quirks.map(q => q.heading),
+                    },
+                    faqPage(guide.faq.map(({ q, a }) => ({ q, a }))),
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'SQL Formatter', path: '/sql' },
+                        { name: guide.name, path: `/sql/${guide.slug}` },
+                    ]),
+                ],
+            };
+        }
+    }
 
     switch (path) {
         case '/':
@@ -161,6 +209,17 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
                         { q: t('faq2Question'), a: t('faq2Answer') },
                         { q: t('faq3Question'), a: t('faq3Answer') },
                     ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'ItemList',
+                        name: 'SQL formatters by dialect',
+                        itemListElement: DIALECT_GUIDE_LIST.map((guide, i) => ({
+                            '@type': 'ListItem',
+                            position: i + 1,
+                            name: guide.h1,
+                            url: `${SITE_URL}/sql/${guide.slug}`,
+                        })),
+                    },
                     breadcrumb([
                         { name: 'Home', path: '/' },
                         { name: t('title'), path: '/sql' },
