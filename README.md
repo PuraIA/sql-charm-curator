@@ -137,6 +137,31 @@ Every sample before/after pair is asserted against the real function that produc
 (`src/utils/json-to-ts.test.ts`, `src/utils/xml-utils.test.ts`, `src/content/json-guides.test.ts`,
 `src/content/xml-guides.test.ts`), the same discipline as the SQL dialect pages.
 
+### Format converter (JSON / XML / YAML)
+
+[`src/components/FormatConverter.tsx`](src/components/FormatConverter.tsx) converts between
+JSON, XML and YAML, all 6 directed pairs, via [`src/utils/format-convert.ts`](src/utils/format-convert.ts).
+It has dedicated landing pages for the 4 highest-intent pairs — `/json/to-xml`, `/xml/to-json`,
+`/json/to-yaml`, `/xml/to-yaml` — reusing the existing `/json/:guide` and `/xml/:guide` routes
+(`JSONGuidePage`/`XMLGuidePage` check the converter-guide lookup before the formatter-guide one).
+YAML has no formatter tool or nav entry of its own, so yaml-as-source conversions
+(`yaml-to-json`, `yaml-to-xml`) are reachable from every converter page's From/To selectors but
+don't have their own dedicated landing page — a deliberate scope line, not an oversight.
+
+JSON <-> YAML needs no invented convention — same data model, different syntax — but JSON <-> XML
+does, since XML has attributes and mixed content that JSON has no native place for.
+[`src/utils/xml-json-convert.ts`](src/utils/xml-json-convert.ts) documents its own convention in
+its file header (`@`-prefixed keys for attributes, `#text` for text content, repeated sibling tags
+become an array) and includes its own hand-rolled XML parser/serializer — not `DOMParser`, which
+only exists in a browser and can't run during the build-time prerender or in tests.
+
+As with the SQL/JSON/XML guide pages, every published sample is checked against what the real
+conversion functions produce (`src/utils/xml-json-convert.test.ts`, `src/utils/yaml-convert.test.ts`,
+`src/utils/format-convert.test.ts`, `src/content/converter-guides.test.ts`), and each page's
+"Known limitations" documents a real, demonstrated gap rather than a hypothetical one — e.g. mixed
+content (text interleaved with child elements) loses its ordering when XML becomes JSON, which is
+verified with a failing-looking-but-correct test, not just asserted in prose.
+
 ## 📂 Project Structure
 
 ```text
