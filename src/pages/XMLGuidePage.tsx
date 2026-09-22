@@ -8,7 +8,7 @@ import { XPathTester } from '@/components/XPathTester';
 import { XmlToolGuideContent } from '@/components/XmlToolGuideContent';
 import { getXmlGuide, localizeXmlGuide } from '@/content/xml-guides';
 import { getConverterGuide, localizeConverterGuide } from '@/content/converter-guides';
-import { getXmlToolGuide } from '@/content/xml-tools';
+import { getXmlToolGuide, localizeXmlToolGuide } from '@/content/xml-tools';
 import NotFound from './NotFound';
 
 /**
@@ -27,14 +27,15 @@ const XMLGuidePage = () => {
 
     const toolGuide = slug ? getXmlToolGuide(slug) : undefined;
     if (toolGuide) {
+        const localizedTool = localizeXmlToolGuide(toolGuide, i18n.language);
         return (
             <XPathTester
                 key={toolGuide.slug}
                 initialXml={toolGuide.sampleXml}
                 initialExpression={toolGuide.defaultExpression}
-                title={toolGuide.h1}
-                subtitle={toolGuide.tagline}
-                content={<XmlToolGuideContent guide={toolGuide} />}
+                title={localizedTool.h1}
+                subtitle={localizedTool.tagline}
+                content={<XmlToolGuideContent guide={localizedTool} />}
             />
         );
     }
