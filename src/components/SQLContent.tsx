@@ -59,10 +59,10 @@ export function SQLContent() {
 
                 <h3>How This Tool Works Under the Hood</h3>
                 <p>
-                    Our SQL formatter utilizes a sophisticated tokenizer and a context-aware parsing engine. Unlike primitive formatters that rely on simple Regular Expressions—which frequently break on nested parentheses or complex string literals—our engine builds a temporary token stream. This stream understands whether a comma is a top-level column separator or part of a function argument list, allowing for intelligent line breaks and indentation.
+                    The formatting itself is done by <a href="https://github.com/sql-formatter-org/sql-formatter" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">sql-formatter</a>, an open-source library that tokenizes SQL rather than relying on Regular Expressions — which is why it doesn't break on nested parentheses or a comma inside a function call the way a naive find-and-replace formatter would. This page adds the dialect selector, the editing UI, and the compact-mode post-processing on top of it.
                 </p>
                 <p>
-                    The formatting process is configurable. You can adjust the expression width (the number of characters before a line wrap is triggered) and the dense operator setting, which controls whitespace around arithmetic and logical operators. This local processing ensures lightning-fast performance without the latency of server-side round trips.
+                    The formatting process is configurable. You can adjust the expression width (the number of characters before a line wrap is triggered) and the dense operator setting, which controls whitespace around arithmetic and logical operators. Everything runs in your browser, so there's no server round trip between typing and seeing the formatted result.
                 </p>
 
                 <h3>SQL Formatting FAQ</h3>
