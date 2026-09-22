@@ -13,6 +13,17 @@
 import { DIALECT_GUIDE_LIST, DIALECT_SLUGS, getDialectGuide } from '@/content/sql-dialects';
 import { JSON_GUIDE_LIST, JSON_GUIDE_SLUGS, getJsonGuide } from '@/content/json-guides';
 import { XML_GUIDE_LIST, XML_GUIDE_SLUGS, getXmlGuide } from '@/content/xml-guides';
+import { CONVERTER_GUIDES, getConverterGuide } from '@/content/converter-guides';
+
+/** Converter guide slugs, split by which host namespace (/json/ or /xml/) they live under. */
+const CONVERTER_SLUGS_BY_HOST = Object.keys(CONVERTER_GUIDES).reduce<Record<'json' | 'xml', string[]>>(
+    (acc, key) => {
+        const [host, slug] = key.split('/') as ['json' | 'xml', string];
+        acc[host].push(slug);
+        return acc;
+    },
+    { json: [], xml: [] }
+);
 
 export const SITE_URL = 'https://www.prettyformat.com';
 
@@ -40,8 +51,10 @@ export const PRERENDER_ROUTES: string[] = [
     ...DIALECT_SLUGS.map(slug => `/sql/${slug}`),
     '/json',
     ...JSON_GUIDE_SLUGS.map(slug => `/json/${slug}`),
+    ...CONVERTER_SLUGS_BY_HOST.json.map(slug => `/json/${slug}`),
     '/xml',
     ...XML_GUIDE_SLUGS.map(slug => `/xml/${slug}`),
+    ...CONVERTER_SLUGS_BY_HOST.xml.map(slug => `/xml/${slug}`),
     '/about',
     '/contact',
     '/privacy',
@@ -105,6 +118,44 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
     const path = normalize(pathname);
     const canonical = `${SITE_URL}${path === '/' ? '/' : path}`;
 
+    function converterSeo(guide: NonNullable<ReturnType<typeof getConverterGuide>>): PageSeo {
+        return {
+            title: guide.seoTitle,
+            description: guide.seoDescription,
+            keywords: guide.seoKeywords,
+            ogTitle: guide.seoTitle,
+            ogDescription: guide.seoDescription,
+            twitterTitle: guide.seoTitle,
+            twitterDescription: guide.seoDescription,
+            canonical,
+            robots: INDEXABLE,
+            jsonLd: [
+                webApplication(guide.h1, guide.seoDescription, [
+                    `${guide.name} conversion`,
+                    'Runs entirely in the browser',
+                ]),
+                {
+                    '@context': 'https://schema.org',
+                    '@type': 'TechArticle',
+                    headline: guide.h1,
+                    description: guide.seoDescription,
+                    url: canonical,
+                    datePublished: guide.updated,
+                    dateModified: guide.updated,
+                    author: ORGANIZATION,
+                    publisher: ORGANIZATION,
+                    articleSection: guide.mapping.map(m => m.heading),
+                },
+                faqPage(guide.faq.map(({ q, a }) => ({ q, a }))),
+                breadcrumb([
+                    { name: 'Home', path: '/' },
+                    { name: guide.hostFormat === 'json' ? 'JSON Formatter' : 'XML Formatter', path: `/${guide.hostFormat}` },
+                    { name: guide.name, path: `/${guide.hostFormat}/${guide.slug}` },
+                ]),
+            ],
+        };
+    }
+
     // /sql/<dialect> pages are driven by the content module rather than by a case here.
     if (path.startsWith('/sql/')) {
         const guide = getDialectGuide(path.slice('/sql/'.length));
@@ -151,6 +202,9 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
     }
 
     if (path.startsWith('/json/')) {
+        const converterGuide = getConverterGuide('json', path.slice('/json/'.length));
+        if (converterGuide) return converterSeo(converterGuide);
+
         const guide = getJsonGuide(path.slice('/json/'.length));
         if (guide) {
             return {
@@ -192,6 +246,9 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
     }
 
     if (path.startsWith('/xml/')) {
+        const converterGuide = getConverterGuide('xml', path.slice('/xml/'.length));
+        if (converterGuide) return converterSeo(converterGuide);
+
         const guide = getXmlGuide(path.slice('/xml/'.length));
         if (guide) {
             return {

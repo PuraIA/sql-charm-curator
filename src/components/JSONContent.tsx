@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Braces, Shield, Zap, Search, ArrowRight } from 'lucide-react';
 import { JSON_GUIDE_LIST } from '@/content/json-guides';
+import { converterGuidesFor } from '@/content/converter-guides';
 
 export function JSONContent() {
     const { t } = useTranslation();
@@ -89,7 +90,7 @@ export function JSONContent() {
             <section>
                 <h3>Specific JSON tasks, each with its own page</h3>
                 <div className="not-prose grid gap-4 sm:grid-cols-3 my-6">
-                    {JSON_GUIDE_LIST.map(guide => (
+                    {[...JSON_GUIDE_LIST, ...converterGuidesFor('json')].map(guide => (
                         <Link
                             key={guide.slug}
                             to={`/json/${guide.slug}`}
