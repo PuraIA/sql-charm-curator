@@ -5,7 +5,7 @@ import { DialectGuideContent } from '@/components/DialectGuideContent';
 import { SQLDiff } from '@/components/SQLDiff';
 import { SqlToolGuideContent } from '@/components/SqlToolGuideContent';
 import { getDialectGuide, localizeDialectGuide } from '@/content/sql-dialects';
-import { getSqlToolGuide } from '@/content/sql-tools';
+import { getSqlToolGuide, localizeSqlToolGuide } from '@/content/sql-tools';
 import NotFound from './NotFound';
 
 /**
@@ -26,6 +26,7 @@ const SQLDialectPage = () => {
 
     const toolGuide = slug ? getSqlToolGuide(slug) : undefined;
     if (toolGuide) {
+        const localizedTool = localizeSqlToolGuide(toolGuide, i18n.language);
         return (
             <SQLDiff
                 key={toolGuide.slug}
@@ -34,9 +35,9 @@ const SQLDialectPage = () => {
                 initialAfter={toolGuide.sample.after}
                 initialFormattedBefore={toolGuide.formatted.before}
                 initialFormattedAfter={toolGuide.formatted.after}
-                title={toolGuide.h1}
-                subtitle={toolGuide.tagline}
-                content={<SqlToolGuideContent guide={toolGuide} />}
+                title={localizedTool.h1}
+                subtitle={localizedTool.tagline}
+                content={<SqlToolGuideContent guide={localizedTool} />}
             />
         );
     }

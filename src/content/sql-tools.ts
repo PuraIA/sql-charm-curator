@@ -9,6 +9,21 @@
  */
 import type { GuideSection, FaqEntry } from './guide-shared';
 import type { Dialect } from '@/components/SQLFormatter';
+import {
+    toExtraLocale,
+    mergeArray,
+    mergeSections,
+    mergeFaq,
+    type ExtraLocale,
+    type SectionTranslation,
+    type FaqTranslation,
+} from './i18n-guide';
+import { SQL_TOOL_TRANSLATIONS_PT } from './i18n/sql-tools.pt';
+import { SQL_TOOL_TRANSLATIONS_ES } from './i18n/sql-tools.es';
+import { SQL_TOOL_TRANSLATIONS_DE } from './i18n/sql-tools.de';
+import { SQL_TOOL_TRANSLATIONS_FR } from './i18n/sql-tools.fr';
+import { SQL_TOOL_TRANSLATIONS_ZH } from './i18n/sql-tools.zh';
+import { SQL_TOOL_TRANSLATIONS_JA } from './i18n/sql-tools.ja';
 
 export const SQL_TOOL_SLUGS = ['diff'] as const;
 export type SqlToolSlug = (typeof SQL_TOOL_SLUGS)[number];
@@ -134,4 +149,38 @@ export const SQL_TOOL_GUIDES: Record<SqlToolSlug, SqlToolGuide> = {
 
 export function getSqlToolGuide(slug: string): SqlToolGuide | undefined {
     return SQL_TOOL_GUIDES[slug as SqlToolSlug];
+}
+
+export interface SqlToolGuideTranslation {
+    h1?: string;
+    tagline?: string;
+    intro?: string[];
+    sections?: SectionTranslation[];
+    limitations?: string[];
+    faq?: FaqTranslation[];
+}
+
+const SQL_TOOL_TRANSLATIONS: Record<ExtraLocale, Partial<Record<SqlToolSlug, SqlToolGuideTranslation>>> = {
+    pt: SQL_TOOL_TRANSLATIONS_PT,
+    es: SQL_TOOL_TRANSLATIONS_ES,
+    de: SQL_TOOL_TRANSLATIONS_DE,
+    fr: SQL_TOOL_TRANSLATIONS_FR,
+    zh: SQL_TOOL_TRANSLATIONS_ZH,
+    ja: SQL_TOOL_TRANSLATIONS_JA,
+};
+
+/** Overlays the active language's translation onto the English base guide (see i18n-guide.ts). */
+export function localizeSqlToolGuide(guide: SqlToolGuide, language: string): SqlToolGuide {
+    const locale = toExtraLocale(language);
+    const t = locale ? SQL_TOOL_TRANSLATIONS[locale][guide.slug] : undefined;
+    if (!t) return guide;
+    return {
+        ...guide,
+        h1: t.h1 ?? guide.h1,
+        tagline: t.tagline ?? guide.tagline,
+        intro: mergeArray(guide.intro, t.intro),
+        sections: mergeSections(guide.sections, t.sections),
+        limitations: mergeArray(guide.limitations, t.limitations),
+        faq: mergeFaq(guide.faq, t.faq),
+    };
 }

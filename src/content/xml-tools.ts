@@ -7,6 +7,21 @@
  * Every example is checked against the real evaluator by xml-tools.test.ts.
  */
 import type { GuideSection, FaqEntry } from './guide-shared';
+import {
+    toExtraLocale,
+    mergeArray,
+    mergeSections,
+    mergeFaq,
+    type ExtraLocale,
+    type SectionTranslation,
+    type FaqTranslation,
+} from './i18n-guide';
+import { XML_TOOL_TRANSLATIONS_PT } from './i18n/xml-tools.pt';
+import { XML_TOOL_TRANSLATIONS_ES } from './i18n/xml-tools.es';
+import { XML_TOOL_TRANSLATIONS_DE } from './i18n/xml-tools.de';
+import { XML_TOOL_TRANSLATIONS_FR } from './i18n/xml-tools.fr';
+import { XML_TOOL_TRANSLATIONS_ZH } from './i18n/xml-tools.zh';
+import { XML_TOOL_TRANSLATIONS_JA } from './i18n/xml-tools.ja';
 
 export const XML_TOOL_SLUGS = ['xpath'] as const;
 export type XmlToolSlug = (typeof XML_TOOL_SLUGS)[number];
@@ -167,4 +182,57 @@ export const XML_TOOL_GUIDES: Record<XmlToolSlug, XmlToolGuide> = {
 
 export function getXmlToolGuide(slug: string): XmlToolGuide | undefined {
     return XML_TOOL_GUIDES[slug as XmlToolSlug];
+}
+
+/** explanation is prose and translatable; expression is real XPath kept language-independent. */
+export interface WorkedExampleTranslation {
+    explanation: string;
+}
+
+export interface XmlToolGuideTranslation {
+    h1?: string;
+    tagline?: string;
+    intro?: string[];
+    examples?: WorkedExampleTranslation[];
+    sections?: SectionTranslation[];
+    limitations?: string[];
+    faq?: FaqTranslation[];
+}
+
+function mergeExamples(
+    base: WorkedExample[],
+    override: WorkedExampleTranslation[] | undefined
+): WorkedExample[] {
+    if (!override) return base;
+    return base.map((example, i) => {
+        const t = override[i];
+        if (!t) return example;
+        return { ...example, explanation: t.explanation ?? example.explanation };
+    });
+}
+
+const XML_TOOL_TRANSLATIONS: Record<ExtraLocale, Partial<Record<XmlToolSlug, XmlToolGuideTranslation>>> = {
+    pt: XML_TOOL_TRANSLATIONS_PT,
+    es: XML_TOOL_TRANSLATIONS_ES,
+    de: XML_TOOL_TRANSLATIONS_DE,
+    fr: XML_TOOL_TRANSLATIONS_FR,
+    zh: XML_TOOL_TRANSLATIONS_ZH,
+    ja: XML_TOOL_TRANSLATIONS_JA,
+};
+
+/** Overlays the active language's translation onto the English base guide (see i18n-guide.ts). */
+export function localizeXmlToolGuide(guide: XmlToolGuide, language: string): XmlToolGuide {
+    const locale = toExtraLocale(language);
+    const t = locale ? XML_TOOL_TRANSLATIONS[locale][guide.slug] : undefined;
+    if (!t) return guide;
+    return {
+        ...guide,
+        h1: t.h1 ?? guide.h1,
+        tagline: t.tagline ?? guide.tagline,
+        intro: mergeArray(guide.intro, t.intro),
+        examples: mergeExamples(guide.examples, t.examples),
+        sections: mergeSections(guide.sections, t.sections),
+        limitations: mergeArray(guide.limitations, t.limitations),
+        faq: mergeFaq(guide.faq, t.faq),
+    };
 }
