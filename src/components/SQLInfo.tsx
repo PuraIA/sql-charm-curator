@@ -1,5 +1,10 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { dialectIcons, dialectLabels, Dialect } from './SQLFormatter';
+import { DIALECT_GUIDE_LIST } from '@/content/sql-dialects';
+
+/** Dialects that have a dedicated reference page, keyed by formatter language id. */
+const GUIDE_BY_DIALECT = new Map(DIALECT_GUIDE_LIST.map(guide => [guide.dialect, guide]));
 
 export const SQLInfo = () => {
     const { t } = useTranslation();
@@ -41,15 +46,33 @@ export const SQLInfo = () => {
             <section className="mb-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
                 <h2 className="text-2xl font-bold mb-6 text-center">{t('supportedDialects')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    {Object.entries(dialectLabels).map(([key, label]) => (
-                        <div key={key} className="flex flex-col items-center p-4 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 transition-colors">
-                            <span className="text-3xl mb-2">{dialectIcons[key as Dialect]}</span>
-                            <span className="font-medium text-sm">{label}</span>
-                            <p className="text-[10px] text-center text-muted-foreground mt-2">
-                                {t(`${key}Desc`)}
-                            </p>
-                        </div>
-                    ))}
+                    {Object.entries(dialectLabels).map(([key, label]) => {
+                        const guide = GUIDE_BY_DIALECT.get(key as Dialect);
+                        const body = (
+                            <>
+                                <span className="text-3xl mb-2">{dialectIcons[key as Dialect]}</span>
+                                <span className="font-medium text-sm">{label}</span>
+                                <p className="text-[10px] text-center text-muted-foreground mt-2">
+                                    {t(`${key}Desc`)}
+                                </p>
+                            </>
+                        );
+                        const className = 'flex flex-col items-center p-4 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 transition-colors';
+
+                        // Standard SQL has no dedicated page; the others link to their guide.
+                        return guide ? (
+                            <Link
+                                key={key}
+                                to={`/sql/${guide.slug}`}
+                                className={`${className} hover:border-primary/30`}
+                                title={`${label} formatter and reference`}
+                            >
+                                {body}
+                            </Link>
+                        ) : (
+                            <div key={key} className={className}>{body}</div>
+                        );
+                    })}
                 </div>
             </section>
 

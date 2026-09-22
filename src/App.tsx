@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import Home from "./pages/Home";
 import SQLPage from "./pages/SQLPage";
+import SQLDialectPage from "./pages/SQLDialectPage";
 import JSONPage from "./pages/JSONPage";
 import XMLPage from "./pages/XMLPage";
 import Privacy from "./pages/Privacy";
@@ -33,6 +34,7 @@ export const AppRoutes = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/sql" element={<SQLPage />} />
+          <Route path="/sql/:dialect" element={<SQLDialectPage />} />
           <Route path="/json" element={<JSONPage />} />
           <Route path="/xml" element={<XMLPage />} />
           <Route path="/privacy" element={<Privacy />} />

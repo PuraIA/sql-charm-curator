@@ -94,6 +94,23 @@ has its own title, description and canonical.
 `index.html` contains `<!--seo:start-->` / `<!--seo:end-->` and `<!--app-html-->` markers
 that the prerender script writes into; the build fails loudly if they are removed.
 
+### Dialect pages
+
+`/sql/postgresql`, `/sql/mysql`, `/sql/t-sql`, `/sql/oracle-plsql` and `/sql/bigquery` are
+generated from [`src/content/sql-dialects.ts`](src/content/sql-dialects.ts). Each one opens
+the formatter with that dialect's grammar selected and its example query already loaded and
+formatted, followed by reference material written for that dialect — including a
+`limitations` list, which is part of the data model rather than an afterthought.
+
+The `sample.formatted` string published on each page is checked against the real output of
+`sql-formatter` by [`src/content/sql-dialects.test.ts`](src/content/sql-dialects.test.ts),
+so the before/after shown to readers can never drift from what the tool actually does.
+Updating a sample means running the formatter and pasting the new output, or the test fails.
+
+To add a dialect: add an entry to `DIALECT_GUIDES` and its slug to `DIALECT_SLUGS`. The
+route, the sitemap entry, the structured data and the cross-links between dialect pages all
+follow from that.
+
 ## 📂 Project Structure
 
 ```text
