@@ -5,7 +5,7 @@ import { AdPlaceholder } from './AdPlaceholder';
 import { ContentMeta } from './ContentMeta';
 import { CodePanel } from './CodePanel';
 import { DATA_FORMAT_LABELS } from '@/utils/format-convert';
-import { CONVERTER_GUIDES, type ConverterGuide } from '@/content/converter-guides';
+import { CONVERTER_GUIDES, localizeConverterGuide, type ConverterGuide } from '@/content/converter-guides';
 
 /**
  * Renders one converter guide page (/json/to-xml, /xml/to-json, ...). Plain markup
@@ -85,8 +85,10 @@ export const ConverterGuideContent = ({ guide }: { guide: ConverterGuide }) => {
 };
 
 function RelatedConverters({ current }: { current: string }) {
-    const { t } = useTranslation();
-    const others = Object.entries(CONVERTER_GUIDES).filter(([key]) => key !== current);
+    const { t, i18n } = useTranslation();
+    const others = Object.entries(CONVERTER_GUIDES)
+        .filter(([key]) => key !== current)
+        .map(([key, guide]) => [key, localizeConverterGuide(guide, i18n.language)] as const);
 
     return (
         <section>

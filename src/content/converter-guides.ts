@@ -16,6 +16,21 @@ import type { DataFormat } from '@/utils/format-convert';
 import type { GuideSection, FaqEntry } from './guide-shared';
 import { jsonToXml, xmlToJson } from '@/utils/xml-json-convert';
 import { jsonToYaml } from '@/utils/yaml-convert';
+import {
+    toExtraLocale,
+    mergeArray,
+    mergeSections,
+    mergeFaq,
+    type ExtraLocale,
+    type SectionTranslation,
+    type FaqTranslation,
+} from './i18n-guide';
+import { CONVERTER_TRANSLATIONS_PT } from './i18n/converter-guides.pt';
+import { CONVERTER_TRANSLATIONS_ES } from './i18n/converter-guides.es';
+import { CONVERTER_TRANSLATIONS_DE } from './i18n/converter-guides.de';
+import { CONVERTER_TRANSLATIONS_FR } from './i18n/converter-guides.fr';
+import { CONVERTER_TRANSLATIONS_ZH } from './i18n/converter-guides.zh';
+import { CONVERTER_TRANSLATIONS_JA } from './i18n/converter-guides.ja';
 
 export type ConverterHost = 'json' | 'xml';
 
@@ -352,4 +367,40 @@ export function getConverterGuide(hostFormat: ConverterHost, slug: string): Conv
 
 export function converterGuidesFor(hostFormat: ConverterHost): ConverterGuide[] {
     return Object.values(CONVERTER_GUIDES).filter(g => g.hostFormat === hostFormat);
+}
+
+export interface ConverterGuideTranslation {
+    h1?: string;
+    tagline?: string;
+    intro?: string[];
+    mapping?: SectionTranslation[];
+    limitations?: string[];
+    faq?: FaqTranslation[];
+}
+
+/** Keyed the same way as CONVERTER_GUIDES: `${hostFormat}/${slug}`, e.g. "json/to-xml". */
+const CONVERTER_TRANSLATIONS: Record<ExtraLocale, Partial<Record<string, ConverterGuideTranslation>>> = {
+    pt: CONVERTER_TRANSLATIONS_PT,
+    es: CONVERTER_TRANSLATIONS_ES,
+    de: CONVERTER_TRANSLATIONS_DE,
+    fr: CONVERTER_TRANSLATIONS_FR,
+    zh: CONVERTER_TRANSLATIONS_ZH,
+    ja: CONVERTER_TRANSLATIONS_JA,
+};
+
+/** Overlays the active language's translation onto the English base guide (see i18n-guide.ts). */
+export function localizeConverterGuide(guide: ConverterGuide, language: string): ConverterGuide {
+    const locale = toExtraLocale(language);
+    const key = `${guide.hostFormat}/${guide.slug}`;
+    const t = locale ? CONVERTER_TRANSLATIONS[locale][key] : undefined;
+    if (!t) return guide;
+    return {
+        ...guide,
+        h1: t.h1 ?? guide.h1,
+        tagline: t.tagline ?? guide.tagline,
+        intro: mergeArray(guide.intro, t.intro),
+        mapping: mergeSections(guide.mapping, t.mapping),
+        limitations: mergeArray(guide.limitations, t.limitations),
+        faq: mergeFaq(guide.faq, t.faq),
+    };
 }
