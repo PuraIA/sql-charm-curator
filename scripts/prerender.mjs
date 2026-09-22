@@ -126,11 +126,10 @@ function escapeHtml(value) {
 async function writeSitemap(outDir, routes, siteUrl) {
     const today = new Date().toISOString().slice(0, 10);
     const toolPriority = { '/': '1.0', '/sql': '0.9', '/json': '0.9', '/xml': '0.9' };
-    // Dialect pages rank between the tool hubs and the boilerplate pages.
-    const priorityFor = route =>
-        toolPriority[route] ?? (route.startsWith('/sql/') ? '0.8' : '0.6');
-    const changefreqFor = route =>
-        toolPriority[route] ? 'weekly' : 'monthly';
+    // Dialect/guide pages rank between the tool hubs and the boilerplate pages.
+    const isGuidePage = route => /^\/(sql|json|xml)\//.test(route);
+    const priorityFor = route => toolPriority[route] ?? (isGuidePage(route) ? '0.8' : '0.6');
+    const changefreqFor = route => (toolPriority[route] ? 'weekly' : 'monthly');
 
     const urls = routes.map(route => [
         '  <url>',

@@ -11,15 +11,10 @@
  * formatter gets wrong as well as what it gets right.
  */
 import type { Dialect } from '@/components/SQLFormatter';
+import type { GuideSection } from './guide-shared';
 
 export const DIALECT_SLUGS = ['postgresql', 'mysql', 't-sql', 'oracle-plsql', 'bigquery'] as const;
 export type DialectSlug = (typeof DIALECT_SLUGS)[number];
-
-export interface GuideSection {
-    heading: string;
-    body: string[];
-    code?: string;
-}
 
 export interface DialectGuide {
     slug: DialectSlug;

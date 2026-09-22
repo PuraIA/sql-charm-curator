@@ -5,6 +5,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import Home from "./pages/Home";
 import SQLPage from "./pages/SQLPage";
 import SQLDialectPage from "./pages/SQLDialectPage";
+import JSONGuidePage from "./pages/JSONGuidePage";
+import XMLGuidePage from "./pages/XMLGuidePage";
 import JSONPage from "./pages/JSONPage";
 import XMLPage from "./pages/XMLPage";
 import Privacy from "./pages/Privacy";
@@ -36,7 +38,9 @@ export const AppRoutes = () => (
           <Route path="/sql" element={<SQLPage />} />
           <Route path="/sql/:dialect" element={<SQLDialectPage />} />
           <Route path="/json" element={<JSONPage />} />
+          <Route path="/json/:guide" element={<JSONGuidePage />} />
           <Route path="/xml" element={<XMLPage />} />
+          <Route path="/xml/:guide" element={<XMLGuidePage />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/privacy-policy" element={<Privacy />} />
           <Route path="/about" element={<About />} />

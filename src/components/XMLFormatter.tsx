@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,9 +15,14 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
-// Lazy load components
-const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
+import { PlainCode } from './PlainCode';
+import { minifyXml, prettyPrintXml } from '@/utils/xml-utils';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+// Editorial content is imported eagerly: it has to exist in the prerendered HTML.
 import { XMLContent } from './XMLContent';
+// Genuinely deferrable: only reachable after the user interacts with the tool.
+const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 
 const sampleXML = `<?xml version="1.0" encoding="UTF-8"?>
 <bookstore>
@@ -41,13 +46,32 @@ const sampleXML = `<?xml version="1.0" encoding="UTF-8"?>
   </book>
 </bookstore>`;
 
-export function XMLFormatter() {
+export interface XMLFormatterProps {
+    /** XML loaded into the editor on first render; the tool opens on the formatted tab. */
+    initialXml?: string;
+    /** Precomputed pretty output for initialXml, so it renders in the prerendered HTML. */
+    initialFormattedOutput?: string;
+    title?: string;
+    subtitle?: string;
+    content?: ReactNode;
+}
+
+export function XMLFormatter({
+    initialXml = '',
+    initialFormattedOutput = '',
+    title,
+    subtitle,
+    content,
+}: XMLFormatterProps = {}) {
     const { t } = useTranslation();
-    const [inputXML, setInputXML] = useState('');
-    const [outputXML, setOutputXML] = useState('');
+    const [inputXML, setInputXML] = useState(initialXml);
+    const [outputXML, setOutputXML] = useState(initialFormattedOutput);
     const [copied, setCopied] = useState(false);
-    const [activeTab, setActiveTab] = useState('original');
+    const [activeTab, setActiveTab] = useState(initialXml ? 'formatted' : 'original');
     const [isValid, setIsValid] = useState(true);
+    // Mirrors SQLFormatter's Compact Mode: same idea (a switch that strips formatting
+    // whitespace from the already-valid output), backed by minifyXml for XML.
+    const [compactMode, setCompactMode] = useState(false);
     const { theme } = useTheme();
 
     const formatXMLString = (xml: string) => {
@@ -85,37 +109,9 @@ export function XMLFormatter() {
 
             setIsValid(true);
 
-            // Simple robust formatting logic
-            let formatted = '';
-            let pad = 0;
-            const PADDING = '  ';
-
-            // Clean the XML first
-            const cleanXml = inputXML.replace(/>\s*</g, '><').trim();
-
-            // Add newlines
-            const reg = /(>)(<)(\/*)/g;
-            const xmlWithNewlines = cleanXml.replace(reg, '$1\r\n$2$3');
-
-            const lines = xmlWithNewlines.split('\r\n');
-
-            lines.forEach((node) => {
-                let indent = 0;
-                if (node.match(/.+<\/\w[^>]*>$/)) {
-                    indent = 0;
-                } else if (node.match(/^<\/\w/)) {
-                    if (pad !== 0) pad -= 1;
-                } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
-                    indent = 1;
-                } else {
-                    indent = 0;
-                }
-
-                formatted += PADDING.repeat(pad) + node + '\r\n';
-                pad += indent;
-            });
-
-            setOutputXML(formatted.trim());
+            const formatted = prettyPrintXml(inputXML);
+            const result = compactMode ? minifyXml(formatted) : formatted;
+            setOutputXML(result);
             toast.success(t('xmlToastSuccess', 'XML formatado com sucesso!'));
         } catch (error) {
             setIsValid(false);
@@ -124,7 +120,7 @@ export function XMLFormatter() {
                 toast.error(t('xmlToastError', 'XML inválido') + ': ' + error.message);
             }
         }
-    }, [inputXML, t]);
+    }, [inputXML, t, compactMode]);
 
     useEffect(() => {
         if (activeTab === 'formatted' && inputXML.trim()) {
@@ -159,9 +155,10 @@ export function XMLFormatter() {
 
     return (
         <ToolLayout
-            title={t('xmlTitle', 'XML Formatter')}
-            subtitle={t('xmlSubtitle', 'Formate, valide e organize seus arquivos XML de forma elegante.')}
+            title={title ?? t('xmlTitle', 'XML Formatter')}
+            subtitle={subtitle ?? t('xmlSubtitle', 'Formate, valide e organize seus arquivos XML de forma elegante.')}
             toolContent={
+                content ?? (
                 <div className="space-y-12">
                     <div className="glass-card p-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -183,9 +180,10 @@ export function XMLFormatter() {
                         <AdPlaceholder slotId="content-bottom" />
                     </div>
                 </div>
+                )
             }
         >
-            <div className="flex justify-center gap-2 mb-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <div className="flex flex-wrap justify-center gap-2 mb-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 <Button
                     variant="outline"
                     onClick={loadSample}
@@ -202,6 +200,16 @@ export function XMLFormatter() {
                     <Trash2 className="w-4 h-4" />
                     {t('clear', 'Limpar')}
                 </Button>
+                <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-10">
+                    <Label htmlFor="xml-compact-mode" className="text-sm cursor-pointer whitespace-nowrap">
+                        {t('compactMode', 'Modo Compacto')}
+                    </Label>
+                    <Switch
+                        id="xml-compact-mode"
+                        checked={compactMode}
+                        onCheckedChange={setCompactMode}
+                    />
+                </div>
             </div>
 
             <div className="glass-card p-5 animate-slide-up transition-opacity duration-300 opacity-100 mb-12" style={{ animationDelay: '0.1s' }}>
@@ -266,11 +274,7 @@ export function XMLFormatter() {
 
                         <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30">
                             {outputXML ? (
-                                <Suspense fallback={
-                                    <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
-                                        <div className="text-muted-foreground">{t('formatting', 'Formatando...')}</div>
-                                    </div>
-                                }>
+                                <Suspense fallback={<PlainCode code={outputXML} />}>
                                     <LazySyntaxHighlighter code={outputXML} theme={theme === 'dark' ? 'dark' : 'light'} language="xml" />
                                 </Suspense>
                             ) : (
