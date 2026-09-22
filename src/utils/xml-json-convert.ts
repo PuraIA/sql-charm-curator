@@ -52,14 +52,25 @@ export function xmlToJson(xml: string): { [rootName: string]: JsonValue } {
 }
 
 function parseXmlDocument(xml: string): XmlToJsonResult {
+    const root = parseXmlTree(xml);
+    return { rootName: root.tag, value: elementToJson(root) };
+}
+
+/**
+ * Parses XML into its raw element tree — tag, attributes, and ordered content — with
+ * no JSON convention applied. Exported for xpath-lite.ts, which needs the actual tree
+ * shape (parent/child structure, attributes, text runs in document order) rather than
+ * the @/#text-flavored JSON value xmlToJson produces.
+ */
+export function parseXmlTree(xml: string): RawElement {
     const tokens = new Tokenizer(xml);
     tokens.skipProlog();
     const root = tokens.readElement();
     if (!root) throw new XmlParseError('No root element found.');
-    return { rootName: root.tag, value: elementToJson(root) };
+    return root;
 }
 
-interface RawElement {
+export interface RawElement {
     tag: string;
     attrs: Record<string, string>;
     /** Interleaved child elements and text runs, in document order. */

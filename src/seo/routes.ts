@@ -11,9 +11,11 @@
  */
 
 import { DIALECT_GUIDE_LIST, DIALECT_SLUGS, getDialectGuide } from '@/content/sql-dialects';
+import { SQL_TOOL_SLUGS, getSqlToolGuide } from '@/content/sql-tools';
 import { JSON_GUIDE_LIST, JSON_GUIDE_SLUGS, getJsonGuide } from '@/content/json-guides';
 import { XML_GUIDE_LIST, XML_GUIDE_SLUGS, getXmlGuide } from '@/content/xml-guides';
 import { CONVERTER_GUIDES, getConverterGuide } from '@/content/converter-guides';
+import { XML_TOOL_SLUGS, getXmlToolGuide } from '@/content/xml-tools';
 
 /** Converter guide slugs, split by which host namespace (/json/ or /xml/) they live under. */
 const CONVERTER_SLUGS_BY_HOST = Object.keys(CONVERTER_GUIDES).reduce<Record<'json' | 'xml', string[]>>(
@@ -49,12 +51,14 @@ export const PRERENDER_ROUTES: string[] = [
     '/',
     '/sql',
     ...DIALECT_SLUGS.map(slug => `/sql/${slug}`),
+    ...SQL_TOOL_SLUGS.map(slug => `/sql/${slug}`),
     '/json',
     ...JSON_GUIDE_SLUGS.map(slug => `/json/${slug}`),
     ...CONVERTER_SLUGS_BY_HOST.json.map(slug => `/json/${slug}`),
     '/xml',
     ...XML_GUIDE_SLUGS.map(slug => `/xml/${slug}`),
     ...CONVERTER_SLUGS_BY_HOST.xml.map(slug => `/xml/${slug}`),
+    ...XML_TOOL_SLUGS.map(slug => `/xml/${slug}`),
     '/about',
     '/contact',
     '/privacy',
@@ -158,6 +162,45 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
 
     // /sql/<dialect> pages are driven by the content module rather than by a case here.
     if (path.startsWith('/sql/')) {
+        const toolGuide = getSqlToolGuide(path.slice('/sql/'.length));
+        if (toolGuide) {
+            return {
+                title: toolGuide.seoTitle,
+                description: toolGuide.seoDescription,
+                keywords: toolGuide.seoKeywords,
+                ogTitle: toolGuide.seoTitle,
+                ogDescription: toolGuide.seoDescription,
+                twitterTitle: toolGuide.seoTitle,
+                twitterDescription: toolGuide.seoDescription,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    webApplication(toolGuide.h1, toolGuide.seoDescription, [
+                        'Line-level diff after formatting both sides identically',
+                        'Runs entirely in the browser',
+                    ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'TechArticle',
+                        headline: toolGuide.h1,
+                        description: toolGuide.seoDescription,
+                        url: canonical,
+                        datePublished: toolGuide.updated,
+                        dateModified: toolGuide.updated,
+                        author: ORGANIZATION,
+                        publisher: ORGANIZATION,
+                        articleSection: toolGuide.sections.map(s => s.heading),
+                    },
+                    faqPage(toolGuide.faq.map(({ q, a }) => ({ q, a }))),
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'SQL Formatter', path: '/sql' },
+                        { name: toolGuide.name, path: `/sql/${toolGuide.slug}` },
+                    ]),
+                ],
+            };
+        }
+
         const guide = getDialectGuide(path.slice('/sql/'.length));
         if (guide) {
             return {
@@ -246,6 +289,45 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
     }
 
     if (path.startsWith('/xml/')) {
+        const toolGuide = getXmlToolGuide(path.slice('/xml/'.length));
+        if (toolGuide) {
+            return {
+                title: toolGuide.seoTitle,
+                description: toolGuide.seoDescription,
+                keywords: toolGuide.seoKeywords,
+                ogTitle: toolGuide.seoTitle,
+                ogDescription: toolGuide.seoDescription,
+                twitterTitle: toolGuide.seoTitle,
+                twitterDescription: toolGuide.seoDescription,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    webApplication(toolGuide.h1, toolGuide.seoDescription, [
+                        'Scoped XPath 1.0 evaluation',
+                        'Runs entirely in the browser',
+                    ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'TechArticle',
+                        headline: toolGuide.h1,
+                        description: toolGuide.seoDescription,
+                        url: canonical,
+                        datePublished: toolGuide.updated,
+                        dateModified: toolGuide.updated,
+                        author: ORGANIZATION,
+                        publisher: ORGANIZATION,
+                        articleSection: toolGuide.sections.map(s => s.heading),
+                    },
+                    faqPage(toolGuide.faq.map(({ q, a }) => ({ q, a }))),
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'XML Formatter', path: '/xml' },
+                        { name: toolGuide.name, path: `/xml/${toolGuide.slug}` },
+                    ]),
+                ],
+            };
+        }
+
         const converterGuide = getConverterGuide('xml', path.slice('/xml/'.length));
         if (converterGuide) return converterSeo(converterGuide);
 
