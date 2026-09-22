@@ -89,7 +89,7 @@ function renderHead(seo) {
         meta('name', 'description', seo.description),
         meta('name', 'keywords', seo.keywords),
         meta('name', 'robots', seo.robots),
-        `  <link rel="canonical" href="${escapeHtml(seo.canonical)}" />`,
+        seo.canonical ? `  <link rel="canonical" href="${escapeHtml(seo.canonical)}" />` : '',
         meta('property', 'og:title', seo.ogTitle),
         meta('property', 'og:description', seo.ogDescription),
         meta('property', 'og:url', seo.canonical),
