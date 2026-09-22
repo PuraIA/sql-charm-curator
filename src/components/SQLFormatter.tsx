@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
-import { superCompactSQL } from '@/utils/sql-utils';
+import { superCompactSQL, formatSqlWithFallback } from '@/utils/sql-utils';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
@@ -134,77 +134,16 @@ export function SQLFormatter({
       return;
     }
 
-    // Configuração de parâmetros específicos por dialeto
-    const getParamTypes = (dialect: Dialect) => {
-      switch (dialect) {
-        case 'postgresql':
-          return { named: [':' as const], positional: true, numbered: ['$' as const] };
-        case 'plsql':
-          return { named: [':' as const], positional: false };
-        case 'mysql':
-          return { positional: true };
-        case 'transactsql':
-          return { positional: false };
-        case 'bigquery':
-          return { positional: true };
-        default:
-          return {};
-      }
-    };
-
     try {
-      const { format } = await import('sql-formatter');
-      const formatted = format(inputSQL, {
-        language: options.dialect,
-        keywordCase: options.keywordCase,
-        dataTypeCase: options.dataTypeCase,
-        functionCase: options.functionCase,
-        identifierCase: options.identifierCase,
-        indentStyle: options.indentStyle,
-        logicalOperatorNewline: options.logicalOperatorNewline,
-        tabWidth: options.tabWidth,
-        useTabs: options.useTabs,
-        expressionWidth: options.expressionWidth,
-        linesBetweenQueries: options.linesBetweenQueries,
-        denseOperators: options.denseOperators,
-        newlineBeforeSemicolon: options.newlineBeforeSemicolon,
-        paramTypes: getParamTypes(options.dialect),
-      });
+      const { formatted, usedFallback } = await formatSqlWithFallback(inputSQL, options);
       const result = compactMode ? superCompactSQL(formatted) : formatted;
       setOutputSQL(result);
-
+      if (usedFallback === 'generic') toast.warning(t('toastGeneric'));
     } catch (error) {
       console.error('Format error:', error);
-      // Fallback: tenta formatar com configurações mínimas
-      try {
-        const { format } = await import('sql-formatter');
-        const fallbackFormatted = format(inputSQL, {
-          language: options.dialect,
-          keywordCase: options.keywordCase,
-          tabWidth: options.tabWidth,
-          paramTypes: getParamTypes(options.dialect),
-        });
-        const result = compactMode ? superCompactSQL(fallbackFormatted) : fallbackFormatted;
-        setOutputSQL(result);
-      } catch (fallbackError) {
-        console.error('Fallback format error:', fallbackError);
-        // Último recurso: formatar como SQL genérico
-        try {
-          const { format } = await import('sql-formatter');
-          const genericFormatted = format(inputSQL, {
-            language: 'sql',
-            keywordCase: options.keywordCase,
-            tabWidth: options.tabWidth,
-          });
-          const result = compactMode ? superCompactSQL(genericFormatted) : genericFormatted;
-          setOutputSQL(result);
-          toast.warning(t('toastGeneric'));
-        } catch {
-          toast.error(t('toastError'));
-        }
-      }
+      toast.error(t('toastError'));
     }
-  }, [inputSQL, options, t]);
+  }, [inputSQL, options, compactMode, t]);
 
   // Auto-format when switching to formatted tab or when options change while on formatted tab
   useEffect(() => {

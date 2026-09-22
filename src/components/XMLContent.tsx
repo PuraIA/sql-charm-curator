@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FileCode, Globe, Layers, Settings, ArrowRight } from 'lucide-react';
 import { XML_GUIDE_LIST } from '@/content/xml-guides';
 import { converterGuidesFor } from '@/content/converter-guides';
+import { XML_TOOL_GUIDES, XML_TOOL_SLUGS } from '@/content/xml-tools';
 
 export function XMLContent() {
     const { t } = useTranslation();
@@ -101,7 +102,11 @@ export function XMLContent() {
             <section>
                 <h3>Specific XML tasks, each with its own page</h3>
                 <div className="not-prose grid gap-4 sm:grid-cols-2 my-6">
-                    {[...XML_GUIDE_LIST, ...converterGuidesFor('xml')].map(guide => (
+                    {[
+                        ...XML_GUIDE_LIST,
+                        ...converterGuidesFor('xml'),
+                        ...XML_TOOL_SLUGS.map(slug => XML_TOOL_GUIDES[slug]),
+                    ].map(guide => (
                         <Link
                             key={guide.slug}
                             to={`/xml/${guide.slug}`}

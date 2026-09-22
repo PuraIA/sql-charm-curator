@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { dialectIcons, dialectLabels, Dialect } from './SQLFormatter';
 import { DIALECT_GUIDE_LIST } from '@/content/sql-dialects';
+import { SQL_TOOL_GUIDES, SQL_TOOL_SLUGS } from '@/content/sql-tools';
 
 /** Dialects that have a dedicated reference page, keyed by formatter language id. */
 const GUIDE_BY_DIALECT = new Map(DIALECT_GUIDE_LIST.map(guide => [guide.dialect, guide]));
@@ -71,6 +73,30 @@ export const SQLInfo = () => {
                             </Link>
                         ) : (
                             <div key={key} className={className}>{body}</div>
+                        );
+                    })}
+                </div>
+            </section>
+
+            <section className="mb-16 animate-fade-in" style={{ animationDelay: '0.35s' }}>
+                <h2 className="text-2xl font-bold mb-6 text-center">SQL tools</h2>
+                <div className="not-prose grid gap-4 sm:grid-cols-2 max-w-2xl mx-auto">
+                    {SQL_TOOL_SLUGS.map(slug => {
+                        const guide = SQL_TOOL_GUIDES[slug];
+                        return (
+                            <Link
+                                key={slug}
+                                to={`/sql/${slug}`}
+                                className="flex items-start gap-2 p-4 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 hover:border-primary/30 transition-colors"
+                            >
+                                <span className="min-w-0">
+                                    <span className="font-semibold text-sm flex items-center gap-1">
+                                        {guide.name}
+                                        <ArrowRight className="w-3.5 h-3.5 text-primary" />
+                                    </span>
+                                    <span className="block text-xs text-muted-foreground mt-1">{guide.tagline}</span>
+                                </span>
+                            </Link>
                         );
                     })}
                 </div>

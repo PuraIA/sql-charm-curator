@@ -162,6 +162,38 @@ conversion functions produce (`src/utils/xml-json-convert.test.ts`, `src/utils/y
 content (text interleaved with child elements) loses its ordering when XML becomes JSON, which is
 verified with a failing-looking-but-correct test, not just asserted in prose.
 
+### SQL diff (`/sql/diff`)
+
+[`src/components/SQLDiff.tsx`](src/components/SQLDiff.tsx) formats two queries with the same
+sql-formatter options (so a purely cosmetic difference — casing, line width — produces an empty
+diff) and compares the results with [`src/utils/line-diff.ts`](src/utils/line-diff.ts), a from-scratch
+implementation of Myers' O(ND) shortest-edit-script algorithm — the same algorithm behind `diff` and
+`git diff` — verified against its own canonical example from the 1986 paper
+(`line-diff.test.ts`). `getParamTypesForDialect`/`formatSqlWithFallback` were extracted out of
+SQLFormatter.tsx into [`src/utils/sql-utils.ts`](src/utils/sql-utils.ts) so both components share one
+dialect-to-placeholder-syntax mapping instead of maintaining two copies that could drift.
+
+### XPath tester (`/xml/xpath`)
+
+[`src/utils/xpath-lite.ts`](src/utils/xpath-lite.ts) is a deliberately scoped XPath 1.0 evaluator —
+paths (`/a/b`, `//a`, `*`, `.`, `..`), node tests (a name, `@name`, `@*`, `text()`), and a documented
+predicate set (`[N]`, `[last()]`, `[@a='v']`, `not()`, `contains()`) — over this project's own XML
+parser, not the browser's `document.evaluate()`. That's a deliberate choice, not a workaround: this
+needs to run identically during the build-time prerender and in tests, where there is no DOM for a
+browser API to attach to. Its file header and `xpath-lite.test.ts` document what it does and does
+not support — no union operator, no following/preceding axes, no XPath 2.0/3.0, and namespace
+prefixes are matched as literal strings.
+
+### Both, a shared lesson
+
+Both tools were run through many small interactive checks *before* their formal test suites were
+written, the same way the dialect and converter pages were — and both caught real design bugs that
+way: the diff algorithm's initial draft needed its canonical Myers-1986 example to confirm the edit
+distance was actually minimal, and the XPath evaluator's first draft returned empty results for
+*every* query, including the simplest one (`/bookstore/book`), because its first path step was
+matching against the root element's children instead of the root element itself — a one-line fix
+once caught, invisible if it hadn't been.
+
 ## 📂 Project Structure
 
 ```text

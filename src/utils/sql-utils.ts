@@ -64,3 +64,81 @@ export const superCompactSQL = (sql: string): string => {
 export const compactWhereClauses = (sql: string): string => {
   return superCompactSQL(sql);
 };
+
+// ---------------------------------------------------------------------------------
+// Shared with SQLFormatter.tsx and SQLDiff.tsx, so the two never drift out of sync on
+// which placeholder syntax each dialect actually uses.
+// ---------------------------------------------------------------------------------
+import type { Dialect } from '@/components/SQLFormatter';
+import type { FormatOptionsWithLanguage } from 'sql-formatter';
+
+/** Parameter-placeholder syntax sql-formatter should recognize for each dialect. */
+export function getParamTypesForDialect(dialect: Dialect): FormatOptionsWithLanguage['paramTypes'] {
+  switch (dialect) {
+    case 'postgresql':
+      return { named: [':'], positional: true, numbered: ['$'] };
+    case 'plsql':
+      return { named: [':'], positional: false };
+    case 'mysql':
+      return { positional: true };
+    case 'transactsql':
+      return { positional: false };
+    case 'bigquery':
+      return { positional: true };
+    default:
+      return {};
+  }
+}
+
+export interface SqlFormatOptions {
+  dialect: Dialect;
+  keywordCase: 'preserve' | 'upper' | 'lower';
+  dataTypeCase: 'preserve' | 'upper' | 'lower';
+  functionCase: 'preserve' | 'upper' | 'lower';
+  identifierCase: 'preserve' | 'upper' | 'lower';
+  indentStyle: 'standard' | 'tabularLeft' | 'tabularRight';
+  logicalOperatorNewline: 'before' | 'after';
+  tabWidth: number;
+  useTabs: boolean;
+  expressionWidth: number;
+  linesBetweenQueries: number;
+  denseOperators: boolean;
+  newlineBeforeSemicolon: boolean;
+}
+
+export interface SqlFormatResult {
+  formatted: string;
+  /** True if the full option set failed and a reduced or fully generic pass was used instead. */
+  usedFallback: 'full' | 'reduced' | 'generic';
+}
+
+/**
+ * Formats SQL with the given options, falling back to a reduced option set and then to
+ * plain "sql" as sql-formatter's own dialect grammars occasionally reject syntax a more
+ * permissive pass accepts — the same three-step fallback SQLFormatter.tsx uses
+ * interactively, extracted here so SQLDiff.tsx doesn't reimplement it.
+ *
+ * Throws only if even the fully generic pass fails, meaning the input isn't SQL
+ * sql-formatter can parse at all.
+ */
+export async function formatSqlWithFallback(sql: string, options: SqlFormatOptions): Promise<SqlFormatResult> {
+  const { format } = await import('sql-formatter');
+  const paramTypes = getParamTypesForDialect(options.dialect);
+
+  try {
+    return { formatted: format(sql, { ...options, paramTypes }), usedFallback: 'full' };
+  } catch {
+    try {
+      return {
+        formatted: format(sql, { language: options.dialect, keywordCase: options.keywordCase, tabWidth: options.tabWidth, paramTypes }),
+        usedFallback: 'reduced',
+      };
+    } catch {
+      // Lets a genuine parse failure (not SQL at all) propagate to the caller.
+      return {
+        formatted: format(sql, { language: 'sql', keywordCase: options.keywordCase, tabWidth: options.tabWidth }),
+        usedFallback: 'generic',
+      };
+    }
+  }
+}
