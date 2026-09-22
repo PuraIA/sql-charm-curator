@@ -5,7 +5,7 @@ import { AdPlaceholder } from './AdPlaceholder';
 import { ContentMeta } from './ContentMeta';
 import { CodePanel } from './CodePanel';
 import { LinkedSentence } from './LinkedSentence';
-import { JSON_GUIDE_LIST, type JsonGuide } from '@/content/json-guides';
+import { JSON_GUIDE_LIST, localizeJsonGuide, type JsonGuide } from '@/content/json-guides';
 
 /**
  * Renders one /json/<slug> page. Plain markup throughout: it has to exist in the
@@ -126,8 +126,10 @@ function ByteStat({ input, output }: { input: string; output: string }) {
 }
 
 function RelatedJsonGuides({ current }: { current: string }) {
-    const { t } = useTranslation();
-    const others = JSON_GUIDE_LIST.filter(guide => guide.slug !== current);
+    const { t, i18n } = useTranslation();
+    const others = JSON_GUIDE_LIST.filter(guide => guide.slug !== current).map(guide =>
+        localizeJsonGuide(guide, i18n.language)
+    );
 
     return (
         <section>
