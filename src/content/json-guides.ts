@@ -13,6 +13,21 @@
  */
 import type { FormatStyle } from '@/components/JSONFormatter';
 import type { GuideSection, FaqEntry } from './guide-shared';
+import {
+    toExtraLocale,
+    mergeArray,
+    mergeSections,
+    mergeFaq,
+    type ExtraLocale,
+    type SectionTranslation,
+    type FaqTranslation,
+} from './i18n-guide';
+import { JSON_TRANSLATIONS_PT } from './i18n/json-guides.pt';
+import { JSON_TRANSLATIONS_ES } from './i18n/json-guides.es';
+import { JSON_TRANSLATIONS_DE } from './i18n/json-guides.de';
+import { JSON_TRANSLATIONS_FR } from './i18n/json-guides.fr';
+import { JSON_TRANSLATIONS_ZH } from './i18n/json-guides.zh';
+import { JSON_TRANSLATIONS_JA } from './i18n/json-guides.ja';
 
 export const JSON_GUIDE_SLUGS = ['minify', 'validate', 'to-typescript'] as const;
 export type JsonGuideSlug = (typeof JSON_GUIDE_SLUGS)[number];
@@ -378,4 +393,60 @@ export const JSON_GUIDE_LIST: JsonGuide[] = JSON_GUIDE_SLUGS.map(slug => JSON_GU
 
 export function getJsonGuide(slug: string): JsonGuide | undefined {
     return JSON_GUIDES[slug as JsonGuideSlug];
+}
+
+/** label/explanation are prose and translatable; code/message are the parser's real output and are not. */
+export interface InvalidExampleTranslation {
+    label: string;
+    explanation: string;
+}
+
+export interface JsonGuideTranslation {
+    h1?: string;
+    tagline?: string;
+    intro?: string[];
+    invalidExamples?: InvalidExampleTranslation[];
+    sections?: SectionTranslation[];
+    limitations?: string[];
+    faq?: FaqTranslation[];
+}
+
+function mergeInvalidExamples(
+    base: InvalidExample[],
+    override: InvalidExampleTranslation[] | undefined
+): InvalidExample[] {
+    if (!override) return base;
+    return base.map((example, i) => {
+        const t = override[i];
+        if (!t) return example;
+        return { ...example, label: t.label ?? example.label, explanation: t.explanation ?? example.explanation };
+    });
+}
+
+const JSON_TRANSLATIONS: Record<ExtraLocale, Partial<Record<JsonGuideSlug, JsonGuideTranslation>>> = {
+    pt: JSON_TRANSLATIONS_PT,
+    es: JSON_TRANSLATIONS_ES,
+    de: JSON_TRANSLATIONS_DE,
+    fr: JSON_TRANSLATIONS_FR,
+    zh: JSON_TRANSLATIONS_ZH,
+    ja: JSON_TRANSLATIONS_JA,
+};
+
+/** Overlays the active language's translation onto the English base guide (see i18n-guide.ts). */
+export function localizeJsonGuide(guide: JsonGuide, language: string): JsonGuide {
+    const locale = toExtraLocale(language);
+    const t = locale ? JSON_TRANSLATIONS[locale][guide.slug] : undefined;
+    if (!t) return guide;
+    return {
+        ...guide,
+        h1: t.h1 ?? guide.h1,
+        tagline: t.tagline ?? guide.tagline,
+        intro: mergeArray(guide.intro, t.intro),
+        invalidExamples: guide.invalidExamples
+            ? mergeInvalidExamples(guide.invalidExamples, t.invalidExamples)
+            : guide.invalidExamples,
+        sections: mergeSections(guide.sections, t.sections),
+        limitations: mergeArray(guide.limitations, t.limitations),
+        faq: mergeFaq(guide.faq, t.faq),
+    };
 }
