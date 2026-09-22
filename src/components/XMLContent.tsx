@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { FileCode, Globe, Layers, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FileCode, Globe, Layers, Settings, ArrowRight } from 'lucide-react';
+import { XML_GUIDE_LIST } from '@/content/xml-guides';
 
 export function XMLContent() {
     const { t } = useTranslation();
@@ -92,6 +94,27 @@ export function XMLContent() {
                             Yes. In XML, you can represent an empty element in two ways: <code className="bg-secondary px-1 rounded">&lt;item&gt;&lt;/item&gt;</code> or the shorthand <code className="bg-secondary px-1 rounded">&lt;item/&gt;</code>. Both are technically correct and treated identically by parsers.
                         </p>
                     </details>
+                </div>
+            </section>
+
+            <section>
+                <h3>Specific XML tasks, each with its own page</h3>
+                <div className="not-prose grid gap-4 sm:grid-cols-2 my-6">
+                    {XML_GUIDE_LIST.map(guide => (
+                        <Link
+                            key={guide.slug}
+                            to={`/xml/${guide.slug}`}
+                            className="flex items-start gap-2 p-4 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 hover:border-primary/30 transition-colors"
+                        >
+                            <span className="min-w-0">
+                                <span className="font-semibold text-sm flex items-center gap-1">
+                                    {guide.name}
+                                    <ArrowRight className="w-3.5 h-3.5 text-primary" />
+                                </span>
+                                <span className="block text-xs text-muted-foreground mt-1">{guide.tagline}</span>
+                            </span>
+                        </Link>
+                    ))}
                 </div>
             </section>
         </div>

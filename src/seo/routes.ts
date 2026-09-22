@@ -11,6 +11,8 @@
  */
 
 import { DIALECT_GUIDE_LIST, DIALECT_SLUGS, getDialectGuide } from '@/content/sql-dialects';
+import { JSON_GUIDE_LIST, JSON_GUIDE_SLUGS, getJsonGuide } from '@/content/json-guides';
+import { XML_GUIDE_LIST, XML_GUIDE_SLUGS, getXmlGuide } from '@/content/xml-guides';
 
 export const SITE_URL = 'https://www.prettyformat.com';
 
@@ -37,7 +39,9 @@ export const PRERENDER_ROUTES: string[] = [
     '/sql',
     ...DIALECT_SLUGS.map(slug => `/sql/${slug}`),
     '/json',
+    ...JSON_GUIDE_SLUGS.map(slug => `/json/${slug}`),
     '/xml',
+    ...XML_GUIDE_SLUGS.map(slug => `/xml/${slug}`),
     '/about',
     '/contact',
     '/privacy',
@@ -140,6 +144,88 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
                         { name: 'Home', path: '/' },
                         { name: 'SQL Formatter', path: '/sql' },
                         { name: guide.name, path: `/sql/${guide.slug}` },
+                    ]),
+                ],
+            };
+        }
+    }
+
+    if (path.startsWith('/json/')) {
+        const guide = getJsonGuide(path.slice('/json/'.length));
+        if (guide) {
+            return {
+                title: guide.seoTitle,
+                description: guide.seoDescription,
+                keywords: guide.seoKeywords,
+                ogTitle: guide.seoTitle,
+                ogDescription: guide.seoDescription,
+                twitterTitle: guide.seoTitle,
+                twitterDescription: guide.seoDescription,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    webApplication(guide.h1, guide.seoDescription, [
+                        `${guide.name} tool state`,
+                        'Runs entirely in the browser',
+                    ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'TechArticle',
+                        headline: guide.h1,
+                        description: guide.seoDescription,
+                        url: canonical,
+                        datePublished: guide.updated,
+                        dateModified: guide.updated,
+                        author: ORGANIZATION,
+                        publisher: ORGANIZATION,
+                        articleSection: guide.sections.map(s => s.heading),
+                    },
+                    faqPage(guide.faq.map(({ q, a }) => ({ q, a }))),
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'JSON Formatter', path: '/json' },
+                        { name: guide.name, path: `/json/${guide.slug}` },
+                    ]),
+                ],
+            };
+        }
+    }
+
+    if (path.startsWith('/xml/')) {
+        const guide = getXmlGuide(path.slice('/xml/'.length));
+        if (guide) {
+            return {
+                title: guide.seoTitle,
+                description: guide.seoDescription,
+                keywords: guide.seoKeywords,
+                ogTitle: guide.seoTitle,
+                ogDescription: guide.seoDescription,
+                twitterTitle: guide.seoTitle,
+                twitterDescription: guide.seoDescription,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    webApplication(guide.h1, guide.seoDescription, [
+                        `${guide.name} tool state`,
+                        'Runs entirely in the browser',
+                    ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'TechArticle',
+                        headline: guide.h1,
+                        description: guide.seoDescription,
+                        url: canonical,
+                        datePublished: guide.updated,
+                        dateModified: guide.updated,
+                        author: ORGANIZATION,
+                        publisher: ORGANIZATION,
+                        articleSection: guide.sections.map(s => s.heading),
+                    },
+                    faqPage(guide.faq.map(({ q, a }) => ({ q, a }))),
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'XML Formatter', path: '/xml' },
+                        { name: guide.name, path: `/xml/${guide.slug}` },
                     ]),
                 ],
             };
@@ -257,6 +343,17 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
                             a: "While the specification doesn't set a hard limit, practical limits are determined by the memory available to the parsing environment. For files larger than 100MB, streaming parsers are recommended over standard JSON.parse().",
                         },
                     ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'ItemList',
+                        name: 'JSON tools',
+                        itemListElement: JSON_GUIDE_LIST.map((guide, i) => ({
+                            '@type': 'ListItem',
+                            position: i + 1,
+                            name: guide.h1,
+                            url: `${SITE_URL}/json/${guide.slug}`,
+                        })),
+                    },
                     breadcrumb([
                         { name: 'Home', path: '/' },
                         { name: t('jsonTitle'), path: '/json' },
@@ -294,6 +391,17 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
                             a: 'Yes. An empty element can be written as <item></item> or with the shorthand <item/>. Both are correct and treated identically by parsers.',
                         },
                     ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'ItemList',
+                        name: 'XML tools',
+                        itemListElement: XML_GUIDE_LIST.map((guide, i) => ({
+                            '@type': 'ListItem',
+                            position: i + 1,
+                            name: guide.h1,
+                            url: `${SITE_URL}/xml/${guide.slug}`,
+                        })),
+                    },
                     breadcrumb([
                         { name: 'Home', path: '/' },
                         { name: t('xmlTitle'), path: '/xml' },

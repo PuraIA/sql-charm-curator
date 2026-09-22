@@ -13,7 +13,7 @@ const loadStyles = () =>
 interface LazySyntaxHighlighterProps {
     code: string;
     theme: 'light' | 'dark';
-    language?: 'sql' | 'json' | 'xml';
+    language?: 'sql' | 'json' | 'xml' | 'typescript';
 }
 
 export function LazySyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxHighlighterProps) {
