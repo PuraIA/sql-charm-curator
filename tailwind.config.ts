@@ -104,5 +104,10 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  // @tailwindcss/typography was a devDependency but never registered here, which
+  // silently turned every `prose`/`prose-*` className in the codebase (About, Terms,
+  // every SQL/JSON/XML/converter guide page) into a no-op: no paragraph spacing, no
+  // heading rhythm, no list/link styling. Confirmed via computed style before fixing
+  // (`.prose p` had margin-top/bottom: 0px) rather than assumed from the missing line.
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;
