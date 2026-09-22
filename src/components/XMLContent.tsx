@@ -31,7 +31,7 @@ export function XMLContent() {
                     <li><strong>Proper Nesting:</strong> Elements must be closed in the reverse order they were opened. You cannot have "crossed tags" like <code className="bg-secondary px-1 rounded">&lt;b&gt;&lt;i&gt;content&lt;/b&gt;&lt;/i&gt;</code>.</li>
                 </ul>
                 <p>
-                    Our XML formatter automatically checks for these rules while beautifying your code. If your XML is not well-formed, our tool will provide feedback, helping you locate the exact line where the structure fails.
+                    Our XML formatter checks for these rules before beautifying your code, using your browser's own XML parser (DOMParser). If your XML is not well-formed, the tool flags it and shows the parser's own error message — the exact wording depends on which browser you're using, since that error text isn't standardized across engines, but it's the real parser talking, not a guess.
                 </p>
 
                 <h3>Why You Need a Dedicated XML Beautifier</h3>
@@ -68,7 +68,7 @@ export function XMLContent() {
                     To ensure your XML files are maintainable and scalable, follow these tips:
                 </p>
                 <ul>
-                    <li><strong>Avoid Deep Nesting:</strong> Just like and tree-like structure, too much depth makes parsing slow and reading difficult. Aim for a balanced hierarchy.</li>
+                    <li><strong>Avoid Deep Nesting:</strong> Like any tree-like structure, too much depth makes parsing slow and reading difficult. Aim for a balanced hierarchy.</li>
                     <li><strong>Use Attributes for Metadata:</strong> Use child elements for actual data and attributes for metadata (data about the data). For example, <code className="bg-secondary px-1 rounded">&lt;price currency="USD"&gt;99.99&lt;/price&gt;</code>.</li>
                     <li><strong>Comment Generously:</strong> Use <code className="bg-secondary px-1 rounded">&lt;!-- --&gt;</code> to explain complex sections or technical decisions within your XML.</li>
                     <li><strong>Validate Frequently:</strong> Always use a formatter and validator like this one during your development process to catch structural issues early.</li>
