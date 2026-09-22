@@ -148,7 +148,7 @@
     "detailedGuideTitle": "SQL フォーマットの究極ガイド",
     "detailedGuideIntro": "クリーンな SQL を書くことはスーパーパワーです。コードが読みやすくなり、デバッグや保守が容易になります。このツールは、元のクエリに業界標準のフォーマット規則を適用することで、それを瞬時に実現するのに役立ちます。",
     "about": "当社について",
-    "aboutTitle": "SQL Formatter について",
+    "aboutTitle": "Pretty Format について",
     "aboutIntroTitle": "私たちのミッション",
     "aboutIntroContent": "SQL Formatter は、開発者がより良く、よりクリーンな SQL コードを書けるように支援するために作成されました。読みやすいコードは保守しやすいコードであると私たちは信じています。",
     "aboutStoryTitle": "私たちのストーリー",

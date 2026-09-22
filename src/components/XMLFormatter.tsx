@@ -15,8 +15,6 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
-import { SEO } from './SEO';
-
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 import { XMLContent } from './XMLContent';
@@ -165,16 +163,6 @@ export function XMLFormatter() {
             subtitle={t('xmlSubtitle', 'Formate, valide e organize seus arquivos XML de forma elegante.')}
             toolContent={
                 <div className="space-y-12">
-                    <SEO
-                        title={t('xmlSeoTitle')}
-                        description={t('xmlSeoDescription')}
-                        keywords={t('xmlSeoKeywords')}
-                        ogTitle={t('xmlOgTitle')}
-                        ogDescription={t('xmlOgDescription')}
-                        twitterTitle={t('xmlTwitterTitle')}
-                        twitterDescription={t('xmlTwitterDescription')}
-                    />
-
                     <div className="glass-card p-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                             <Code2 className="w-6 h-6 text-primary" />

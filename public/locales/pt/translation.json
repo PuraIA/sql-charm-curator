@@ -148,7 +148,7 @@
     "detailedGuideTitle": "O Guia Definitivo para Formatação SQL",
     "detailedGuideIntro": "Escrever SQL limpo é um superpoder. Torna seu código mais fácil de ler, depurar e manter. Esta ferramenta ajuda você a alcançar isso instantaneamente, aplicando regras de formatação padrão da indústria às suas consultas brutas.",
     "about": "Sobre Nós",
-    "aboutTitle": "Sobre o SQL Formatter",
+    "aboutTitle": "Sobre o Pretty Format",
     "aboutIntroTitle": "Nossa Missão",
     "aboutIntroContent": "O SQL Formatter foi criado para ajudar desenvolvedores a escreverem códigos SQL melhores e mais limpos. Acreditamos que um código legível é um código sustentável.",
     "aboutStoryTitle": "Nossa História",

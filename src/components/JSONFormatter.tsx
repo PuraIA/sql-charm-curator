@@ -36,8 +36,6 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
-import { SEO } from './SEO';
-
 // Lazy load components
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 import { JSONContent } from './JSONContent';
@@ -397,16 +395,6 @@ export function JSONFormatter() {
             subtitle={t('jsonSubtitle', 'Formate, valide e organize seus dados JSON de forma elegante.')}
             toolContent={
                 <div className="space-y-12">
-                    <SEO
-                        title={t('jsonSeoTitle')}
-                        description={t('jsonSeoDescription')}
-                        keywords={t('jsonSeoKeywords')}
-                        ogTitle={t('jsonOgTitle')}
-                        ogDescription={t('jsonOgDescription')}
-                        twitterTitle={t('jsonTwitterTitle')}
-                        twitterDescription={t('jsonTwitterDescription')}
-                    />
-
                     <div className="glass-card p-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                             <Braces className="w-6 h-6 text-primary" />

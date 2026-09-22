@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getConsentStatus } from './CookieBanner';
+import { AD_CLIENT, AD_SLOTS, type AdPlacement } from '@/config/ads';
 
 declare global {
     interface Window {
@@ -8,18 +9,19 @@ declare global {
 }
 
 interface AdBannerProps {
+    /** Which placement this unit represents. */
+    slotId?: AdPlacement;
     className?: string;
 }
 
 /**
- * Real Google AdSense banner component.
- * Slot: 5322374741 / Publisher: ca-pub-4026555335042993
+ * Google AdSense banner.
  * Respects LGPD/GDPR cookie consent stored in localStorage ('pf_cookie_consent').
  * - 'accepted'  → personalized ads (default AdSense behavior)
  * - 'declined'  → non-personalized ads (data-adsbygoogle-npa="1")
  * - null        → waits for user consent before pushing
  */
-export const AdPlaceholder: React.FC<AdBannerProps> = ({ className = '' }) => {
+export const AdPlaceholder: React.FC<AdBannerProps> = ({ slotId = 'content-top', className = '' }) => {
     const [consent, setConsent] = useState<'accepted' | 'declined' | null>(getConsentStatus);
 
     // Re-check consent whenever localStorage changes (e.g. after user interacts with banner)
@@ -55,8 +57,8 @@ export const AdPlaceholder: React.FC<AdBannerProps> = ({ className = '' }) => {
             <ins
                 className="adsbygoogle"
                 style={{ display: 'block' }}
-                data-ad-client="ca-pub-4026555335042993"
-                data-ad-slot="5322374741"
+                data-ad-client={AD_CLIENT}
+                data-ad-slot={AD_SLOTS[slotId]}
                 data-ad-format="auto"
                 data-full-width-responsive="true"
                 {...(consent === 'declined' ? { 'data-adsbygoogle-npa': '1' } : {})}
