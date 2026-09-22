@@ -1,9 +1,12 @@
-import { lazy, Suspense } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import Home from "./pages/Home";
 import SQLPage from "./pages/SQLPage";
+import SQLDialectPage from "./pages/SQLDialectPage";
+import JSONGuidePage from "./pages/JSONGuidePage";
+import XMLGuidePage from "./pages/XMLGuidePage";
 import JSONPage from "./pages/JSONPage";
 import XMLPage from "./pages/XMLPage";
 import Privacy from "./pages/Privacy";
@@ -12,40 +15,44 @@ import Contact from "./pages/Contact";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
-
-// Lazy load feedback components
-const Sonner = lazy(() => import('@/components/ui/sonner').then(module => ({ default: module.Toaster })));
-
 import { ThemeProvider } from "@/components/theme-provider";
 import { CookieBanner } from "@/components/CookieBanner";
+import { SEO } from "@/components/SEO";
 
-const App = () => (
+const queryClient = new QueryClient();
+
+/**
+ * Everything below the router. Kept separate from the router itself so the build-time
+ * prerender (src/entry-server.tsx) can wrap it in a StaticRouter while the browser
+ * entry (src/main.tsx) wraps it in a BrowserRouter.
+ */
+export const AppRoutes = () => (
   <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Suspense fallback={null}>
-          <Sonner />
-        </Suspense>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/sql" element={<SQLPage />} />
-            <Route path="/json" element={<JSONPage />} />
-            <Route path="/xml" element={<XMLPage />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/privacy-policy" element={<Privacy />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/contact" element={<Contact />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+        <Sonner />
+        {/* One instance for the whole app: the route is the only input it needs. */}
+        <SEO />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/sql" element={<SQLPage />} />
+          <Route path="/sql/:dialect" element={<SQLDialectPage />} />
+          <Route path="/json" element={<JSONPage />} />
+          <Route path="/json/:guide" element={<JSONGuidePage />} />
+          <Route path="/xml" element={<XMLPage />} />
+          <Route path="/xml/:guide" element={<XMLGuidePage />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/privacy-policy" element={<Privacy />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/contact" element={<Contact />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
         <CookieBanner />
-        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>
 );
 
-export default App;
+export default AppRoutes;

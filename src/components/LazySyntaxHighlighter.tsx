@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import createElement from 'react-syntax-highlighter/dist/esm/create-element';
+import { PlainCode } from './PlainCode';
 
 // Lazy load the styles
 const loadStyles = () =>
@@ -12,18 +13,12 @@ const loadStyles = () =>
 interface LazySyntaxHighlighterProps {
     code: string;
     theme: 'light' | 'dark';
-    language?: 'sql' | 'json' | 'xml';
+    language?: 'sql' | 'json' | 'xml' | 'typescript' | 'yaml';
 }
 
 export function LazySyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxHighlighterProps) {
     return (
-        <Suspense
-            fallback={
-                <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center">
-                    <div className="text-muted-foreground">Loading syntax highlighter...</div>
-                </div>
-            }
-        >
+        <Suspense fallback={<PlainCode code={code} />}>
             <DynamicSyntaxHighlighter code={code} theme={theme} language={language} />
         </Suspense>
     );
@@ -39,13 +34,8 @@ function DynamicSyntaxHighlighter({ code, theme, language = 'sql' }: LazySyntaxH
         });
     }, []);
 
-    if (!styles) {
-        return (
-            <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center">
-                <div className="text-muted-foreground">Loading...</div>
-            </div>
-        );
-    }
+    // Styles arrive in a separate chunk; show the code unstyled until they do.
+    if (!styles) return <PlainCode code={code} />;
 
     const customRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
         rows.forEach((row: any) => {

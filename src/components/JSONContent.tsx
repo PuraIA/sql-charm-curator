@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Braces, Shield, Zap, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Braces, Shield, Zap, Search, ArrowRight } from 'lucide-react';
+import { JSON_GUIDE_LIST } from '@/content/json-guides';
+import { converterGuidesFor } from '@/content/converter-guides';
 
 export function JSONContent() {
     const { t } = useTranslation();
@@ -81,6 +84,27 @@ export function JSONContent() {
                         <strong>Q: Is there a maximum size for JSON files?</strong>
                         <p className="text-sm mt-2">A: While the specification doesn't set a hard limit, practical limits are determined by the memory available to the parsing environment (like the browser or its runtime). For files larger than 100MB, streaming parsers are often recommended over standard JSON.parse().</p>
                     </div>
+                </div>
+            </section>
+
+            <section>
+                <h3>Specific JSON tasks, each with its own page</h3>
+                <div className="not-prose grid gap-4 sm:grid-cols-3 my-6">
+                    {[...JSON_GUIDE_LIST, ...converterGuidesFor('json')].map(guide => (
+                        <Link
+                            key={guide.slug}
+                            to={`/json/${guide.slug}`}
+                            className="flex items-start gap-2 p-4 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 hover:border-primary/30 transition-colors"
+                        >
+                            <span className="min-w-0">
+                                <span className="font-semibold text-sm flex items-center gap-1">
+                                    {guide.name}
+                                    <ArrowRight className="w-3.5 h-3.5 text-primary" />
+                                </span>
+                                <span className="block text-xs text-muted-foreground mt-1">{guide.tagline}</span>
+                            </span>
+                        </Link>
+                    ))}
                 </div>
             </section>
         </div>

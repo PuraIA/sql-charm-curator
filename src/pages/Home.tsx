@@ -1,6 +1,5 @@
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { SEO } from '@/components/SEO';
 import { AdPlaceholder } from '@/components/AdPlaceholder';
 import { useTranslation } from 'react-i18next';
 import { Database, Braces, Code2, ArrowRight, ShieldCheck, Zap, Sparkles, MousePointerClick, Clock, Lock } from 'lucide-react';
@@ -81,16 +80,6 @@ const Home = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            <SEO
-                title={t('homeSeoTitle')}
-                description={t('homeSeoDescription')}
-                keywords={t('homeSeoKeywords')}
-                ogTitle={t('homeOgTitle')}
-                ogDescription={t('homeOgDescription')}
-                twitterTitle={t('homeTwitterTitle')}
-                twitterDescription={t('homeTwitterDescription')}
-            />
-
             {/* Background gradient effect */}
             <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
 

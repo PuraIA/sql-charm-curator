@@ -3,19 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Users, Zap, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-import { SEO } from '@/components/SEO';
-
 export default function About() {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen bg-background">
-            <SEO
-                title={`${t('aboutTitle')} - SQL Formatter`}
-                description={t('aboutIntroContent')}
-                keywords={t('aboutKeywords')}
-            />
             {/* Background gradient effect */}
             <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
 
@@ -49,10 +41,7 @@ export default function About() {
                             {t('aboutIntroContent')}
                         </p>
                         <p>
-                            At Pretty Format, we believe that the beauty of code lies in its structure. In an era where data is the lifeblood of every digital experience, the tools we use to understand and manipulate that data must be as elegant as they are functional. Our mission is to provide developers, data scientists, and students with a world-class suite of formatting tools that prioritize speed, privacy, and user experience.
-                        </p>
-                        <p>
-                            We understand that every extra second spent de-obfuscating a minified JSON response or a messy SQL query is a second taken away from real innovation. That's why we've built our platform on the philosophy of "Instant Clarity." No logins, no paywalls, just pure productivity.
+                            That's a deliberate constraint, not just a privacy talking point: it means the tools behave the same whether you paste a two-line config file or a query with production table and column names in it, because there's nothing in transit to intercept — nothing is transmitted in the first place.
                         </p>
                     </section>
 
@@ -63,10 +52,7 @@ export default function About() {
                             {t('aboutStoryContent')}
                         </p>
                         <p>
-                            Pretty Format started in 2024 as a internal utility for a small team of backend engineers who were tired of using slow, ad-heavy websites that often compromised their data's privacy by sending it to remote servers. We realized that the developer community deserved better: a modern, browser-based solution that respects the sanctity of your code.
-                        </p>
-                        <p>
-                            What began as a simple SQL beautifier has rapidly evolved. Today, Pretty Format supports multiple languages and dialects, used by professionals at top tech companies and independent developers alike. We are constantly iterating, adding support for new dialects and advanced features based on the feedback we receive from our community.
+                            The source is public on <a href="https://github.com/PuraIA/sql-charm-curator" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">GitHub</a>, so which dialects are supported, how the TypeScript converter infers types, or what exactly Compact Mode strips from your XML is something you can check in the code — not just take on faith from this page.
                         </p>
                     </section>
 
@@ -87,8 +73,8 @@ export default function About() {
                                 <p className="text-sm text-muted-foreground">The best tools should be available to everyone, regardless of their location or budget. Pretty Format will always be free.</p>
                             </div>
                             <div className="bg-secondary/20 p-6 rounded-xl border border-border/50">
-                                <h3 className="font-bold text-primary mb-2">Performance</h3>
-                                <p className="text-sm text-muted-foreground">Built with modern web technologies, our tools are lightning-fast and responsive on any device.</p>
+                                <h3 className="font-bold text-primary mb-2">No Server Round Trip</h3>
+                                <p className="text-sm text-muted-foreground">Formatting happens the instant you type, in your browser's own engine — there's no request to wait on and no server load to be affected by.</p>
                             </div>
                         </div>
                     </section>
@@ -103,7 +89,17 @@ export default function About() {
                             {t('aboutTeamContent')}
                         </p>
                         <p>
-                            The project is currently maintained by Pura IA, a collective of passionate software architects and designers who believe in the power of open-source and free community tools. We are remote-first and driven by the desire to build the utilities we wish we had when we were starting out.
+                            Bug reports and dialect requests are welcome on the{' '}
+                            <a
+                                href="https://github.com/PuraIA/sql-charm-curator/issues"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline"
+                            >
+                                GitHub issue tracker
+                            </a>
+                            {' '}— or reach out directly from the{' '}
+                            <Link to="/contact" className="text-primary hover:underline">Contact page</Link>.
                         </p>
                     </section>
                 </div>

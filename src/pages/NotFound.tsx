@@ -8,7 +8,6 @@ const NotFound = () => {
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-    document.title = "404 - Page Not Found | SQL Formatter";
   }, [location.pathname]);
 
   return (
@@ -42,7 +41,13 @@ const NotFound = () => {
           <p className="text-sm text-muted-foreground mb-4">You might be interested in:</p>
           <ul className="text-sm space-y-2">
             <li>
-              <Link to="/" className="text-primary hover:underline">Free SQL Formatter Tool</Link>
+              <Link to="/sql" className="text-primary hover:underline">Free SQL Formatter</Link>
+            </li>
+            <li>
+              <Link to="/json" className="text-primary hover:underline">Free JSON Formatter &amp; Validator</Link>
+            </li>
+            <li>
+              <Link to="/xml" className="text-primary hover:underline">Free XML Formatter</Link>
             </li>
           </ul>
         </div>

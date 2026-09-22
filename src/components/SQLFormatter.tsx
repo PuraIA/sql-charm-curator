@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,18 +14,19 @@ import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
-import { superCompactSQL } from '@/utils/sql-utils';
+import { superCompactSQL, formatSqlWithFallback } from '@/utils/sql-utils';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
-import { SEO } from './SEO';
-
-// Lazy load components that are not needed for initial interaction
-const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
-const FormatterFAQ = lazy(() => import('./FormatterFAQ').then(module => ({ default: module.FormatterFAQ })));
-const SQLInfo = lazy(() => import('./SQLInfo').then(module => ({ default: module.SQLInfo })));
-const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
+import { PlainCode } from './PlainCode';
+// Editorial content is imported eagerly: it has to exist in the prerendered HTML,
+// and a lazy chunk would only ever render its Suspense fallback at build time.
+import { FormatterFAQ } from './FormatterFAQ';
+import { SQLInfo } from './SQLInfo';
 import { SQLContent } from './SQLContent';
+// Genuinely deferrable: only reachable after the user interacts with the tool.
+const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
+const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
 
 export type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
@@ -76,18 +77,43 @@ const sampleQueries: Record<Dialect, string> = {
   bigquery: `SELECT u.id, u.name, COUNT(o.id) as order_count FROM \`project.dataset.users\` u LEFT JOIN \`project.dataset.orders\` o ON u.id = o.user_id WHERE u.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) GROUP BY u.id, u.name ORDER BY order_count DESC LIMIT 10;`,
 };
 
-export function SQLFormatter() {
+export interface SQLFormatterProps {
+  /** Dialect the tool opens with. */
+  initialDialect?: Dialect;
+  /** SQL loaded into the editor on first render; the tool opens on the formatted tab. */
+  initialSql?: string;
+  /**
+   * Formatted counterpart of initialSql, shown before the formatter chunk loads.
+   * Must equal what the formatter produces — src/content/sql-dialects.test.ts checks it.
+   */
+  initialFormattedSql?: string;
+  /** Overrides the generic page heading. */
+  title?: string;
+  subtitle?: string;
+  /** Replaces the default editorial content rendered below the tool. */
+  content?: ReactNode;
+}
+
+export function SQLFormatter({
+  initialDialect = 'postgresql',
+  initialSql = '',
+  initialFormattedSql = '',
+  title,
+  subtitle,
+  content,
+}: SQLFormatterProps = {}) {
   const { t, i18n } = useTranslation();
-  const [inputSQL, setInputSQL] = useState('');
-  const [outputSQL, setOutputSQL] = useState('');
+  const [inputSQL, setInputSQL] = useState(initialSql);
+  const [outputSQL, setOutputSQL] = useState(initialFormattedSql);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState('original');
+  // With a query preloaded there is nothing to type, so show the result straight away.
+  const [activeTab, setActiveTab] = useState(initialSql ? 'formatted' : 'original');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [compactMode, setCompactMode] = useState(false);
   const { theme } = useTheme();
 
   const [options, setOptions] = useState<FormatterOptions>({
-    dialect: 'postgresql',
+    dialect: initialDialect,
     keywordCase: 'upper',
     dataTypeCase: 'upper',
     functionCase: 'upper',
@@ -108,77 +134,16 @@ export function SQLFormatter() {
       return;
     }
 
-    // Configuração de parâmetros específicos por dialeto
-    const getParamTypes = (dialect: Dialect) => {
-      switch (dialect) {
-        case 'postgresql':
-          return { named: [':' as const], positional: true, numbered: ['$' as const] };
-        case 'plsql':
-          return { named: [':' as const], positional: false };
-        case 'mysql':
-          return { positional: true };
-        case 'transactsql':
-          return { positional: false };
-        case 'bigquery':
-          return { positional: true };
-        default:
-          return {};
-      }
-    };
-
     try {
-      const { format } = await import('sql-formatter');
-      const formatted = format(inputSQL, {
-        language: options.dialect,
-        keywordCase: options.keywordCase,
-        dataTypeCase: options.dataTypeCase,
-        functionCase: options.functionCase,
-        identifierCase: options.identifierCase,
-        indentStyle: options.indentStyle,
-        logicalOperatorNewline: options.logicalOperatorNewline,
-        tabWidth: options.tabWidth,
-        useTabs: options.useTabs,
-        expressionWidth: options.expressionWidth,
-        linesBetweenQueries: options.linesBetweenQueries,
-        denseOperators: options.denseOperators,
-        newlineBeforeSemicolon: options.newlineBeforeSemicolon,
-        paramTypes: getParamTypes(options.dialect),
-      });
+      const { formatted, usedFallback } = await formatSqlWithFallback(inputSQL, options);
       const result = compactMode ? superCompactSQL(formatted) : formatted;
       setOutputSQL(result);
-
+      if (usedFallback === 'generic') toast.warning(t('toastGeneric'));
     } catch (error) {
       console.error('Format error:', error);
-      // Fallback: tenta formatar com configurações mínimas
-      try {
-        const { format } = await import('sql-formatter');
-        const fallbackFormatted = format(inputSQL, {
-          language: options.dialect,
-          keywordCase: options.keywordCase,
-          tabWidth: options.tabWidth,
-          paramTypes: getParamTypes(options.dialect),
-        });
-        const result = compactMode ? superCompactSQL(fallbackFormatted) : fallbackFormatted;
-        setOutputSQL(result);
-      } catch (fallbackError) {
-        console.error('Fallback format error:', fallbackError);
-        // Último recurso: formatar como SQL genérico
-        try {
-          const { format } = await import('sql-formatter');
-          const genericFormatted = format(inputSQL, {
-            language: 'sql',
-            keywordCase: options.keywordCase,
-            tabWidth: options.tabWidth,
-          });
-          const result = compactMode ? superCompactSQL(genericFormatted) : genericFormatted;
-          setOutputSQL(result);
-          toast.warning(t('toastGeneric'));
-        } catch {
-          toast.error(t('toastError'));
-        }
-      }
+      toast.error(t('toastError'));
     }
-  }, [inputSQL, options, t]);
+  }, [inputSQL, options, compactMode, t]);
 
   // Auto-format when switching to formatted tab or when options change while on formatted tab
   useEffect(() => {
@@ -235,40 +200,26 @@ export function SQLFormatter() {
 
   return (
     <ToolLayout
-      title={t('title')}
-      subtitle={t('subtitle')}
+      title={title ?? t('title')}
+      subtitle={subtitle ?? t('subtitle')}
       toolContent={
+        content ?? (
         <div className="space-y-12">
-          <SEO
-            title={t('seoTitle')}
-            description={t('seoDescription')}
-            keywords={t('seoKeywords')}
-            ogTitle={t('ogTitle')}
-            ogDescription={t('ogDescription')}
-            twitterTitle={t('twitterTitle')}
-            twitterDescription={t('twitterDescription')}
-          />
-
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <SQLInfo />
-          </Suspense>
 
           <div className="my-12 py-8 border-y border-border/50">
             <AdPlaceholder slotId="content-middle" />
           </div>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <SQLContent />
-          </Suspense>
 
           <div className="my-12 py-8 border-y border-border/50">
             <AdPlaceholder slotId="content-bottom" />
           </div>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <FormatterFAQ />
-          </Suspense>
         </div>
+        )
       }
     >
       <div className="flex flex-wrap justify-center gap-4 mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
@@ -437,11 +388,7 @@ export function SQLFormatter() {
             {/* Formatted Output */}
             <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30 contain-content">
               {outputSQL ? (
-                <Suspense fallback={
-                  <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
-                    <div className="text-muted-foreground">{t('formatting', 'Beautifying...')}</div>
-                  </div>
-                }>
+                <Suspense fallback={<PlainCode code={outputSQL} />}>
                   <LazySyntaxHighlighter code={outputSQL} theme={theme === 'dark' ? 'dark' : 'light'} />
                 </Suspense>
               ) : (

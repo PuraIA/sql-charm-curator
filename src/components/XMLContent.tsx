@@ -1,5 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { FileCode, Globe, Layers, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FileCode, Globe, Layers, Settings, ArrowRight } from 'lucide-react';
+import { XML_GUIDE_LIST } from '@/content/xml-guides';
+import { converterGuidesFor } from '@/content/converter-guides';
+import { XML_TOOL_GUIDES, XML_TOOL_SLUGS } from '@/content/xml-tools';
 
 export function XMLContent() {
     const { t } = useTranslation();
@@ -29,7 +33,7 @@ export function XMLContent() {
                     <li><strong>Proper Nesting:</strong> Elements must be closed in the reverse order they were opened. You cannot have "crossed tags" like <code className="bg-secondary px-1 rounded">&lt;b&gt;&lt;i&gt;content&lt;/b&gt;&lt;/i&gt;</code>.</li>
                 </ul>
                 <p>
-                    Our XML formatter automatically checks for these rules while beautifying your code. If your XML is not well-formed, our tool will provide feedback, helping you locate the exact line where the structure fails.
+                    Our XML formatter checks for these rules before beautifying your code, using your browser's own XML parser (DOMParser). If your XML is not well-formed, the tool flags it and shows the parser's own error message — the exact wording depends on which browser you're using, since that error text isn't standardized across engines, but it's the real parser talking, not a guess.
                 </p>
 
                 <h3>Why You Need a Dedicated XML Beautifier</h3>
@@ -66,7 +70,7 @@ export function XMLContent() {
                     To ensure your XML files are maintainable and scalable, follow these tips:
                 </p>
                 <ul>
-                    <li><strong>Avoid Deep Nesting:</strong> Just like and tree-like structure, too much depth makes parsing slow and reading difficult. Aim for a balanced hierarchy.</li>
+                    <li><strong>Avoid Deep Nesting:</strong> Like any tree-like structure, too much depth makes parsing slow and reading difficult. Aim for a balanced hierarchy.</li>
                     <li><strong>Use Attributes for Metadata:</strong> Use child elements for actual data and attributes for metadata (data about the data). For example, <code className="bg-secondary px-1 rounded">&lt;price currency="USD"&gt;99.99&lt;/price&gt;</code>.</li>
                     <li><strong>Comment Generously:</strong> Use <code className="bg-secondary px-1 rounded">&lt;!-- --&gt;</code> to explain complex sections or technical decisions within your XML.</li>
                     <li><strong>Validate Frequently:</strong> Always use a formatter and validator like this one during your development process to catch structural issues early.</li>
@@ -92,6 +96,31 @@ export function XMLContent() {
                             Yes. In XML, you can represent an empty element in two ways: <code className="bg-secondary px-1 rounded">&lt;item&gt;&lt;/item&gt;</code> or the shorthand <code className="bg-secondary px-1 rounded">&lt;item/&gt;</code>. Both are technically correct and treated identically by parsers.
                         </p>
                     </details>
+                </div>
+            </section>
+
+            <section>
+                <h3>Specific XML tasks, each with its own page</h3>
+                <div className="not-prose grid gap-4 sm:grid-cols-2 my-6">
+                    {[
+                        ...XML_GUIDE_LIST,
+                        ...converterGuidesFor('xml'),
+                        ...XML_TOOL_SLUGS.map(slug => XML_TOOL_GUIDES[slug]),
+                    ].map(guide => (
+                        <Link
+                            key={guide.slug}
+                            to={`/xml/${guide.slug}`}
+                            className="flex items-start gap-2 p-4 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 hover:border-primary/30 transition-colors"
+                        >
+                            <span className="min-w-0">
+                                <span className="font-semibold text-sm flex items-center gap-1">
+                                    {guide.name}
+                                    <ArrowRight className="w-3.5 h-3.5 text-primary" />
+                                </span>
+                                <span className="block text-xs text-muted-foreground mt-1">{guide.tagline}</span>
+                            </span>
+                        </Link>
+                    ))}
                 </div>
             </section>
         </div>

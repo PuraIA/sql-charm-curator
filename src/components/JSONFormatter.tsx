@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -36,13 +36,14 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
-import { SEO } from './SEO';
-
-// Lazy load components
-const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
+import { PlainCode } from './PlainCode';
+import { jsonToTypeScript } from '@/utils/json-to-ts';
+// Editorial content is imported eagerly: it has to exist in the prerendered HTML.
 import { JSONContent } from './JSONContent';
+// Genuinely deferrable: only reachable after the user interacts with the tool.
+const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 
-type FormatStyle = 'pretty' | 'compact' | 'sorted' | 'minified' | 'table' | 'tree';
+export type FormatStyle = 'pretty' | 'compact' | 'sorted' | 'minified' | 'table' | 'tree' | 'typescript';
 type IndentSize = 2 | 4 | 8;
 
 export interface JSONFormatterOptions {
@@ -60,6 +61,7 @@ export const formatStyleLabels: Record<FormatStyle, string> = {
     minified: 'Minificado',
     table: 'Tabela',
     tree: 'Árvore Interativa',
+    typescript: 'JSON → TypeScript',
 };
 
 export const formatStyleIcons: Record<FormatStyle, string> = {
@@ -69,6 +71,7 @@ export const formatStyleIcons: Record<FormatStyle, string> = {
     minified: '🗜️',
     table: '📊',
     tree: '🌲',
+    typescript: '🔷',
 };
 
 const sampleJSON = {
@@ -273,18 +276,46 @@ function JSONTreeView({ data }: { data: any }) {
     );
 }
 
-export function JSONFormatter() {
+export interface JSONFormatterProps {
+    /** Format style the tool opens with. */
+    initialFormatStyle?: FormatStyle;
+    /** JSON loaded into the editor on first render; the tool opens on the formatted tab. */
+    initialData?: string;
+    /** Precomputed output for initialData, so it renders in the prerendered HTML. */
+    initialFormattedOutput?: string;
+    /** Root interface name used by the 'typescript' format style. */
+    tsRootName?: string;
+    title?: string;
+    subtitle?: string;
+    content?: ReactNode;
+}
+
+export function JSONFormatter({
+    initialFormatStyle = 'pretty',
+    initialData = '',
+    initialFormattedOutput = '',
+    tsRootName = 'Root',
+    title,
+    subtitle,
+    content,
+}: JSONFormatterProps = {}) {
     const { t } = useTranslation();
-    const [inputJSON, setInputJSON] = useState('');
-    const [outputJSON, setOutputJSON] = useState('');
-    const [parsedData, setParsedData] = useState<any>(null);
+    const [inputJSON, setInputJSON] = useState(initialData);
+    const [outputJSON, setOutputJSON] = useState(initialFormattedOutput);
+    const [parsedData, setParsedData] = useState<any>(() => {
+        try {
+            return initialData ? JSON.parse(initialData) : null;
+        } catch {
+            return null;
+        }
+    });
     const [copied, setCopied] = useState(false);
-    const [activeTab, setActiveTab] = useState('original');
+    const [activeTab, setActiveTab] = useState(initialData ? 'formatted' : 'original');
     const [isValid, setIsValid] = useState(true);
     const { theme } = useTheme();
 
     const [options, setOptions] = useState<JSONFormatterOptions>({
-        formatStyle: 'pretty',
+        formatStyle: initialFormatStyle,
         indentSize: 2,
         sortKeys: false,
         removeWhitespace: false,
@@ -316,6 +347,14 @@ export function JSONFormatter() {
             let parsed = JSON.parse(inputJSON);
             setIsValid(true);
             setParsedData(parsed);
+
+            // TypeScript generation is not a JSON serialization: it skips sortKeys and
+            // escapeUnicode entirely, since neither means anything for an interface.
+            if (options.formatStyle === 'typescript') {
+                setOutputJSON(jsonToTypeScript(parsed, tsRootName));
+                toast.success(t('jsonToastSuccess', 'JSON formatado com sucesso!'));
+                return;
+            }
 
             // Apply sorting if enabled or if format style is 'sorted'
             if (options.sortKeys || options.formatStyle === 'sorted') {
@@ -357,7 +396,7 @@ export function JSONFormatter() {
                 toast.error(t('jsonToastError', 'JSON inválido') + ': ' + error.message);
             }
         }
-    }, [inputJSON, options, t]);
+    }, [inputJSON, options, t, tsRootName]);
 
     // Auto-format when switching to formatted tab or when options change while on formatted tab
     useEffect(() => {
@@ -393,20 +432,11 @@ export function JSONFormatter() {
 
     return (
         <ToolLayout
-            title={t('jsonTitle', 'JSON Formatter')}
-            subtitle={t('jsonSubtitle', 'Formate, valide e organize seus dados JSON de forma elegante.')}
+            title={title ?? t('jsonTitle', 'JSON Formatter')}
+            subtitle={subtitle ?? t('jsonSubtitle', 'Formate, valide e organize seus dados JSON de forma elegante.')}
             toolContent={
+                content ?? (
                 <div className="space-y-12">
-                    <SEO
-                        title={t('jsonSeoTitle')}
-                        description={t('jsonSeoDescription')}
-                        keywords={t('jsonSeoKeywords')}
-                        ogTitle={t('jsonOgTitle')}
-                        ogDescription={t('jsonOgDescription')}
-                        twitterTitle={t('jsonTwitterTitle')}
-                        twitterDescription={t('jsonTwitterDescription')}
-                    />
-
                     <div className="glass-card p-8">
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                             <Braces className="w-6 h-6 text-primary" />
@@ -427,6 +457,7 @@ export function JSONFormatter() {
                         <AdPlaceholder slotId="content-bottom" />
                     </div>
                 </div>
+                )
             }
         >
             <div className="flex flex-wrap justify-center gap-4 mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
@@ -456,7 +487,7 @@ export function JSONFormatter() {
                 </div>
 
                 {/* Indent Size selector */}
-                {options.formatStyle !== 'minified' && (
+                {options.formatStyle !== 'minified' && options.formatStyle !== 'typescript' && (
                     <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
                         <Select
                             value={options.indentSize.toString()}
@@ -478,7 +509,7 @@ export function JSONFormatter() {
                 )}
 
                 {/* Sort keys switch */}
-                {options.formatStyle !== 'sorted' && (
+                {options.formatStyle !== 'sorted' && options.formatStyle !== 'typescript' && (
                     <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-[50px]">
                         <div className="flex items-center gap-2">
                             <Label htmlFor="sort-keys" className="text-sm cursor-pointer whitespace-nowrap">
@@ -494,6 +525,7 @@ export function JSONFormatter() {
                 )}
 
                 {/* Escape Unicode switch */}
+                {options.formatStyle !== 'typescript' && (
                 <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-[50px]">
                     <div className="flex items-center gap-2">
                         <Label htmlFor="escape-unicode" className="text-sm cursor-pointer whitespace-nowrap">
@@ -506,6 +538,7 @@ export function JSONFormatter() {
                         />
                     </div>
                 </div>
+                )}
             </div>
 
             <div className="flex justify-center gap-2 mb-8">
@@ -596,12 +629,12 @@ export function JSONFormatter() {
                                 ) : options.formatStyle === 'tree' ? (
                                     <JSONTreeView data={parsedData} />
                                 ) : (
-                                    <Suspense fallback={
-                                        <div className="p-6 font-mono text-sm bg-secondary/50 rounded-lg border border-border/50 min-h-[450px] flex items-center justify-center animate-pulse">
-                                            <div className="text-muted-foreground">{t('formatting', 'Formatando...')}</div>
-                                        </div>
-                                    }>
-                                        <LazySyntaxHighlighter code={outputJSON} theme={theme === 'dark' ? 'dark' : 'light'} language="json" />
+                                    <Suspense fallback={<PlainCode code={outputJSON} />}>
+                                        <LazySyntaxHighlighter
+                                            code={outputJSON}
+                                            theme={theme === 'dark' ? 'dark' : 'light'}
+                                            language={options.formatStyle === 'typescript' ? 'typescript' : 'json'}
+                                        />
                                     </Suspense>
                                 )
                             ) : (
