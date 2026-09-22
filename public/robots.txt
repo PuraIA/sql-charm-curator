@@ -1,36 +1,16 @@
 # https://www.prettyformat.com robots.txt
 
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
-
-User-agent: Slurp
-Allow: /
-Crawl-delay: 1
-
-User-agent: DuckDuckBot
-Allow: /
-Crawl-delay: 1
-
 User-agent: *
 Allow: /
-Crawl-delay: 2
 
-# Sitemap location
+# AdSense crawler needs access to render pages for ad targeting.
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
 Sitemap: https://www.prettyformat.com/sitemap.xml
-
-# Host
-Host: https://www.prettyformat.com

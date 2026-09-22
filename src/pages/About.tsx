@@ -3,19 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Users, Zap, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-import { SEO } from '@/components/SEO';
-
 export default function About() {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen bg-background">
-            <SEO
-                title={`${t('aboutTitle')} - SQL Formatter`}
-                description={t('aboutIntroContent')}
-                keywords={t('aboutKeywords')}
-            />
             {/* Background gradient effect */}
             <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
 

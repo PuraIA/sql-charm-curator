@@ -18,14 +18,14 @@ import { superCompactSQL } from '@/utils/sql-utils';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
-import { SEO } from './SEO';
-
-// Lazy load components that are not needed for initial interaction
-const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
-const FormatterFAQ = lazy(() => import('./FormatterFAQ').then(module => ({ default: module.FormatterFAQ })));
-const SQLInfo = lazy(() => import('./SQLInfo').then(module => ({ default: module.SQLInfo })));
-const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
+// Editorial content is imported eagerly: it has to exist in the prerendered HTML,
+// and a lazy chunk would only ever render its Suspense fallback at build time.
+import { FormatterFAQ } from './FormatterFAQ';
+import { SQLInfo } from './SQLInfo';
 import { SQLContent } from './SQLContent';
+// Genuinely deferrable: only reachable after the user interacts with the tool.
+const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
+const FormatterSidebar = lazy(() => import('./FormatterSidebar').then(module => ({ default: module.FormatterSidebar })));
 
 export type Dialect = 'postgresql' | 'mysql' | 'plsql' | 'transactsql' | 'sql' | 'bigquery';
 type KeywordCase = 'preserve' | 'upper' | 'lower';
@@ -239,35 +239,19 @@ export function SQLFormatter() {
       subtitle={t('subtitle')}
       toolContent={
         <div className="space-y-12">
-          <SEO
-            title={t('seoTitle')}
-            description={t('seoDescription')}
-            keywords={t('seoKeywords')}
-            ogTitle={t('ogTitle')}
-            ogDescription={t('ogDescription')}
-            twitterTitle={t('twitterTitle')}
-            twitterDescription={t('twitterDescription')}
-          />
-
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <SQLInfo />
-          </Suspense>
 
           <div className="my-12 py-8 border-y border-border/50">
             <AdPlaceholder slotId="content-middle" />
           </div>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <SQLContent />
-          </Suspense>
 
           <div className="my-12 py-8 border-y border-border/50">
             <AdPlaceholder slotId="content-bottom" />
           </div>
 
-          <Suspense fallback={<div className="h-64 animate-pulse bg-secondary/10 rounded-xl" />}>
             <FormatterFAQ />
-          </Suspense>
         </div>
       }
     >

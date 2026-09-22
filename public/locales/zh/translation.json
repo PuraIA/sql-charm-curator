@@ -148,7 +148,7 @@
     "detailedGuideTitle": "SQL 格式化终极指南",
     "detailedGuideIntro": "编写整洁的 SQL 是一项超能力。它使您的代码更容易阅读、调试和维护。该工具通过对您的原始查询应用行业标准的格式化规则，帮助您瞬间实现这一目标。",
     "about": "关于我们",
-    "aboutTitle": "关于 SQL Formatter",
+    "aboutTitle": "关于 Pretty Format",
     "aboutIntroTitle": "我们的使命",
     "aboutIntroContent": "SQL Formatter 的诞生旨在帮助开发者编写更好、更整洁的 SQL 代码。我们相信易读的代码就是易维护的代码。",
     "aboutStoryTitle": "我们的故事",

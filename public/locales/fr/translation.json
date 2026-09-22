@@ -148,7 +148,7 @@
     "detailedGuideTitle": "Le guide ultime du formatage SQL",
     "detailedGuideIntro": "Écrire du SQL propre est un super-pouvoir. Cela rend votre code plus facile à lire, à déboguer et à maintenir. Cet outil vous aide à y parvenir instantanément en appliquant les règles de formatage standard de l'industrie à vos requêtes brutes.",
     "about": "À propos de nous",
-    "aboutTitle": "À propos de SQL Formatter",
+    "aboutTitle": "À propos de Pretty Format",
     "aboutIntroTitle": "Notre Mission",
     "aboutIntroContent": "SQL Formatter a été créé pour aider les développeurs à écrire un code SQL meilleur et plus propre. Nous pensons qu'un code lisible est un code maintenable.",
     "aboutStoryTitle": "Notre Histoire",

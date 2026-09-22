@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode, isSsrBuild }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -29,7 +29,9 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     // Increase chunk size warning limit (we're handling large chunks intentionally)
     chunkSizeWarningLimit: 600,
-    rollupOptions: {
+    // The SSR bundle is only consumed by scripts/prerender.mjs, which imports it at a
+    // fixed path. Chunking and hashed filenames apply to the browser build only.
+    rollupOptions: isSsrBuild ? {} : {
       output: {
         // Vite 8 (rolldown) requires manualChunks as a function, not a plain object
         manualChunks: (id: string) => {

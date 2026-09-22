@@ -26,9 +26,15 @@ export function ThemeProvider({
     storageKey = "vite-ui-theme",
     ...props
 }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<Theme>(
-        () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-    )
+    // Read lazily and defensively: this component also renders during the build-time
+    // prerender, where localStorage does not exist.
+    const [theme, setTheme] = useState<Theme>(() => {
+        try {
+            return (localStorage.getItem(storageKey) as Theme) || defaultTheme
+        } catch {
+            return defaultTheme
+        }
+    })
 
     useEffect(() => {
         const root = window.document.documentElement
@@ -51,7 +57,11 @@ export function ThemeProvider({
     const value = {
         theme,
         setTheme: (theme: Theme) => {
-            localStorage.setItem(storageKey, theme)
+            try {
+                localStorage.setItem(storageKey, theme)
+            } catch {
+                // Private mode / blocked storage: keep the theme for this session only.
+            }
             setTheme(theme)
         },
     }

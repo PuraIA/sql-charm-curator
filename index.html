@@ -4,23 +4,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    Everything between seo:start and seo:end is replaced per route by
+    scripts/prerender.mjs. The values below are the dev-server defaults and the
+    fallback for any HTML that is served without going through the prerender.
+    Do not add route-specific tags outside these markers.
+  -->
+  <!--seo:start-->
   <title>Pretty Format - Free Online Formatting Tools for Developers</title>
   <meta name="description"
     content="Professional code formatting tools including SQL, JSON, and XML beautifiers. Secure, private, and runs 100% in your browser." />
   <meta name="keywords"
     content="code formatter, developer tools, sql formatter, json formatter, xml formatter, web developer utilities, sql beautifier, format sql online" />
-  <meta name="author" content="Pura IA — pura.ia.br" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <link rel="canonical" href="https://www.prettyformat.com/" />
+  <meta property="og:title" content="Pretty Format - Your Code, Beautified" />
+  <meta property="og:description"
+    content="The ultimate suite of code formatting tools. SQL, JSON, and XML beautifiers running 100% in your browser." />
+  <meta property="og:url" content="https://www.prettyformat.com/" />
+  <meta name="twitter:title" content="Pretty Format - Developer Tools" />
+  <meta name="twitter:description"
+    content="All-in-one code formatting platform. Fast, secure, and private SQL, JSON, and XML formatters." />
+  <meta name="twitter:url" content="https://www.prettyformat.com/" />
+  <!--seo:end-->
+
+  <meta name="author" content="Pura IA — pura.ia.br" />
   <meta name="googlebot" content="index, follow" />
   <meta name="google-adsense-account" content="ca-pub-4026555335042993" />
   <meta name="theme-color" content="#6366f1" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph / Facebook (route-independent) -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.prettyformat.com/" />
-  <meta property="og:title" content="Pretty Format - Your Code, Beautified" />
-  <meta property="og:description"
-    content="The ultimate suite of code formatting tools. SQL, JSON, and XML beautifiers running 100% in your browser." />
   <meta property="og:image" content="https://www.prettyformat.com/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -33,24 +48,21 @@
   <meta property="og:locale:alternate" content="zh_CN" />
   <meta property="og:locale:alternate" content="ja_JP" />
 
-  <!-- Twitter -->
+  <!-- Twitter (route-independent) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://www.prettyformat.com/" />
-  <meta name="twitter:title" content="Pretty Format - Developer Tools" />
-  <meta name="twitter:description"
-    content="All-in-one code formatting platform. Fast, secure, and private SQL, JSON, and XML formatters." />
   <meta name="twitter:image" content="https://www.prettyformat.com/og-image.png" />
 
-  <link rel="canonical" href="https://www.prettyformat.com/" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="manifest" href="/manifest.json" />
 
   <!-- Preconnect and DNS prefetch to improve performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
   <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="preconnect" href="https://www.pura.ia.br" />
 
   <!-- Critical CSS inline to prevent render blocking -->
   <style>
@@ -125,95 +137,6 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
   </noscript>
 
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Pretty Format",
-      "url": "https://www.prettyformat.com",
-      "description": "The best free online SQL formatter and beautifier. Supports PostgreSQL, MySQL, Oracle (PL/SQL), SQL Server (T-SQL), and BigQuery.",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "All",
-      "browserRequirements": "Requires JavaScript",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "Pura IA",
-        "url": "https://www.pura.ia.br"
-      },
-      "featureList": [
-        "PostgreSQL formatting",
-        "MySQL formatting",
-        "Oracle PL/SQL formatting",
-        "SQL Server T-SQL formatting",
-        "BigQuery formatting",
-        "Customizable keyword casing",
-        "Adjustable indentation",
-        "Multiple language support"
-      ]
-    }
-  </script>
-
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What SQL dialects does this formatter support?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Our SQL formatter supports PostgreSQL, MySQL, Oracle (PL/SQL), SQL Server (T-SQL), BigQuery, and Standard SQL."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is this SQL formatter free to use?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, this SQL formatter is completely free to use with no limitations on the number of queries you can format."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is my SQL data secure?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, all SQL formatting happens in your browser. Your queries are never sent to any server, ensuring complete privacy and security."
-          }
-        }
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.prettyformat.com/"
-        }
-      ]
-    }
-  </script>
-
-  <link rel="manifest" href="/manifest.json" />
-
-  <!-- Preconnect to critical domains to reduce connection overhead -->
-  <link rel="preconnect" href="https://www.pura.ia.br" />
-  <link rel="dns-prefetch" href="https://www.pura.ia.br" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
   <!-- Google AdSense — loaded immediately for crawler detection -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4026555335042993" crossorigin="anonymous"></script>
 
@@ -267,37 +190,15 @@
 <body>
   <noscript>
     <div style="padding: 2rem; text-align: center; font-family: system-ui, sans-serif;">
-      <h1>SQL Formatter - JavaScript Required</h1>
-      <p>This application requires JavaScript to be enabled. Please enable JavaScript in your browser settings to use
-        the SQL Formatter.</p>
-      <p>Our free online SQL formatter helps you beautify and format SQL queries for PostgreSQL, MySQL, Oracle (PL/SQL),
-        SQL Server (T-SQL), and BigQuery.</p>
+      <p><strong>JavaScript is disabled.</strong> The formatting tools are interactive and need JavaScript to run, but
+        the guides and reference material on this page are fully readable without it.</p>
     </div>
   </noscript>
-  <div id="root">
-    <!-- LCP Skeleton to improve perceived performance and eliminate rendering delay -->
-    <div
-      style="min-height: 100vh; display: flex; flex-direction: column; padding: 1.5rem; font-family: 'Inter', system-ui, sans-serif; background-color: #ffffff; color: #1e293b;">
-      <div style="text-align: center; max-width: 800px; margin: 3rem auto 0;">
-        <div style="display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 0.5rem;"></div>
-          <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0; color: #1e293b; letter-spacing: -0.025em;">
-            SQL Formatter
-          </h1>
-        </div>
-        <p
-          style="font-size: 1.125rem; color: #64748b; line-height: 1.6; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-          The best free online SQL beautifier. Format your queries instantly for PostgreSQL, MySQL, and more.
-        </p>
-        <div
-          style="height: 450px; background: #f8fafc; border-radius: 0.75rem; border: 1px solid #e2e8f0; position: relative;">
-          <div
-            style="position: absolute; top: 1rem; left: 1rem; right: 1rem; height: 2.5rem; background: #f1f5f9; border-radius: 0.375rem;">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!--
+    The build-time prerender replaces the marker below with the fully rendered page
+    for each route. In dev it stays empty and React renders on the client.
+  -->
+  <div id="root"><!--app-html--></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

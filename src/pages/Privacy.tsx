@@ -2,19 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-import { SEO } from '@/components/SEO';
-
 export default function Privacy() {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen bg-background">
-            <SEO
-                title={`${t('privacyPolicyTitle')} - SQL Formatter`}
-                description={t('privacyIntroContent').substring(0, 160)}
-                keywords={t('privacyKeywords')}
-            />
             {/* Background gradient effect */}
             <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--gradient-glow)' }} />
 

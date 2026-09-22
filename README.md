@@ -54,11 +54,45 @@ The application will be available at `http://localhost:8080` (or the port specif
 ## 📜 Available Scripts
 
 - `npm run dev`: Starts the Vite development server.
-- `npm run build`: Creates a production build in the `dist/` directory.
+- `npm run build`: Full production build — client bundle, SSR bundle, then prerender.
+- `npm run build:client`: Browser bundle only (`dist/`).
+- `npm run build:ssr`: Server bundle used by the prerender step (`dist-ssr/`).
+- `npm run prerender`: Writes the static HTML for each route (requires the two builds above).
 - `npm run build:dev`: Creates a development build.
 - `npm run lint`: Runs ESLint for code quality checks.
 - `npm test`: Executes unit tests using Vitest.
 - `npm run preview`: Locally previews the production build.
+
+## 🔎 Static rendering and SEO
+
+The app is a SPA, but it is **not** shipped as a bare shell. `npm run build` renders every
+route to its own HTML file, so crawlers (and users with JavaScript disabled) get the full
+page without executing any JavaScript:
+
+```text
+dist/index.html          →  /
+dist/sql/index.html      →  /sql
+dist/json/index.html     →  /json
+...
+dist/404.html            →  served with a real 404 status
+dist/sitemap.xml         →  generated from the same route table
+```
+
+Per-route metadata — title, description, canonical URL, Open Graph, structured data —
+lives in a single place, [`src/seo/routes.ts`](src/seo/routes.ts). It is consumed by:
+
+- `scripts/prerender.mjs`, which bakes it into the static HTML at build time;
+- [`src/components/SEO.tsx`](src/components/SEO.tsx), which reapplies it during client-side
+  navigation.
+
+**Adding a route** means adding it to `PRERENDER_ROUTES` and to the `switch` in
+`src/seo/routes.ts`, alongside the `<Route>` in `src/App.tsx`. A route missing from that
+table falls back to the noindex 404 profile, and nginx returns a real 404 for any path
+without a prerendered file. `src/seo/routes.test.ts` guards the invariant that every route
+has its own title, description and canonical.
+
+`index.html` contains `<!--seo:start-->` / `<!--seo:end-->` and `<!--app-html-->` markers
+that the prerender script writes into; the build fails loudly if they are removed.
 
 ## 📂 Project Structure
 
@@ -67,20 +101,29 @@ src/
 ├── components/     # UI and application components
 │   ├── ui/         # Shadcn UI base components
 │   └── ...
+├── config/         # Static configuration (AdSense slot ids)
 ├── hooks/          # Custom React hooks
 ├── lib/            # Utility functions and shared libraries
-├── locales/        # I18n translation files (JSON)
-├── pages/          # Application pages (Index, NotFound)
+├── pages/          # Application pages
+├── seo/            # Per-route SEO metadata (single source of truth) + tests
 ├── utils/          # Core utility logic (SQL post-processing)
-├── App.tsx         # Main App component & Routing
-└── main.tsx        # Application entry point
+├── App.tsx         # Routes and providers (router-agnostic)
+├── entry-server.tsx# Build-time rendering entry, used by scripts/prerender.mjs
+└── main.tsx        # Browser entry point
+
+public/locales/     # I18n translation files (JSON), fetched at runtime
+scripts/prerender.mjs  # Static HTML generation
 ```
 
 ## 🌍 Localization
 
-Translation files are located in `src/locales/`. To add a new language:
-1. Create a new JSON file in `src/locales/` (e.g., `it-IT.json`).
-2. Update `src/i18n.ts` to include the new locale.
+Translation files live in `public/locales/<lang>/translation.json` and are fetched at
+runtime by `i18next-http-backend`. To add a new language:
+1. Create `public/locales/<lang>/translation.json`.
+2. Add the code to `supportedLngs` in `src/i18n.ts` and to the picker in `src/components/Header.tsx`.
+
+The prerendered HTML is generated in English (`PRERENDER_LANG` in `scripts/prerender.mjs`);
+other languages are applied on the client after the translations load.
 
 ## 🧪 Testing
 
