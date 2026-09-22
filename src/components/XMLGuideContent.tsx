@@ -5,7 +5,7 @@ import { AdPlaceholder } from './AdPlaceholder';
 import { ContentMeta } from './ContentMeta';
 import { CodePanel } from './CodePanel';
 import { LinkedSentence } from './LinkedSentence';
-import { XML_GUIDE_LIST, type XmlGuide } from '@/content/xml-guides';
+import { XML_GUIDE_LIST, localizeXmlGuide, type XmlGuide } from '@/content/xml-guides';
 
 /**
  * Renders one /xml/<slug> page. Plain markup throughout: it has to exist in the
@@ -123,8 +123,10 @@ function ByteStat({ input, output }: { input: string; output: string }) {
 }
 
 function RelatedXmlGuides({ current }: { current: string }) {
-    const { t } = useTranslation();
-    const others = XML_GUIDE_LIST.filter(guide => guide.slug !== current);
+    const { t, i18n } = useTranslation();
+    const others = XML_GUIDE_LIST.filter(guide => guide.slug !== current).map(guide =>
+        localizeXmlGuide(guide, i18n.language)
+    );
 
     return (
         <section>

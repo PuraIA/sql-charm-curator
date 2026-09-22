@@ -8,6 +8,21 @@
  */
 import type { GuideSection, FaqEntry } from './guide-shared';
 import { minifyXml, prettyPrintXml } from '@/utils/xml-utils';
+import {
+    toExtraLocale,
+    mergeArray,
+    mergeSections,
+    mergeFaq,
+    type ExtraLocale,
+    type SectionTranslation,
+    type FaqTranslation,
+} from './i18n-guide';
+import { XML_TRANSLATIONS_PT } from './i18n/xml-guides.pt';
+import { XML_TRANSLATIONS_ES } from './i18n/xml-guides.es';
+import { XML_TRANSLATIONS_DE } from './i18n/xml-guides.de';
+import { XML_TRANSLATIONS_FR } from './i18n/xml-guides.fr';
+import { XML_TRANSLATIONS_ZH } from './i18n/xml-guides.zh';
+import { XML_TRANSLATIONS_JA } from './i18n/xml-guides.ja';
 
 export const XML_GUIDE_SLUGS = ['minify', 'validate'] as const;
 export type XmlGuideSlug = (typeof XML_GUIDE_SLUGS)[number];
@@ -200,4 +215,60 @@ export const XML_GUIDE_LIST: XmlGuide[] = XML_GUIDE_SLUGS.map(slug => XML_GUIDES
 
 export function getXmlGuide(slug: string): XmlGuide | undefined {
     return XML_GUIDES[slug as XmlGuideSlug];
+}
+
+/** label/rule are prose and translatable; code is real XML kept language-independent. */
+export interface InvalidXmlExampleTranslation {
+    label: string;
+    rule: string;
+}
+
+export interface XmlGuideTranslation {
+    h1?: string;
+    tagline?: string;
+    intro?: string[];
+    invalidExamples?: InvalidXmlExampleTranslation[];
+    sections?: SectionTranslation[];
+    limitations?: string[];
+    faq?: FaqTranslation[];
+}
+
+function mergeInvalidXmlExamples(
+    base: InvalidXmlExample[],
+    override: InvalidXmlExampleTranslation[] | undefined
+): InvalidXmlExample[] {
+    if (!override) return base;
+    return base.map((example, i) => {
+        const t = override[i];
+        if (!t) return example;
+        return { ...example, label: t.label ?? example.label, rule: t.rule ?? example.rule };
+    });
+}
+
+const XML_TRANSLATIONS: Record<ExtraLocale, Partial<Record<XmlGuideSlug, XmlGuideTranslation>>> = {
+    pt: XML_TRANSLATIONS_PT,
+    es: XML_TRANSLATIONS_ES,
+    de: XML_TRANSLATIONS_DE,
+    fr: XML_TRANSLATIONS_FR,
+    zh: XML_TRANSLATIONS_ZH,
+    ja: XML_TRANSLATIONS_JA,
+};
+
+/** Overlays the active language's translation onto the English base guide (see i18n-guide.ts). */
+export function localizeXmlGuide(guide: XmlGuide, language: string): XmlGuide {
+    const locale = toExtraLocale(language);
+    const t = locale ? XML_TRANSLATIONS[locale][guide.slug] : undefined;
+    if (!t) return guide;
+    return {
+        ...guide,
+        h1: t.h1 ?? guide.h1,
+        tagline: t.tagline ?? guide.tagline,
+        intro: mergeArray(guide.intro, t.intro),
+        invalidExamples: guide.invalidExamples
+            ? mergeInvalidXmlExamples(guide.invalidExamples, t.invalidExamples)
+            : guide.invalidExamples,
+        sections: mergeSections(guide.sections, t.sections),
+        limitations: mergeArray(guide.limitations, t.limitations),
+        faq: mergeFaq(guide.faq, t.faq),
+    };
 }
