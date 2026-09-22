@@ -7,7 +7,7 @@ import { ConverterGuideContent } from '@/components/ConverterGuideContent';
 import { XPathTester } from '@/components/XPathTester';
 import { XmlToolGuideContent } from '@/components/XmlToolGuideContent';
 import { getXmlGuide, localizeXmlGuide } from '@/content/xml-guides';
-import { getConverterGuide } from '@/content/converter-guides';
+import { getConverterGuide, localizeConverterGuide } from '@/content/converter-guides';
 import { getXmlToolGuide } from '@/content/xml-tools';
 import NotFound from './NotFound';
 
@@ -41,15 +41,16 @@ const XMLGuidePage = () => {
 
     const converterGuide = slug ? getConverterGuide('xml', slug) : undefined;
     if (converterGuide) {
+        const localizedConverter = localizeConverterGuide(converterGuide, i18n.language);
         return (
             <FormatConverter
                 key={`xml-${converterGuide.slug}`}
                 initialFromFormat={converterGuide.fromFormat}
                 initialToFormat={converterGuide.toFormat}
                 initialInput={converterGuide.sample.input}
-                title={converterGuide.h1}
-                subtitle={converterGuide.tagline}
-                content={<ConverterGuideContent guide={converterGuide} />}
+                title={localizedConverter.h1}
+                subtitle={localizedConverter.tagline}
+                content={<ConverterGuideContent guide={localizedConverter} />}
             />
         );
     }

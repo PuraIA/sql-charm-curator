@@ -5,7 +5,7 @@ import { JSONGuideContent } from '@/components/JSONGuideContent';
 import { FormatConverter } from '@/components/FormatConverter';
 import { ConverterGuideContent } from '@/components/ConverterGuideContent';
 import { getJsonGuide, localizeJsonGuide } from '@/content/json-guides';
-import { getConverterGuide } from '@/content/converter-guides';
+import { getConverterGuide, localizeConverterGuide } from '@/content/converter-guides';
 import NotFound from './NotFound';
 
 /**
@@ -23,15 +23,16 @@ const JSONGuidePage = () => {
 
     const converterGuide = slug ? getConverterGuide('json', slug) : undefined;
     if (converterGuide) {
+        const localizedConverter = localizeConverterGuide(converterGuide, i18n.language);
         return (
             <FormatConverter
                 key={`json-${converterGuide.slug}`}
                 initialFromFormat={converterGuide.fromFormat}
                 initialToFormat={converterGuide.toFormat}
                 initialInput={converterGuide.sample.input}
-                title={converterGuide.h1}
-                subtitle={converterGuide.tagline}
-                content={<ConverterGuideContent guide={converterGuide} />}
+                title={localizedConverter.h1}
+                subtitle={localizedConverter.tagline}
+                content={<ConverterGuideContent guide={localizedConverter} />}
             />
         );
     }
