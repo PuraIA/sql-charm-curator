@@ -300,21 +300,15 @@ export function JSONFormatter({
     content,
 }: JSONFormatterProps = {}) {
     const { t } = useTranslation();
-<<<<<<< Updated upstream
     const [inputJSON, setInputJSON] = useState(initialData);
     const [outputJSON, setOutputJSON] = useState(initialFormattedOutput);
-    const [parsedData, setParsedData] = useState<any>(() => {
+    const [parsedData, setParsedData] = useState<unknown>(() => {
         try {
             return initialData ? JSON.parse(initialData) : null;
         } catch {
             return null;
         }
     });
-=======
-    const [inputJSON, setInputJSON] = useState('');
-    const [outputJSON, setOutputJSON] = useState('');
-    const [parsedData, setParsedData] = useState<unknown>(null);
->>>>>>> Stashed changes
     const [copied, setCopied] = useState(false);
     const [activeTab, setActiveTab] = useState(initialData ? 'formatted' : 'original');
     const [isValid, setIsValid] = useState(true);

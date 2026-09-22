@@ -12,7 +12,6 @@ interface AdBannerProps {
     /** Which placement this unit represents. */
     slotId?: AdPlacement;
     className?: string;
-    slotId?: string;
 }
 
 /**
@@ -22,11 +21,7 @@ interface AdBannerProps {
  * - 'declined'  → non-personalized ads (data-adsbygoogle-npa="1")
  * - null        → waits for user consent before pushing
  */
-<<<<<<< Updated upstream
 export const AdPlaceholder: React.FC<AdBannerProps> = ({ slotId = 'content-top', className = '' }) => {
-=======
-export const AdPlaceholder: React.FC<AdBannerProps> = ({ className = '', slotId }) => {
->>>>>>> Stashed changes
     const [consent, setConsent] = useState<'accepted' | 'declined' | null>(getConsentStatus);
 
     // Re-check consent whenever localStorage changes (e.g. after user interacts with banner)
