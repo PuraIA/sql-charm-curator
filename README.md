@@ -1,5 +1,9 @@
 # SQL Charm Curator
 
+[![CI](https://github.com/PuraIA/sql-charm-curator/actions/workflows/ci.yml/badge.svg)](https://github.com/PuraIA/sql-charm-curator/actions/workflows/ci.yml)
+[![Docker Build](https://github.com/PuraIA/sql-charm-curator/actions/workflows/docker.yml/badge.svg)](https://github.com/PuraIA/sql-charm-curator/actions/workflows/docker.yml)
+[![Release on Merge](https://github.com/PuraIA/sql-charm-curator/actions/workflows/release.yml/badge.svg)](https://github.com/PuraIA/sql-charm-curator/actions/workflows/release.yml)
+
 A professional, feature-rich SQL formatter application built with React, Vite, and TypeScript. SQL Charm Curator helps developers format their SQL queries according to best practices and custom preferences.
 
 ## 🚀 Features
