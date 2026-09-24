@@ -46,7 +46,7 @@
     "@tanstack/react-query": "^5.83.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "ajv": "^8.20.0",
-    "baseline-browser-mapping": "^2.9.14",
+    "baseline-browser-mapping": "^2.11.25",
     "browserslist": "^4.28.9",
     "caniuse-lite": "^1.0.30001764",
     "class-variance-authority": "^0.7.1",
