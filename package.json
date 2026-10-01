@@ -73,7 +73,7 @@
     "react-resizable-panels": "^2.1.9",
     "react-router-dom": "^7.18.3",
     "react-syntax-highlighter": "^16.1.0",
-    "recharts": "^2.15.4",
+    "recharts": "^3.10.1",
     "rollup": "^4.63.1",
     "sonner": "^2.0.8",
     "sql-formatter": "^15.6.12",
