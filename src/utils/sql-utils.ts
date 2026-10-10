@@ -72,11 +72,18 @@ export const compactWhereClauses = (sql: string): string => {
 import type { Dialect } from '@/components/SQLFormatter';
 import type { FormatOptionsWithLanguage } from 'sql-formatter';
 
-/** Parameter-placeholder syntax sql-formatter should recognize for each dialect. */
+/**
+ * Parameter-placeholder syntax sql-formatter should recognize for each dialect, or
+ * undefined to keep the library's own default for that dialect.
+ *
+ * PostgreSQL deliberately has no positional `?`: it would turn the JSONB operators
+ * `?|` and `?&` into a placeholder followed by `|` / `&` (`? |`), which is not what the
+ * query means and contradicts what /sql/postgresql documents.
+ */
 export function getParamTypesForDialect(dialect: Dialect): FormatOptionsWithLanguage['paramTypes'] {
   switch (dialect) {
     case 'postgresql':
-      return { named: [':'], positional: true, numbered: ['$'] };
+      return { named: [':'], numbered: ['$'] };
     case 'plsql':
       return { named: [':'], positional: false };
     case 'mysql':
@@ -85,8 +92,10 @@ export function getParamTypesForDialect(dialect: Dialect): FormatOptionsWithLang
       return { positional: false };
     case 'bigquery':
       return { positional: true };
-    default:
+    case 'sql':
       return {};
+    default:
+      return undefined;
   }
 }
 
@@ -125,12 +134,16 @@ export async function formatSqlWithFallback(sql: string, options: SqlFormatOptio
   const { format } = await import('sql-formatter');
   const paramTypes = getParamTypesForDialect(options.dialect);
 
+  // `dialect` is this app's name for sql-formatter's `language`. Spreading it as-is used
+  // to leave `language` unset, so the "full" pass silently ran the generic grammar.
+  const { dialect, ...rest } = options;
+
   try {
-    return { formatted: format(sql, { ...options, paramTypes }), usedFallback: 'full' };
+    return { formatted: format(sql, { ...rest, language: dialect, paramTypes }), usedFallback: 'full' };
   } catch {
     try {
       return {
-        formatted: format(sql, { language: options.dialect, keywordCase: options.keywordCase, tabWidth: options.tabWidth, paramTypes }),
+        formatted: format(sql, { language: dialect, keywordCase: options.keywordCase, tabWidth: options.tabWidth, paramTypes }),
         usedFallback: 'reduced',
       };
     } catch {
