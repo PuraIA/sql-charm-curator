@@ -20,6 +20,11 @@ export function getBlogPost(slug: string): BlogPost | undefined {
     return BLOG_POSTS.find(post => post.slug === slug);
 }
 
+/** Articles that list `path` among the tools they cover — used to link tool pages to them. */
+export function postsAboutPath(path: string): BlogPost[] {
+    return BLOG_POSTS.filter(post => post.relatedTools.some(tool => tool.path === path));
+}
+
 /** Approximate reading time, from the prose and list text (code blocks excluded). */
 export function readingMinutes(post: BlogPost): number {
     const words = post.blocks

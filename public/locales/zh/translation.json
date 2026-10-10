@@ -345,5 +345,10 @@
   "blogMinRead": "阅读约 {{count}} 分钟",
   "blogBackToIndex": "全部文章",
   "blogRelatedTools": "本文提到的工具",
-  "blogMoreArticles": "更多文章"
+  "blogMoreArticles": "更多文章",
+  "homeDirectoryTitle": "全部工具与指南",
+  "homeDirectoryIntro": "每个页面都会打开针对某一具体任务配置好的工具，并附有参考说明——输出是什么样子、能处理什么，以及在哪些地方有局限。",
+  "homeLatestArticlesTitle": "最新文章",
+  "homeAllArticlesLink": "全部文章",
+  "guideFromBlogTitle": "来自博客"
 }

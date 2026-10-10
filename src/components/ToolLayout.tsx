@@ -4,6 +4,7 @@ import { AdPlaceholder } from './AdPlaceholder';
 import { ScrollToTop } from './ScrollToTop';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { RelatedArticles } from './RelatedArticles';
 
 interface ToolLayoutProps {
     children: ReactNode;
@@ -49,6 +50,8 @@ export const ToolLayout = ({ children, title, subtitle, toolContent }: ToolLayou
                     <article className="prose prose-slate dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground">
                         {toolContent}
                     </article>
+
+                    <RelatedArticles />
                 </main>
             </div>
 

@@ -86,6 +86,9 @@ export const sqlFormatterEdgeCases: BlogPost = {
         { label: 'SQL Formatter', path: '/sql' },
         { label: 'T-SQL Formatter', path: '/sql/t-sql' },
         { label: 'PostgreSQL Formatter', path: '/sql/postgresql' },
+        { label: 'Oracle SQL Formatter', path: '/sql/oracle-plsql' },
+        { label: 'MySQL Formatter', path: '/sql/mysql' },
+        { label: 'BigQuery Formatter', path: '/sql/bigquery' },
     ],
     blocks: [
         {

@@ -35,6 +35,7 @@ export const xmlToJsonConventions: BlogPost = {
     relatedTools: [
         { label: 'XML to JSON Converter', path: '/xml/to-json' },
         { label: 'JSON to XML Converter', path: '/json/to-xml' },
+        { label: 'JSON to YAML Converter', path: '/json/to-yaml' },
     ],
     blocks: [
         {
