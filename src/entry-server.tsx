@@ -51,4 +51,4 @@ async function createServerI18n(translation: Record<string, unknown>, lng: strin
 }
 
 // Re-exported so the prerender script has a single import for everything it needs.
-export { PRERENDER_ROUTES, SITE_URL } from './seo/routes';
+export { PRERENDER_ROUTES, SITE_URL, lastModifiedFor } from './seo/routes';

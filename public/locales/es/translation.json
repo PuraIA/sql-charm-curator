@@ -336,5 +336,14 @@
   "guideAfterFormattedLabel": "Después, formateado",
   "guideSqlDialectFormattersTitle": "Formateadores de dialectos de SQL",
   "guideWorkedExamplesTitle": "Ejemplos prácticos",
-  "guideWorkedExamplesIntro": "Cada uno de estos se evalúa contra el documento bookstore cargado en el editor de arriba."
+  "guideWorkedExamplesIntro": "Cada uno de estos se evalúa contra el documento bookstore cargado en el editor de arriba.",
+  "blogNavLabel": "Blog",
+  "blogIndexTitle": "Blog",
+  "blogIndexSubtitle": "Notas de campo de la construcción de estas herramientas: casos límite de formateo encontrados probando consultas reales, las ventajas y desventajas detrás de la conversión entre formatos de datos y crónicas de ingeniería.",
+  "blogEnglishOnlyNote": "Por ahora, los artículos solo están disponibles en inglés.",
+  "blogReadArticle": "Leer el artículo",
+  "blogMinRead": "{{count}} min de lectura",
+  "blogBackToIndex": "Todos los artículos",
+  "blogRelatedTools": "Herramientas mencionadas en este artículo",
+  "blogMoreArticles": "Más artículos"
 }

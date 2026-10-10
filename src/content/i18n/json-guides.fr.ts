@@ -47,10 +47,6 @@ export const JSON_TRANSLATIONS_FR: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: 'Est-ce que cela aidera si mes réponses API sont déjà en gzip ?',
                 a: "Moins que vous ne pourriez l'espérer. Gzip compresse déjà efficacement les espaces répétés, donc minifier avant compression apporte une économie supplémentaire plus faible que ne le suggère le nombre d'octets ci-dessus. Cela compte plus pour les charges utiles non compressées.",
             },
-            {
-                q: 'Mon JSON est-il envoyé quelque part ?',
-                a: "Non. JSON.parse() et JSON.stringify() s'exécutent dans votre navigateur. Rien n'est envoyé à un serveur, ce qui compte si la charge utile contient de vraies données clients ou de compte.",
-            },
         ],
     },
 
@@ -115,10 +111,6 @@ export const JSON_TRANSLATIONS_FR: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: 'Puis-je valider du JSON contenant des commentaires (JSONC) ?',
                 a: "Pas avec cet outil — il vérifie par rapport au JSON standard (RFC 8259), qui n'a aucune syntaxe de commentaire. Retirez d'abord les commentaires si vous travaillez avec un fichier de configuration JSONC.",
             },
-            {
-                q: 'Mon JSON est-il envoyé quelque part pour être vérifié ?',
-                a: "Non. La validation s'exécute via le propre JSON.parse() de votre navigateur, localement. Rien n'est téléversé.",
-            },
         ],
     },
 
@@ -171,10 +163,6 @@ export const JSON_TRANSLATIONS_FR: Partial<Record<JsonGuideSlug, JsonGuideTransl
             {
                 q: 'Puis-je définir mon propre nom d\'interface racine ?',
                 a: "L'interface racine générée s'appelle Root par défaut lorsque vous modifiez le JSON dans l'outil. Cette page la nomme d'après ce que représente l'exemple (ApiUser) purement pour la lisibilité dans l'exemple.",
-            },
-            {
-                q: 'Mon JSON est-il envoyé à un serveur pour générer les types ?',
-                a: "Non. Le générateur s'exécute dans votre navigateur et ne téléverse jamais ce que vous collez, ce qui compte puisqu'une vraie réponse API est exactement ce que vous colleriez ici.",
             },
         ],
     },

@@ -336,5 +336,14 @@
   "guideAfterFormattedLabel": "Nachher, formatiert",
   "guideSqlDialectFormattersTitle": "SQL-Dialekt-Formatierer",
   "guideWorkedExamplesTitle": "Ausgearbeitete Beispiele",
-  "guideWorkedExamplesIntro": "Jedes davon wird gegen das oben im Editor geladene bookstore-Dokument ausgewertet."
+  "guideWorkedExamplesIntro": "Jedes davon wird gegen das oben im Editor geladene bookstore-Dokument ausgewertet.",
+  "blogNavLabel": "Blog",
+  "blogIndexTitle": "Blog",
+  "blogIndexSubtitle": "Notizen aus der Entwicklung dieser Werkzeuge: Formatierungs-Grenzfälle, die wir beim Testen echter Abfragen gefunden haben, die Abwägungen hinter der Konvertierung von Datenformaten und technische Hintergrundberichte.",
+  "blogEnglishOnlyNote": "Die Artikel sind derzeit nur auf Englisch verfügbar.",
+  "blogReadArticle": "Artikel lesen",
+  "blogMinRead": "{{count}} Min. Lesezeit",
+  "blogBackToIndex": "Alle Artikel",
+  "blogRelatedTools": "In diesem Artikel erwähnte Werkzeuge",
+  "blogMoreArticles": "Weitere Artikel"
 }

@@ -78,10 +78,6 @@ export const DIALECT_TRANSLATIONS_DE: Partial<Record<DialectSlug, DialectGuideTr
                 q: 'Kann es den Rumpf einer PL/pgSQL-Funktion formatieren?',
                 a: 'Der Rumpf zwischen den $$-Begrenzern ist aus Sicht des SQL-Parsers ein String-Literal und wird daher wörtlich bewahrt statt neu eingerückt. Um den Rumpf selbst zu formatieren, fügen Sie nur den Block zwischen den Begrenzern ein.',
             },
-            {
-                q: 'Werden meine Abfragen irgendwohin gesendet?',
-                a: 'Nein. Der Formatierer ist eine JavaScript-Bibliothek, die in Ihrem Browser läuft. Nichts wird hochgeladen, weshalb es sicher ist, eine Abfrage mit echten Tabellen- und Spaltennamen aus der Produktion einzufügen.',
-            },
         ],
     },
 
@@ -162,10 +158,6 @@ export const DIALECT_TRANSLATIONS_DE: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'Warum wird mein --Kommentar nicht als Kommentar behandelt?',
                 a: 'MySQL verlangt ein Leerzeichen nach dem doppelten Bindestrich. --hinweis wird als Ausdruck interpretiert; -- hinweis ist ein Kommentar. Das ist eine MySQL-Regel, kein Verhalten des Formatierers.',
-            },
-            {
-                q: 'Wird mein SQL an einen Server gesendet?',
-                a: 'Nein. Die Formatierung geschieht in Ihrem Browser, und nichts verlässt Ihren Rechner — deshalb ist es sicher, Abfragen mit echten Schemanamen einzufügen.',
             },
         ],
     },
@@ -250,10 +242,6 @@ export const DIALECT_TRANSLATIONS_DE: Partial<Record<DialectSlug, DialectGuideTr
                 q: 'Formatiert es Rümpfe gespeicherter Prozeduren?',
                 a: 'Die Anweisungen innerhalb einer Prozedur werden als gewöhnliches T-SQL formatiert. Kontrollflusskonstrukte wie IF und WHILE werden erkannt, aber das Ergebnis ist weniger ausgefeilt als bei einem einfachen SELECT — prozeduraler Code ist die Schwachstelle jedes SQL-Formatierers.',
             },
-            {
-                q: 'Wird mein T-SQL an einen Server gesendet?',
-                a: 'Nein. Alles läuft in Ihrem Browser, sodass Abfragen mit internen Schema- oder Objektnamen Ihren Rechner nie verlassen.',
-            },
         ],
     },
 
@@ -333,8 +321,8 @@ export const DIALECT_TRANSLATIONS_DE: Partial<Record<DialectSlug, DialectGuideTr
                 a: 'Nein. Der / ist eine SQL*Plus-Anweisung zur Ausführung des vorangehenden Blocks, kein Teil von PL/SQL. Fügen Sie die Anweisung ohne ihn ein.',
             },
             {
-                q: 'Wird mein SQL irgendwohin hochgeladen?',
-                a: 'Nein. Die Formatierung läuft vollständig in Ihrem Browser, was hier wichtig ist, weil Oracle-Abfragen oft Schemanamen und Geschäftslogik enthalten.',
+                q: 'Warum wurde meine Spalte namens name zu NAME?',
+                a: 'Die PL/SQL-Grammatik behandelt NAME als Schlüsselwort, daher wird die Schreibweise für Schlüsselwörter darauf angewendet, auch wenn die Schreibweise für Bezeichner auf Preserve steht. In Oracle ist das harmlos — nicht zitierte Bezeichner unterscheiden nicht zwischen Groß- und Kleinschreibung, name und NAME sind also dieselbe Spalte. Behebe es nicht mit Anführungszeichen: "name" in doppelten Anführungszeichen ist groß-/kleinschreibungssensitiv und verweist auf eine andere Spalte. Wenn die Abfrage exakt so bleiben soll, wie du sie getippt hast, stelle die Schreibweise für Schlüsselwörter auf Preserve.',
             },
         ],
     },
@@ -412,10 +400,6 @@ export const DIALECT_TRANSLATIONS_DE: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'Werden STRUCT- und ARRAY-Ausdrücke behandelt?',
                 a: 'Ja. Verschachtelte STRUCT-Konstruktoren und ARRAY_AGG-Aufrufe werden als gewöhnliche Ausdrücke interpretiert, und UNNEST wird als Teil der FROM-Klausel erkannt.',
-            },
-            {
-                q: 'Wird meine Abfrage an Google oder einen Server gesendet?',
-                a: 'Nein. Diese Seite führt den Formatierer in Ihrem Browser aus. Die Abfrage wird nirgendwohin gesendet, auch nicht an BigQuery.',
             },
         ],
     },

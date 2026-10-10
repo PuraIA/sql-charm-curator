@@ -1,6 +1,6 @@
 import type { ConverterGuideTranslation } from '../converter-guides';
 
-/** 简体中文翻译 /json/to-xml、/xml/to-json、/json/to-yaml、/xml/to-yaml。 */
+/** 简体中文翻译 /json/to-xml、/xml/to-json、/json/to-yaml。 */
 export const CONVERTER_TRANSLATIONS_ZH: Partial<Record<string, ConverterGuideTranslation>> = {
     'json/to-xml': {
         h1: 'JSON 转 XML 工具',
@@ -51,10 +51,6 @@ export const CONVERTER_TRANSLATIONS_ZH: Partial<Record<string, ConverterGuideTra
             {
                 q: '这个转换是可逆的吗？',
                 a: '对于这个约定所针对的形态——对象、属性、形态一致的数组——是的：用"XML 转 JSON"把结果转换回去会得到完全相同的 JSON，这一点已经由本站自己的测试验证过。文本和元素混合的内容是唯一的例外：具体原因请参见 /xml/to-json 自身的限制说明。',
-            },
-            {
-                q: '我的 JSON 会被上传到什么地方吗？',
-                a: '不会。转换过程在你的浏览器中运行；不会有任何内容被发送到服务器。',
             },
         ],
     },
@@ -116,10 +112,6 @@ export const CONVERTER_TRANSLATIONS_ZH: Partial<Record<string, ConverterGuideTra
                 q: '它能处理 CDATA 区段吗？',
                 a: '能——<![CDATA[ ... ]]> 内部的内容会被逐字当作文本处理，不会被重新解析为标记，就像普通的文本节点一样。',
             },
-            {
-                q: '我的 XML 会被上传到什么地方吗？',
-                a: '不会。解析和转换都在你的浏览器中运行，使用的是本站自己的 XML 解析器，而不是一次服务器调用。',
-            },
         ],
     },
 
@@ -149,6 +141,13 @@ export const CONVERTER_TRANSLATIONS_ZH: Partial<Record<string, ConverterGuideTra
                     '一个包含 \\n 的 JSON 字符串会使用 YAML 的 | 块状字面量风格来书写——文本按自己的缩进行排列——而不是写成带有字面反斜杠 n 的单行加引号字符串。它读起来就像原始文本实际呈现的样子，这对于任何类似多行描述，或嵌入在 CI 配置中的 shell 命令来说都很重要。',
                 ],
             },
+            {
+                heading: '看起来像其他类型的字符串总是会加上引号',
+                body: [
+                    '许多解析器至今仍在实现的 YAML 1.1，比 JSON 把更多不加引号的词视为特殊值：yes、no、on 和 off 在那里是布尔值，像 0777 这样带前导零的值可能被读成八进制数，2026-10-09 可能变成日期，而 ~ 表示 null。经典的例子是挪威的国家代码——country: NO 会被这些解析器读成 country: false。',
+                    '因此，转换工具会给任何可能被 YAML 解析器读成其他类型的 JSON 字符串加上引号：\'NO\'、\'yes\'、\'on\'、\'01310\'、\'0777\'、\'2026-10-09\' 和 \'~\' 都会以单引号形式输出，转换回来时仍是相同的字符串。这些引号在人看来似乎多余；正是它们防止了邮政编码在别人的处理流程中变成数字。',
+                ],
+            },
         ],
         limitations: [
             '没有专属于这个方向的限制：每个 JSON 值（对象、数组、字符串、数字、布尔值、null）都有一个直接对应的 YAML 形式，因此这里没有像 XML 那一侧的属性或重复标签名那样需要猜测的内容。唯一需要知道的一点是关于 YAML 本身的，而不是关于这个转换工具的：一个 YAML 文档可以表达 JSON 无法表达的东西（用于重复结构的锚点和别名、一个文件中的多个文档、注释）——把 JSON 转换成 YAML 永远不会产生这些内容，因为 JSON 里根本没有可以生成它们的来源。',
@@ -165,56 +164,6 @@ export const CONVERTER_TRANSLATIONS_ZH: Partial<Record<string, ConverterGuideTra
             {
                 q: '我能用这种方式转换 Kubernetes 清单文件或 docker-compose 文件吗？',
                 a: '可以，对于粘贴 JSON、输出 YAML 这个方向来说——大多数基础设施工具两者都能接受，而且这个工具能为任何以合法 JSON 开头的内容生成合法的 YAML。',
-            },
-            {
-                q: '我的数据会被上传到什么地方吗？',
-                a: '不会。转换在你的浏览器中运行，这一点在这里很重要，因为 Kubernetes 和 CI 配置经常包含内部服务名称。',
-            },
-        ],
-    },
-
-    'xml/to-yaml': {
-        h1: 'XML 转 YAML 工具',
-        tagline: '先经过与"XML 转 JSON"相同的 @ / #text 约定，然后再序列化为 YAML。',
-        intro: [
-            '这实际上是接连执行的两次转换，而不是一次独立的直接转换：XML 会被解析成与 /xml/to-json 相同的、带有 @ 属性 / #text / 重复标签约定的 JSON 表示形式，然后这个值会被写成 YAML 而不是 JSON。/xml/to-json 上记录的每一条规则和每一项限制在这里都同样适用——这个页面之所以存在，是因为"xml 转 yaml"是有人真正会搜索的关键词，而不是因为底层的转换有任何不同。',
-            '这个示例复用了与 /xml/to-json 相同的产品数据源，因此你可以直接对比两种输出：相同的 @sku 和 #text 键，只是写成了 YAML 映射而不是 JSON 对象。',
-        ],
-        mapping: [
-            {
-                heading: '属性和文本完全遵循 XML 转 JSON 的约定',
-                body: [
-                    '下面的 @sku: SKU-100 和 #text: \'129.90\' 与 /xml/to-json 上记录的那些带 @ 前缀的属性键和 #text 内容键完全相同，只是渲染成了 YAML 的 键: 值 语法，而不是 JSON 的 "键": "值"。YAML 一侧的加引号规则遵循 YAML 通常的规则："@sku" 因为以 @ 开头的键需要引号而被加上引号，"129.90" 被加上引号是为了让它保持为字符串，而不是被重新读取为数字。',
-                ],
-            },
-            {
-                heading: '重复的元素会变成一个 YAML 序列',
-                body: [
-                    '两个兄弟元素 <product> 会变成一个 product: 键，其中包含一个 YAML 序列（- @sku: ... / - @sku: ...）——数组这一步发生在 XML 解析期间，与 /xml/to-json 完全相同；只有最后的序列化步骤不同。',
-                ],
-            },
-            {
-                heading: '来自 XML 的数字在 YAML 中仍然是加引号的字符串',
-                body: [
-                    '上面的 129.90 会以加引号的 YAML 字符串 \'129.90\' 形式出现，而不是裸数字 129.9——因为它一开始就从来不是一个数字。XML 中的文本永远都是字符（具体原因请参见 /xml/to-json 的映射说明，了解为什么这个转换工具不会做相反的猜测），因此 YAML 这一步得到的是一个需要序列化的字符串，它会像对待任何看起来像数字的字符串一样，用同样的方式给它加上引号。',
-                ],
-            },
-        ],
-        limitations: [
-            '/xml/to-json 的每一项限制在这里都会首先适用，甚至在 YAML 介入之前：混合内容会丢失顺序，命名空间被当作字面字符串前缀处理，注释会被丢弃，每个 XML 文本值都会变成字符串，而不会被解析成数字或布尔值。',
-        ],
-        faq: [
-            {
-                q: '这与 XML 转 JSON 是不同的转换吗？',
-                a: '不是——它使用完全相同的规则解析 XML，然后把结果序列化为 YAML 而不是 JSON。每一条映射规则和限制都与 /xml/to-json 共用。',
-            },
-            {
-                q: '为什么 YAML 输出中有些键会被加上引号，比如 \'@sku\'？',
-                a: 'YAML 要求给原本会产生歧义的普通标量加上引号——以 @ 开头的键就是这样一种情况。这是 YAML 的语法要求，不是这个转换工具额外添加的东西。',
-            },
-            {
-                q: '我的 XML 会被上传到什么地方吗？',
-                a: '不会。解析步骤和 YAML 序列化都在你的浏览器中运行。',
             },
         ],
     },

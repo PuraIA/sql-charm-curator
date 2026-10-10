@@ -47,10 +47,6 @@ export const XML_TRANSLATIONS_FR: Partial<Record<XmlGuideSlug, XmlGuideTranslati
                 q: 'La minification économise-t-elle autant que le ferait déjà le gzip ?',
                 a: "Moins que ne le suggère le nombre brut d'octets, si la réponse est déjà compressée — gzip gère déjà efficacement les espaces répétés. Minifier compte le plus pour les charges utiles non compressées, comme certaines requêtes SOAP et appels de service internes.",
             },
-            {
-                q: 'Mon XML est-il envoyé quelque part ?',
-                a: "Non. La mise en forme et la minification s'exécutent toutes deux dans votre navigateur. Rien n'est téléversé, ce qui compte puisque les charges utiles XML comme l'exemple SOAP ci-dessus portent souvent des noms de services internes.",
-            },
         ],
     },
 
@@ -110,10 +106,6 @@ export const XML_TRANSLATIONS_FR: Partial<Record<XmlGuideSlug, XmlGuideTranslati
             {
                 q: "Un document peut-il avoir plus d'un élément racine ?",
                 a: "Non. Un document XML bien formé a exactement un élément contenant tout le reste. Deux éléments frères de premier niveau ont besoin d'un parent commun qui les enveloppe.",
-            },
-            {
-                q: 'Mon XML est-il téléversé pour être vérifié ?',
-                a: "Non. La validation s'exécute via le propre DOMParser de votre navigateur, localement — rien n'est envoyé nulle part.",
             },
         ],
     },

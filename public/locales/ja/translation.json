@@ -336,5 +336,14 @@
   "guideAfterFormattedLabel": "変更後（整形済み）",
   "guideSqlDialectFormattersTitle": "SQL方言別フォーマッター",
   "guideWorkedExamplesTitle": "実践例",
-  "guideWorkedExamplesIntro": "これらはいずれも、上のエディタに読み込まれているbookstoreドキュメントに対して評価されます。"
+  "guideWorkedExamplesIntro": "これらはいずれも、上のエディタに読み込まれているbookstoreドキュメントに対して評価されます。",
+  "blogNavLabel": "ブログ",
+  "blogIndexTitle": "ブログ",
+  "blogIndexSubtitle": "これらのツールを作る中で得た実践メモ：実際のクエリをテストして見つけた整形のエッジケース、データ形式変換の背後にあるトレードオフ、そして開発の記録。",
+  "blogEnglishOnlyNote": "記事は現在、英語版のみ公開しています。",
+  "blogReadArticle": "記事を読む",
+  "blogMinRead": "約 {{count}} 分で読めます",
+  "blogBackToIndex": "すべての記事",
+  "blogRelatedTools": "この記事で紹介したツール",
+  "blogMoreArticles": "その他の記事"
 }

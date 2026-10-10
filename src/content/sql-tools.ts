@@ -47,7 +47,7 @@ export interface SqlToolGuide {
     updated: string;
 }
 
-const UPDATED = '2026-09-21';
+const UPDATED = '2026-10-09';
 
 const BEFORE_QUERY =
     'select u.id, u.name, count(o.id) as orders from users u left join orders o on o.user_id = u.id group by u.id, u.name;';
@@ -137,10 +137,6 @@ export const SQL_TOOL_GUIDES: Record<SqlToolSlug, SqlToolGuide> = {
             {
                 q: 'Does it diff whole statements or individual lines?',
                 a: 'Lines, after formatting — the same unit git diff uses for code. A change inside a single line (like a renamed column) marks that whole line as changed, not just the changed portion of it.',
-            },
-            {
-                q: 'Are my queries uploaded anywhere?',
-                a: 'No. Formatting and diffing both run in your browser, which matters here since comparing two versions of a query often means comparing two versions with real table and column names in them.',
             },
         ],
         updated: UPDATED,

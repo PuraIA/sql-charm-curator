@@ -53,7 +53,7 @@ export interface XmlGuide {
     updated: string;
 }
 
-const UPDATED = '2026-09-21';
+const UPDATED = '2026-10-09';
 
 // Derived from raw, unindented XML through the site's own functions — not hand-typed
 // — so the "before" the pages show can never drift from what the live tool produces.
@@ -124,10 +124,6 @@ export const XML_GUIDES: Record<XmlGuideSlug, XmlGuide> = {
             {
                 q: 'Does minifying save as much as gzip already would?',
                 a: 'Less than the raw byte count suggests, if the response is already compressed — gzip handles repeated whitespace efficiently on its own. Minifying matters most for payloads that are not compressed, like some SOAP requests and internal service calls.',
-            },
-            {
-                q: 'Is my XML sent anywhere?',
-                a: 'No. Formatting and minifying both run in your browser. Nothing is uploaded, which matters since XML payloads like the SOAP example above often carry internal service names.',
             },
         ],
         updated: UPDATED,
@@ -201,10 +197,6 @@ export const XML_GUIDES: Record<XmlGuideSlug, XmlGuide> = {
             {
                 q: 'Can a document have more than one root element?',
                 a: 'No. A well-formed XML document has exactly one element containing everything else. Two top-level sibling elements need a common wrapping parent.',
-            },
-            {
-                q: 'Is my XML uploaded to check it?',
-                a: "No. Validation runs through your browser's own DOMParser, locally — nothing is sent anywhere.",
             },
         ],
         updated: UPDATED,

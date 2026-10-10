@@ -336,5 +336,14 @@
   "guideAfterFormattedLabel": "After, formatted",
   "guideSqlDialectFormattersTitle": "SQL dialect formatters",
   "guideWorkedExamplesTitle": "Worked examples",
-  "guideWorkedExamplesIntro": "Each of these evaluates against the bookstore document loaded in the editor above."
+  "guideWorkedExamplesIntro": "Each of these evaluates against the bookstore document loaded in the editor above.",
+  "blogNavLabel": "Blog",
+  "blogIndexTitle": "Blog",
+  "blogIndexSubtitle": "Field notes from building these tools: formatter edge cases we found by testing real queries, the trade-offs behind data-format conversion, and engineering write-ups.",
+  "blogEnglishOnlyNote": "Articles are currently available in English only.",
+  "blogReadArticle": "Read the article",
+  "blogMinRead": "{{count}} min read",
+  "blogBackToIndex": "All articles",
+  "blogRelatedTools": "Tools mentioned in this article",
+  "blogMoreArticles": "More articles"
 }

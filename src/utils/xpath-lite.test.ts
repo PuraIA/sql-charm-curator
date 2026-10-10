@@ -38,6 +38,15 @@ describe('evaluateXPath', () => {
         ]);
     });
 
+    it('regression: a leading / is the document node, so the first step matches the root element itself', () => {
+        expect(nodes('/bookstore')).toHaveLength(1);
+        expect(nodes('/book')).toHaveLength(0);
+    });
+
+    it('a relative path from the document finds nothing below the root, as in real XPath', () => {
+        expect(nodes('book')).toHaveLength(0);
+    });
+
     it('//title finds elements at any depth, not just direct children', () => {
         expect(nodes('//title')).toHaveLength(3);
     });

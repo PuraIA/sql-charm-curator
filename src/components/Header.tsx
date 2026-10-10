@@ -53,6 +53,15 @@ export const Header = () => {
                         >
                             <span className="text-sm font-medium">XML</span>
                         </Link>
+                        <Link
+                            to="/blog"
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${location.pathname.startsWith('/blog')
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'bg-secondary/50 border-border/50 hover:bg-secondary hover:border-border'
+                                }`}
+                        >
+                            <span className="text-sm font-medium">{t('blogNavLabel')}</span>
+                        </Link>
                     </nav>
                 </div>
 

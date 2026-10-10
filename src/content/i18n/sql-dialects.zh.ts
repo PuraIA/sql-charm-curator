@@ -78,10 +78,6 @@ export const DIALECT_TRANSLATIONS_ZH: Partial<Record<DialectSlug, DialectGuideTr
                 q: '它能格式化 PL/pgSQL 函数体吗？',
                 a: '从 SQL 解析器的角度看，$$ 分隔符之间的函数体是一个字符串字面量，因此会原样保留而不会重新缩进。要格式化函数体本身，请只粘贴分隔符之间的那部分代码。',
             },
-            {
-                q: '我的查询会被发送到什么地方吗？',
-                a: '不会。格式化工具是一个在你浏览器中运行的 JavaScript 库。没有任何内容会被上传，因此你可以放心粘贴包含生产环境表名和列名的查询。',
-            },
         ],
     },
 
@@ -162,10 +158,6 @@ export const DIALECT_TRANSLATIONS_ZH: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: '为什么我的 -- 注释没有被当作注释处理？',
                 a: 'MySQL 要求双短横线后必须有一个空格字符。--note 会被解析为一个表达式；-- note 才是注释。这是 MySQL 本身的规则，不是格式化工具的行为。',
-            },
-            {
-                q: '我的 SQL 会被发送到服务器吗？',
-                a: '不会。格式化过程发生在你的浏览器中，任何内容都不会离开你的电脑，因此你可以放心粘贴包含真实架构名称的查询。',
             },
         ],
     },
@@ -250,10 +242,6 @@ export const DIALECT_TRANSLATIONS_ZH: Partial<Record<DialectSlug, DialectGuideTr
                 q: '它能格式化存储过程内部的代码吗？',
                 a: '过程内部的语句会作为普通 T-SQL 被格式化。IF 和 WHILE 之类的流程控制结构能被识别，但结果不如简单的 SELECT 那样整洁——过程式代码是所有 SQL 格式化工具的薄弱环节。',
             },
-            {
-                q: '我的 T-SQL 会被发送到服务器吗？',
-                a: '不会。所有处理都在你的浏览器中进行，因此包含内部架构名称或对象名称的查询永远不会离开你的电脑。',
-            },
         ],
     },
 
@@ -333,8 +321,8 @@ export const DIALECT_TRANSLATIONS_ZH: Partial<Record<DialectSlug, DialectGuideTr
                 a: '不需要。/ 是 SQL*Plus 用来执行前面代码块的指令，它不属于 PL/SQL 本身。粘贴语句时请不要包含它。',
             },
             {
-                q: '我的 SQL 会被上传到什么地方吗？',
-                a: '不会。格式化完全在你的浏览器中进行——这一点在这里尤为重要，因为 Oracle 查询经常嵌入架构名称和业务逻辑。',
+                q: '为什么我名为 name 的列变成了 NAME？',
+                a: 'PL/SQL 语法把 NAME 当作关键字，因此即使标识符大小写设置为 Preserve，关键字大小写规则仍会作用于它。在 Oracle 中这没有影响——未加引号的标识符不区分大小写，name 和 NAME 是同一列。不要用加引号的方式来修复：双引号括起来的 "name" 区分大小写，指向的是另一列。如果你希望查询完全保持输入时的样子，请把关键字大小写设置为 Preserve。',
             },
         ],
     },
@@ -412,10 +400,6 @@ export const DIALECT_TRANSLATIONS_ZH: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'STRUCT 和 ARRAY 表达式会被处理吗？',
                 a: '会。嵌套的 STRUCT 构造函数和 ARRAY_AGG 调用会被解析为普通表达式，UNNEST 也会被识别为 FROM 子句的一部分。',
-            },
-            {
-                q: '我的查询会被发送给 Google 或某个服务器吗？',
-                a: '不会。本页面在你的浏览器中运行格式化工具。查询不会被发送到任何地方，甚至也不会发送给 BigQuery。',
             },
         ],
     },

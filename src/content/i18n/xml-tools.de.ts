@@ -79,10 +79,6 @@ export const XML_TOOL_TRANSLATIONS_DE: Partial<Record<XmlToolSlug, XmlToolGuideT
                 q: 'Sind Positionen 0-indiziert oder 1-indiziert?',
                 a: '1-indiziert, wie echtes XPath: [1] ist der erste Treffer, nicht der zweite. Das ist eine häufige Quelle von Off-by-one-Fehlern für alle, die an 0-indizierte Sprachen gewöhnt sind.',
             },
-            {
-                q: 'Wird mein XML irgendwohin hochgeladen?',
-                a: 'Nein. Sowohl das Parsen als auch die Auswertung laufen in deinem Browser.',
-            },
         ],
     },
 };

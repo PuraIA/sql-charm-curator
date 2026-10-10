@@ -69,7 +69,7 @@ export interface JsonGuide {
     updated: string;
 }
 
-const UPDATED = '2026-09-21';
+const UPDATED = '2026-10-09';
 
 /** products.length === 2 keeps the arrays and byte counts on the page honest and small. */
 const CATALOG_PRETTY = `{
@@ -226,10 +226,6 @@ export const JSON_GUIDES: Record<JsonGuideSlug, JsonGuide> = {
                 q: 'Will this help if my API responses are already gzipped?',
                 a: 'Less than you might expect. Gzip already compresses repeated whitespace efficiently, so minifying before compression yields a smaller extra saving than the raw byte count above suggests. It matters more for uncompressed payloads.',
             },
-            {
-                q: 'Is my JSON uploaded anywhere?',
-                a: 'No. JSON.parse() and JSON.stringify() run in your browser. Nothing is sent to a server, which matters if the payload contains real customer or account data.',
-            },
         ],
         updated: UPDATED,
     },
@@ -311,10 +307,6 @@ export const JSON_GUIDES: Record<JsonGuideSlug, JsonGuide> = {
                 q: 'Can I validate JSON with comments in it (JSONC)?',
                 a: 'Not with this tool — it checks against standard JSON (RFC 8259), which has no comment syntax. Strip the comments first if you are working with a JSONC config file.',
             },
-            {
-                q: 'Is my JSON sent anywhere to be checked?',
-                a: 'No. Validation runs via your browser\'s own JSON.parse(), locally. Nothing is uploaded.',
-            },
         ],
         updated: UPDATED,
     },
@@ -379,10 +371,6 @@ export const JSON_GUIDES: Record<JsonGuideSlug, JsonGuide> = {
             {
                 q: 'Can I set my own root interface name?',
                 a: 'The generated root interface is named Root by default when you edit the JSON in the tool. This page names it after what the sample represents (ApiUser) purely for readability in the example.',
-            },
-            {
-                q: 'Is my JSON sent to a server to generate the types?',
-                a: 'No. The generator runs in your browser and never uploads what you paste, which matters since a real API response is exactly what you would paste here.',
             },
         ],
         updated: UPDATED,

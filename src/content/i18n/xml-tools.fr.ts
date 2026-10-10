@@ -79,10 +79,6 @@ export const XML_TOOL_TRANSLATIONS_FR: Partial<Record<XmlToolSlug, XmlToolGuideT
                 q: 'Les positions sont-elles indexées à partir de 0 ou de 1 ?',
                 a: "Indexées à partir de 1, comme le vrai XPath : [1] est la première correspondance, pas la deuxième. C'est une source fréquente d'erreurs de décalage pour quiconque est habitué aux langages indexés à partir de 0.",
             },
-            {
-                q: 'Mon XML est-il envoyé quelque part ?',
-                a: "Non. L'analyse et l'évaluation s'exécutent toutes deux dans votre navigateur.",
-            },
         ],
     },
 };

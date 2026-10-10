@@ -2,8 +2,16 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+/**
+ * When the policy text last changed. A fixed date, not `new Date()`: rendering "today"
+ * claimed the policy was revised on every visit, and differed between the prerendered
+ * HTML and the client. Update it whenever the privacy* strings change.
+ */
+const POLICY_LAST_UPDATED = '2026-09-22';
+
 export default function Privacy() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     return (
         <div className="min-h-screen bg-background">
@@ -27,7 +35,15 @@ export default function Privacy() {
                         </h1>
                     </div>
                     <p className="text-muted-foreground text-sm">
-                        {t('privacyPolicyLastUpdated')}: {new Date().toLocaleDateString()}
+                        {t('privacyPolicyLastUpdated')}:{' '}
+                        <time dateTime={POLICY_LAST_UPDATED}>
+                            {new Date(`${POLICY_LAST_UPDATED}T00:00:00Z`).toLocaleDateString(i18n.language, {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                timeZone: 'UTC',
+                            })}
+                        </time>
                     </p>
                 </header>
 

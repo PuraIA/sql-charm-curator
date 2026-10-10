@@ -26,7 +26,7 @@ const SEO_END = '<!--seo:end-->';
 const APP_MARKER = '<!--app-html-->';
 
 async function main() {
-    const { render, PRERENDER_ROUTES, SITE_URL } = await import(pathToFileURL(ssrEntry).href);
+    const { render, PRERENDER_ROUTES, SITE_URL, lastModifiedFor } = await import(pathToFileURL(ssrEntry).href);
 
     const template = await fs.readFile(path.join(distDir, 'index.html'), 'utf8');
     assertTemplateMarkers(template);
@@ -57,7 +57,7 @@ async function main() {
     );
     report('404', '404.html', '', notFound.html);
 
-    await writeSitemap(distDir, PRERENDER_ROUTES, SITE_URL);
+    await writeSitemap(distDir, PRERENDER_ROUTES, SITE_URL, lastModifiedFor);
 }
 
 function assertTemplateMarkers(template) {
@@ -123,22 +123,25 @@ function escapeHtml(value) {
         .replace(/"/g, '&quot;');
 }
 
-async function writeSitemap(outDir, routes, siteUrl) {
-    const today = new Date().toISOString().slice(0, 10);
-    const toolPriority = { '/': '1.0', '/sql': '0.9', '/json': '0.9', '/xml': '0.9' };
-    // Dialect/guide pages rank between the tool hubs and the boilerplate pages.
-    const isGuidePage = route => /^\/(sql|json|xml)\//.test(route);
-    const priorityFor = route => toolPriority[route] ?? (isGuidePage(route) ? '0.8' : '0.6');
+async function writeSitemap(outDir, routes, siteUrl, lastModifiedFor) {
+    const toolPriority = { '/': '1.0', '/sql': '0.9', '/json': '0.9', '/xml': '0.9', '/blog': '0.7' };
+    // Dialect/guide pages and articles rank between the hubs and the boilerplate pages.
+    const isContentPage = route => /^\/(sql|json|xml|blog)\//.test(route);
+    const priorityFor = route => toolPriority[route] ?? (isContentPage(route) ? '0.8' : '0.6');
     const changefreqFor = route => (toolPriority[route] ? 'weekly' : 'monthly');
 
-    const urls = routes.map(route => [
-        '  <url>',
-        `    <loc>${siteUrl}${route}</loc>`,
-        `    <lastmod>${today}</lastmod>`,
-        `    <changefreq>${changefreqFor(route)}</changefreq>`,
-        `    <priority>${priorityFor(route)}</priority>`,
-        '  </url>',
-    ].join('\n'));
+    const urls = routes.map(route => {
+        // Only a real content date — never the build date. See lastModifiedFor().
+        const lastmod = lastModifiedFor(route);
+        return [
+            '  <url>',
+            `    <loc>${siteUrl}${route}</loc>`,
+            ...(lastmod ? [`    <lastmod>${lastmod}</lastmod>`] : []),
+            `    <changefreq>${changefreqFor(route)}</changefreq>`,
+            `    <priority>${priorityFor(route)}</priority>`,
+            '  </url>',
+        ].join('\n');
+    });
 
     const xml = [
         '<?xml version="1.0" encoding="UTF-8"?>',

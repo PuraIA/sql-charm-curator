@@ -47,10 +47,6 @@ export const JSON_TRANSLATIONS_PT: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: 'Isso vai ajudar se minhas respostas de API já estiverem em gzip?',
                 a: 'Menos do que você imagina. O gzip já comprime espaço em branco repetido de forma eficiente, então minificar antes da compressão rende uma economia extra menor do que a contagem de bytes acima sugere. Importa mais para payloads não comprimidos.',
             },
-            {
-                q: 'Meu JSON é enviado para algum lugar?',
-                a: 'Não. JSON.parse() e JSON.stringify() rodam no seu navegador. Nada é enviado a um servidor, o que importa se o payload contém dados reais de clientes ou de conta.',
-            },
         ],
     },
 
@@ -115,10 +111,6 @@ export const JSON_TRANSLATIONS_PT: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: 'Posso validar JSON com comentários dentro (JSONC)?',
                 a: 'Não com esta ferramenta — ela verifica contra o JSON padrão (RFC 8259), que não tem sintaxe de comentário. Remova os comentários primeiro se você estiver trabalhando com um arquivo de configuração JSONC.',
             },
-            {
-                q: 'Meu JSON é enviado para algum lugar para ser verificado?',
-                a: 'Não. A validação roda através do próprio JSON.parse() do seu navegador, localmente. Nada é enviado.',
-            },
         ],
     },
 
@@ -171,10 +163,6 @@ export const JSON_TRANSLATIONS_PT: Partial<Record<JsonGuideSlug, JsonGuideTransl
             {
                 q: 'Posso definir meu próprio nome de interface raiz?',
                 a: 'A interface raiz gerada se chama Root por padrão quando você edita o JSON na ferramenta. Esta página a nomeia de acordo com o que o exemplo representa (ApiUser) puramente para facilitar a leitura no exemplo.',
-            },
-            {
-                q: 'Meu JSON é enviado a um servidor para gerar os tipos?',
-                a: 'Não. O gerador roda no seu navegador e nunca envia o que você cola, o que importa já que uma resposta real de API é exatamente o que você colaria aqui.',
             },
         ],
     },

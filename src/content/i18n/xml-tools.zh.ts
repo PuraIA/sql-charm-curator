@@ -79,10 +79,6 @@ export const XML_TOOL_TRANSLATIONS_ZH: Partial<Record<XmlToolSlug, XmlToolGuideT
                 q: '位置是从 0 开始计数还是从 1 开始计数？',
                 a: '从 1 开始计数，与真正的 XPath 一致：[1] 是第一个匹配结果，不是第二个。对于习惯了从 0 开始计数的语言的人来说，这是一个常见的差一错误来源。',
             },
-            {
-                q: '我的 XML 会被上传到什么地方吗？',
-                a: '不会。解析和求值都在你的浏览器中运行。',
-            },
         ],
     },
 };

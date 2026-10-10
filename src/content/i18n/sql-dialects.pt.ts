@@ -82,10 +82,6 @@ export const DIALECT_TRANSLATIONS_PT: Partial<Record<DialectSlug, DialectGuideTr
                 q: 'Consegue formatar o corpo de uma função PL/pgSQL?',
                 a: 'O corpo entre delimitadores $$ é um literal de string do ponto de vista do parser de SQL, então é preservado literalmente em vez de reindentado. Para formatar o corpo em si, cole apenas o bloco entre os delimitadores.',
             },
-            {
-                q: 'Minhas queries são enviadas para algum lugar?',
-                a: 'Não. O formatador é uma biblioteca JavaScript rodando no seu navegador. Nada é enviado, o que é o que torna seguro colar uma query que contenha nomes de tabelas e colunas de produção.',
-            },
         ],
     },
 
@@ -166,10 +162,6 @@ export const DIALECT_TRANSLATIONS_PT: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'Por que meu comentário -- não está sendo tratado como comentário?',
                 a: 'O MySQL exige um caractere de espaço depois do traço duplo. --nota é interpretado como uma expressão; -- nota é um comentário. Essa é uma regra do MySQL, não um comportamento do formatador.',
-            },
-            {
-                q: 'Meu SQL é enviado para um servidor?',
-                a: 'Não. A formatação acontece no seu navegador e nada sai da sua máquina, o que torna seguro colar queries com nomes reais de schema.',
             },
         ],
     },
@@ -254,10 +246,6 @@ export const DIALECT_TRANSLATIONS_PT: Partial<Record<DialectSlug, DialectGuideTr
                 q: 'Formata o corpo de stored procedures?',
                 a: 'As instruções dentro de um procedimento são formatadas como T-SQL comum. Construções de controle de fluxo como IF e WHILE são reconhecidas, mas o resultado é menos refinado do que para um SELECT simples — código procedural é onde qualquer formatador de SQL é mais fraco.',
             },
-            {
-                q: 'Meu T-SQL é enviado a um servidor?',
-                a: 'Não. Tudo roda no seu navegador, então queries com nomes internos de schema ou objeto nunca saem da sua máquina.',
-            },
         ],
     },
 
@@ -337,8 +325,8 @@ export const DIALECT_TRANSLATIONS_PT: Partial<Record<DialectSlug, DialectGuideTr
                 a: 'Não. A / é uma instrução do SQL*Plus para executar o bloco anterior, não faz parte do PL/SQL. Cole a instrução sem ela.',
             },
             {
-                q: 'Meu SQL é enviado para algum lugar?',
-                a: 'Não. A formatação roda inteiramente no seu navegador, o que importa aqui porque queries do Oracle costumam embutir nomes de schema e lógica de negócio.',
+                q: 'Por que minha coluna chamada name saiu como NAME?',
+                a: 'A gramática PL/SQL trata NAME como palavra-chave, então a caixa das palavras-chave é aplicada a ela mesmo com a caixa dos identificadores em Preserve. No Oracle isso é inofensivo — identificadores sem aspas não diferenciam maiúsculas de minúsculas, então name e NAME são a mesma coluna. Não corrija colocando aspas: "name" entre aspas duplas diferencia maiúsculas e aponta para outra coluna. Se quiser a consulta exatamente como digitou, defina a caixa das palavras-chave como Preserve.',
             },
         ],
     },
@@ -416,10 +404,6 @@ export const DIALECT_TRANSLATIONS_PT: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'Expressões STRUCT e ARRAY são tratadas?',
                 a: 'Sim. Construtores STRUCT aninhados e chamadas ARRAY_AGG são interpretados como expressões comuns, e UNNEST é reconhecido como parte da cláusula FROM.',
-            },
-            {
-                q: 'Minha query é enviada ao Google ou a algum servidor?',
-                a: 'Não. Esta página roda o formatador no seu navegador. A query não é enviada a lugar nenhum, nem mesmo ao BigQuery.',
             },
         ],
     },
