@@ -78,10 +78,6 @@ export const DIALECT_TRANSLATIONS_FR: Partial<Record<DialectSlug, DialectGuideTr
                 q: "Peut-il formater le corps d'une fonction PL/pgSQL ?",
                 a: "Le corps entre délimiteurs $$ est un littéral de chaîne du point de vue de l'analyseur SQL, il est donc préservé tel quel plutôt que réindenté. Pour formater le corps lui-même, collez uniquement le bloc entre les délimiteurs.",
             },
-            {
-                q: 'Mes requêtes sont-elles envoyées quelque part ?',
-                a: "Non. Le formateur est une bibliothèque JavaScript qui s'exécute dans votre navigateur. Rien n'est téléversé, ce qui permet de coller sans risque une requête contenant des noms de tables et de colonnes de production.",
-            },
         ],
     },
 
@@ -162,10 +158,6 @@ export const DIALECT_TRANSLATIONS_FR: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'Pourquoi mon commentaire -- n\'est-il pas traité comme un commentaire ?',
                 a: 'MySQL exige un caractère espace après le double tiret. --note est interprété comme une expression ; -- note est un commentaire. C\'est une règle de MySQL, pas un comportement du formateur.',
-            },
-            {
-                q: 'Mon SQL est-il envoyé à un serveur ?',
-                a: "Non. Le formatage se produit dans votre navigateur et rien ne quitte votre machine, ce qui permet de coller sans risque des requêtes contenant de vrais noms de schéma.",
             },
         ],
     },
@@ -250,10 +242,6 @@ export const DIALECT_TRANSLATIONS_FR: Partial<Record<DialectSlug, DialectGuideTr
                 q: 'Formate-t-il le corps des procédures stockées ?',
                 a: "Les instructions à l'intérieur d'une procédure sont formatées comme du T-SQL ordinaire. Les constructions de contrôle de flux comme IF et WHILE sont reconnues, mais le résultat est moins soigné que pour un simple SELECT — le code procédural est le point faible de tout formateur SQL.",
             },
-            {
-                q: 'Mon T-SQL est-il envoyé à un serveur ?',
-                a: "Non. Tout s'exécute dans votre navigateur, donc les requêtes contenant des noms internes de schéma ou d'objet ne quittent jamais votre machine.",
-            },
         ],
     },
 
@@ -333,8 +321,8 @@ export const DIALECT_TRANSLATIONS_FR: Partial<Record<DialectSlug, DialectGuideTr
                 a: "Non. Le / est une instruction SQL*Plus pour exécuter le bloc précédent, cela ne fait pas partie du PL/SQL. Collez l'instruction sans elle.",
             },
             {
-                q: 'Mon SQL est-il téléversé quelque part ?',
-                a: "Non. Le formatage s'exécute entièrement dans votre navigateur, ce qui compte ici car les requêtes Oracle intègrent souvent des noms de schéma et de la logique métier.",
+                q: 'Pourquoi ma colonne nommée name est-elle devenue NAME ?',
+                a: 'La grammaire PL/SQL traite NAME comme un mot-clé, donc la casse des mots-clés lui est appliquée même avec la casse des identifiants sur Preserve. Dans Oracle c\'est sans conséquence — les identifiants non cités sont insensibles à la casse, donc name et NAME désignent la même colonne. Ne corrigez pas en ajoutant des guillemets : "name" entre guillemets doubles est sensible à la casse et désigne une autre colonne. Si vous voulez la requête exactement telle que tapée, réglez la casse des mots-clés sur Preserve.',
             },
         ],
     },
@@ -412,10 +400,6 @@ export const DIALECT_TRANSLATIONS_FR: Partial<Record<DialectSlug, DialectGuideTr
             {
                 q: 'Les expressions STRUCT et ARRAY sont-elles traitées ?',
                 a: "Oui. Les constructeurs STRUCT imbriqués et les appels ARRAY_AGG sont interprétés comme des expressions ordinaires, et UNNEST est reconnu comme faisant partie de la clause FROM.",
-            },
-            {
-                q: 'Ma requête est-elle envoyée à Google ou à un serveur ?',
-                a: "Non. Cette page exécute le formateur dans votre navigateur. La requête n'est envoyée nulle part, pas même à BigQuery.",
             },
         ],
     },

@@ -47,10 +47,6 @@ export const SQL_TOOL_TRANSLATIONS_FR: Partial<Record<SqlToolSlug, SqlToolGuideT
                 q: 'Compare-t-il des instructions entières ou des lignes individuelles ?',
                 a: "Des lignes, après formatage — la même unité qu'utilise git diff pour le code. Un changement à l'intérieur d'une seule ligne (comme une colonne renommée) marque toute cette ligne comme modifiée, pas seulement la partie changée.",
             },
-            {
-                q: 'Mes requêtes sont-elles envoyées quelque part ?',
-                a: "Non. Le formatage et le diff s'exécutent tous deux dans votre navigateur, ce qui compte ici puisque comparer deux versions d'une requête signifie souvent comparer deux versions contenant de vrais noms de tables et de colonnes.",
-            },
         ],
     },
 };

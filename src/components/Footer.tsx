@@ -63,6 +63,12 @@ export const Footer = () => {
                                 </a>
                             </li>
                             <li>
+                                <Link to="/blog" className="hover:text-primary flex items-center gap-2">
+                                    <ExternalLink className="w-4 h-4" />
+                                    {t('blogNavLabel')}
+                                </Link>
+                            </li>
+                            <li>
                                 <Link to="/about" className="hover:text-primary flex items-center gap-2">
                                     <ExternalLink className="w-4 h-4" />
                                     {t('about')}

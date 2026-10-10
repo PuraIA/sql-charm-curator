@@ -47,10 +47,6 @@ export const JSON_TRANSLATIONS_ZH: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: '如果我的 API 响应已经是 gzip 压缩的，这还有帮助吗？',
                 a: '帮助比你预期的要小。Gzip 已经能高效压缩重复的空白，因此在压缩之前先做 JSON 压缩带来的额外节省，会比上面显示的字节数所暗示的要小。对于未压缩的负载，它更重要。',
             },
-            {
-                q: '我的 JSON 会被上传到什么地方吗？',
-                a: '不会。JSON.parse() 和 JSON.stringify() 都在你的浏览器中运行。没有任何内容会被发送到服务器，这在负载中包含真实客户或账户数据时尤为重要。',
-            },
         ],
     },
 
@@ -115,10 +111,6 @@ export const JSON_TRANSLATIONS_ZH: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: '我能校验包含注释的 JSON（JSONC）吗？',
                 a: '用这个工具不行——它是针对没有注释语法的标准 JSON（RFC 8259）进行检查的。如果你处理的是 JSONC 配置文件，请先去掉注释。',
             },
-            {
-                q: '我的 JSON 会被发送到某处进行检查吗？',
-                a: '不会。校验是通过浏览器自身的 JSON.parse() 在本地运行的。没有任何内容会被上传。',
-            },
         ],
     },
 
@@ -171,10 +163,6 @@ export const JSON_TRANSLATIONS_ZH: Partial<Record<JsonGuideSlug, JsonGuideTransl
             {
                 q: '我能设置自己的根接口名称吗？',
                 a: '当你在工具中编辑 JSON 时，生成的根接口默认命名为 Root。本页面之所以将其命名为示例所代表的内容（ApiUser），纯粹是为了让示例更易读。',
-            },
-            {
-                q: '我的 JSON 会被发送到服务器来生成类型吗？',
-                a: '不会。生成器在你的浏览器中运行，从不上传你粘贴的内容——这一点很重要，因为你在这里粘贴的很可能正是一个真实的 API 响应。',
             },
         ],
     },

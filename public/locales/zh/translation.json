@@ -336,5 +336,14 @@
   "guideAfterFormattedLabel": "格式化后",
   "guideSqlDialectFormattersTitle": "SQL 方言格式化工具",
   "guideWorkedExamplesTitle": "实践示例",
-  "guideWorkedExamplesIntro": "以下每一项都是针对上方编辑器中加载的 bookstore 文档进行求值的。"
+  "guideWorkedExamplesIntro": "以下每一项都是针对上方编辑器中加载的 bookstore 文档进行求值的。",
+  "blogNavLabel": "博客",
+  "blogIndexTitle": "博客",
+  "blogIndexSubtitle": "构建这些工具过程中的实践笔记：通过测试真实查询发现的格式化边界情况、数据格式转换背后的取舍，以及工程实现记录。",
+  "blogEnglishOnlyNote": "目前文章仅提供英文版本。",
+  "blogReadArticle": "阅读文章",
+  "blogMinRead": "阅读约 {{count}} 分钟",
+  "blogBackToIndex": "全部文章",
+  "blogRelatedTools": "本文提到的工具",
+  "blogMoreArticles": "更多文章"
 }

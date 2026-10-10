@@ -1,6 +1,6 @@
 import type { ConverterGuideTranslation } from '../converter-guides';
 
-/** Traductions françaises pour /json/to-xml, /xml/to-json, /json/to-yaml, /xml/to-yaml. */
+/** Traductions françaises pour /json/to-xml, /xml/to-json, /json/to-yaml. */
 export const CONVERTER_TRANSLATIONS_FR: Partial<Record<string, ConverterGuideTranslation>> = {
     'json/to-xml': {
         h1: 'Convertisseur JSON vers XML',
@@ -51,10 +51,6 @@ export const CONVERTER_TRANSLATIONS_FR: Partial<Record<string, ConverterGuideTra
             {
                 q: 'La conversion est-elle réversible ?',
                 a: "Pour les formes que cette convention vise — objets, attributs, tableaux d'une forme cohérente — oui : reconvertir le résultat avec XML vers JSON reproduit le même JSON, vérifié par les propres tests de ce site. Le contenu mixte texte-et-éléments est le seul cas qui ne l'est pas : voir les propres limites de /xml/to-json pour la raison.",
-            },
-            {
-                q: 'Mon JSON est-il envoyé quelque part ?',
-                a: "Non. La conversion s'exécute dans votre navigateur ; rien n'est envoyé à un serveur.",
             },
         ],
     },
@@ -116,10 +112,6 @@ export const CONVERTER_TRANSLATIONS_FR: Partial<Record<string, ConverterGuideTra
                 q: 'Gère-t-il les sections CDATA ?',
                 a: "Oui — le contenu à l'intérieur de <![CDATA[ ... ]]> est pris tel quel comme texte, sans le réanalyser comme balisage, exactement comme un nœud texte normal.",
             },
-            {
-                q: 'Mon XML est-il envoyé quelque part ?',
-                a: "Non. L'analyse et la conversion s'exécutent toutes deux dans votre navigateur en utilisant le propre analyseur XML de ce site, pas un appel serveur.",
-            },
         ],
     },
 
@@ -149,6 +141,13 @@ export const CONVERTER_TRANSLATIONS_FR: Partial<Record<string, ConverterGuideTra
                     "Une chaîne JSON contenant \\n est écrite en utilisant le style littéral de bloc | de YAML — le texte sur ses propres lignes indentées — plutôt que comme une seule ligne citée avec un antislash-n littéral dedans. Elle se lit comme le texte original apparaît réellement, ce qui compte pour tout ce qui ressemble à une description multiligne ou une commande shell intégrée dans une configuration CI.",
                 ],
             },
+            {
+                heading: 'Les chaînes qui ressemblent à autre chose sont toujours citées',
+                body: [
+                    'YAML 1.1, que de nombreux analyseurs implémentent encore, considère comme spéciaux davantage de mots non cités que JSON : yes, no, on et off y sont des booléens, un zéro initial comme dans 0777 peut être lu comme un nombre octal, 2026-10-09 peut devenir une date et ~ signifie null. L\'exemple classique est le code pays de la Norvège : country: NO est lu par ces analyseurs comme country: false.',
+                    'Le convertisseur cite donc toute chaîne JSON qu\'un analyseur YAML pourrait lire comme un autre type : \'NO\', \'yes\', \'on\', \'01310\', \'0777\', \'2026-10-09\' et \'~\' sortent tous entre apostrophes et reviennent sous forme des mêmes chaînes. Ces guillemets paraissent superflus à un humain ; ce sont eux qui empêchent un code postal de devenir un nombre dans le pipeline de quelqu\'un d\'autre.',
+                ],
+            },
         ],
         limitations: [
             "Aucune spécifique à cette direction : chaque valeur JSON (objet, tableau, chaîne, nombre, booléen, null) a un équivalent YAML direct, donc rien ici n'est une supposition comme le sont un attribut ou un nom de balise répété du côté XML. La seule chose à savoir est générale à YAML, pas à ce convertisseur : un document YAML peut exprimer des choses que JSON ne peut pas (ancres et alias pour des structures répétées, plusieurs documents dans un seul fichier, commentaires) — convertir du JSON en YAML ne produira jamais cela, puisque JSON n'a rien dont cela pourrait provenir.",
@@ -165,56 +164,6 @@ export const CONVERTER_TRANSLATIONS_FR: Partial<Record<string, ConverterGuideTra
             {
                 q: 'Puis-je convertir un manifeste Kubernetes ou un fichier docker-compose de cette façon ?',
                 a: "Oui, pour le sens coller du JSON et obtenir du YAML en sortie — la plupart des outils d'infrastructure acceptent les deux, et cela produit du YAML valide pour tout ce qui a commencé comme du JSON valide.",
-            },
-            {
-                q: 'Mes données sont-elles envoyées quelque part ?',
-                a: "Non. La conversion s'exécute dans votre navigateur, ce qui compte ici puisque les configurations Kubernetes et CI contiennent souvent des noms de services internes.",
-            },
-        ],
-    },
-
-    'xml/to-yaml': {
-        h1: 'Convertisseur XML vers YAML',
-        tagline: 'Passe par la même convention @ / #text que XML vers JSON, puis sérialise en YAML.',
-        intro: [
-            "Ce sont deux conversions exécutées l'une après l'autre, pas une conversion directe séparée : le XML est analysé dans la même représentation JSON attribut-@ / #text / balise-répétée que produit /xml/to-json, et cette valeur est ensuite écrite en YAML plutôt qu'en JSON. Chaque règle et chaque limite documentée sur /xml/to-json s'applique ici de façon identique — cette page existe parce que « xml vers yaml » est une recherche que quelqu'un tape réellement, pas parce que la conversion sous-jacente est différente en quoi que ce soit.",
-            "L'exemple réutilise le même flux de produits que /xml/to-json, vous pouvez donc comparer les deux sorties directement : mêmes clés @sku et #text, juste écrites comme des mappings YAML plutôt que des objets JSON.",
-        ],
-        mapping: [
-            {
-                heading: 'Les attributs et le texte suivent exactement la convention XML vers JSON',
-                body: [
-                    "@sku: SKU-100 et #text: '129.90' ci-dessous sont les mêmes clés d'attribut préfixé par @ et de contenu #text documentées sur /xml/to-json, juste rendues dans la syntaxe clé : valeur de YAML plutôt que \"clé\": \"valeur\" de JSON. La mise entre guillemets côté YAML suit la règle YAML habituelle : '@sku' est cité car une clé commençant par @ en a besoin, et '129.90' est cité pour qu'il reste une chaîne plutôt que d'être relu comme un nombre.",
-                ],
-            },
-            {
-                heading: 'Les éléments répétés deviennent une séquence YAML',
-                body: [
-                    "Deux éléments frères <product> deviennent une clé product: contenant une séquence YAML (- @sku: ... / - @sku: ...) — l'étape de tableau se produit pendant l'analyse XML, exactement comme sur /xml/to-json ; seule l'étape finale de sérialisation diffère.",
-                ],
-            },
-            {
-                heading: 'Les nombres provenant du XML restent des chaînes citées dans le YAML',
-                body: [
-                    "Le 129.90 ci-dessus ressort comme la chaîne YAML citée '129.90', pas le nombre nu 129,9 — car il n'a jamais été un nombre au départ. Le texte XML est toujours des caractères (voir le mappage de /xml/to-json pour la raison pour laquelle ce convertisseur ne devine pas le contraire), donc l'étape YAML a une chaîne à sérialiser, et la cite de la même façon qu'elle citerait toute chaîne qui se trouve ressembler à un nombre.",
-                ],
-            },
-        ],
-        limitations: [
-            "Chaque limite de /xml/to-json s'applique ici en premier, avant même que YAML n'entre en jeu : le contenu mixte perd l'ordre, les espaces de noms sont traités comme des préfixes de chaîne littéraux, les commentaires sont abandonnés, et chaque valeur texte XML devient une chaîne plutôt que d'être analysée comme un nombre ou un booléen.",
-        ],
-        faq: [
-            {
-                q: "S'agit-il d'une conversion différente de XML vers JSON ?",
-                a: "Non — elle analyse le XML en utilisant exactement les mêmes règles, puis sérialise le résultat en YAML plutôt qu'en JSON. Chaque règle de mappage et chaque limite est partagée avec /xml/to-json.",
-            },
-            {
-                q: "Pourquoi certaines clés sont-elles citées dans la sortie YAML, comme '@sku' ?",
-                a: "YAML exige de citer un scalaire simple qui serait autrement ambigu — une clé commençant par @ en est un exemple. C'est une exigence de syntaxe YAML, pas quelque chose que ce convertisseur ajoute en plus.",
-            },
-            {
-                q: 'Mon XML est-il envoyé quelque part ?',
-                a: "Non. L'étape d'analyse et la sérialisation YAML s'exécutent toutes deux dans votre navigateur.",
             },
         ],
     },

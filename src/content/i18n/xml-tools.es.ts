@@ -79,10 +79,6 @@ export const XML_TOOL_TRANSLATIONS_ES: Partial<Record<XmlToolSlug, XmlToolGuideT
                 q: '¿Las posiciones empiezan en 0 o en 1?',
                 a: 'Empiezan en 1, igual que el XPath real: [1] es la primera coincidencia, no la segunda. Esta es una fuente común de errores de desfase para cualquiera acostumbrado a lenguajes que empiezan en 0.',
             },
-            {
-                q: '¿Se sube mi XML a algún lugar?',
-                a: 'No. Tanto el análisis como la evaluación se ejecutan en tu navegador.',
-            },
         ],
     },
 };

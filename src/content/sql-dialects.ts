@@ -69,7 +69,7 @@ export interface DialectGuide {
     updated: string;
 }
 
-const UPDATED = '2026-09-21';
+const UPDATED = '2026-10-09';
 
 export const DIALECT_GUIDES: Record<DialectSlug, DialectGuide> = {
     // ---------------------------------------------------------------- PostgreSQL
@@ -210,10 +210,6 @@ RETURNING
                 q: 'Can it format the body of a PL/pgSQL function?',
                 a: 'The body between $$ delimiters is a string literal as far as the SQL parser is concerned, so it is preserved verbatim rather than reindented. To format the body itself, paste just the block between the delimiters.',
             },
-            {
-                q: 'Are my queries sent anywhere?',
-                a: 'No. The formatter is a JavaScript library running in your browser. Nothing is uploaded, which is what makes it safe to paste a query that contains production table and column names.',
-            },
         ],
         updated: UPDATED,
     },
@@ -339,10 +335,6 @@ ON DUPLICATE KEY UPDATE
             {
                 q: 'Why is my -- comment not being treated as a comment?',
                 a: 'MySQL requires a whitespace character after the double dash. --note is parsed as an expression; -- note is a comment. This is a MySQL rule, not a formatter behaviour.',
-            },
-            {
-                q: 'Is my SQL uploaded to a server?',
-                a: 'No. Formatting happens in your browser and nothing leaves your machine, so it is safe to paste queries containing real schema names.',
             },
         ],
         updated: UPDATED,
@@ -499,10 +491,6 @@ VALUES
                 q: 'Does it format stored procedure bodies?',
                 a: 'The statements inside a procedure are formatted as ordinary T-SQL. Control-of-flow constructs such as IF and WHILE are recognised, but the result is less polished than for a plain SELECT — procedural code is where any SQL formatter is weakest.',
             },
-            {
-                q: 'Is my T-SQL sent to a server?',
-                a: 'No. Everything runs in your browser, so queries containing internal schema or object names never leave your machine.',
-            },
         ],
         updated: UPDATED,
     },
@@ -615,8 +603,8 @@ FETCH FIRST
                 a: 'No. The / is a SQL*Plus instruction to execute the preceding block, not part of PL/SQL. Paste the statement without it.',
             },
             {
-                q: 'Is my SQL uploaded anywhere?',
-                a: 'No. Formatting runs entirely in your browser, which matters here because Oracle queries often embed schema names and business logic.',
+                q: 'Why did my column called name come out as NAME?',
+                a: 'The PL/SQL grammar treats NAME as a keyword, so keyword casing is applied to it even with identifier casing on Preserve. In Oracle this is harmless — unquoted identifiers are case-insensitive, so name and NAME are the same column. Don\'t fix it by quoting: "name" in double quotes is case-sensitive and refers to a different column. If you want the query left exactly as typed, set keyword casing to Preserve.',
             },
         ],
         updated: UPDATED,
@@ -727,10 +715,6 @@ QUALIFY
             {
                 q: 'Are STRUCT and ARRAY expressions handled?',
                 a: 'Yes. Nested STRUCT constructors and ARRAY_AGG calls are parsed as ordinary expressions, and UNNEST is recognised as part of the FROM clause.',
-            },
-            {
-                q: 'Is my query sent to Google or to any server?',
-                a: 'No. This page runs the formatter in your browser. The query is not sent anywhere, including to BigQuery.',
             },
         ],
         updated: UPDATED,

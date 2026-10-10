@@ -21,12 +21,12 @@ describe('converter guides', () => {
         expect(xmlToJson.toFormat).toBe('json');
     });
 
-    it('xml/to-yaml shares its sample XML input with xml/to-json, so the two pages are directly comparable', () => {
-        expect(CONVERTER_GUIDES['xml/to-yaml'].sample.input).toBe(CONVERTER_GUIDES['xml/to-json'].sample.input);
+    it('has no xml/to-yaml page: it repeated /xml/to-json with a different output format (nginx 301s it there)', () => {
+        expect(getConverterGuide('xml', 'to-yaml')).toBeUndefined();
     });
 
     it('has a guide for every expected slug, each with substantial content', () => {
-        for (const key of ['json/to-xml', 'xml/to-json', 'json/to-yaml', 'xml/to-yaml']) {
+        for (const key of ['json/to-xml', 'xml/to-json', 'json/to-yaml']) {
             const [host, slug] = key.split('/');
             const guide = getConverterGuide(host as 'json' | 'xml', slug);
             expect(guide, key).toBeDefined();
@@ -41,10 +41,7 @@ describe('converter guides', () => {
             ]
                 .join(' ')
                 .split(/\s+/).length;
-            // Lower than the SQL/JSON/XML guides' floor: xml/to-yaml is honestly two
-            // conversions run back to back (see its intro), so it defers most of its
-            // mapping explanation to /xml/to-json rather than repeating it.
-            expect(words, `${key} word count`).toBeGreaterThan(300);
+            expect(words, `${key} word count`).toBeGreaterThan(400);
         }
     });
 
@@ -59,6 +56,14 @@ describe('converter guides', () => {
         const { jsonToYaml } = await import('@/utils/yaml-convert');
         expect(jsonToYaml({ note: 'see: readme' })).toBe("note: 'see: readme'\n");
         expect(jsonToYaml({ multi: 'line1\nline2' })).toBe('multi: |-\n  line1\n  line2\n');
+    });
+
+    it('json/to-yaml: every string the "Norway problem" section lists comes out quoted and round-trips as a string', async () => {
+        const { jsonToYaml, yamlToJson } = await import('@/utils/yaml-convert');
+        const value = { a: 'NO', b: 'yes', c: 'on', d: '01310', e: '0777', f: '2026-10-09', g: '~' };
+        const yaml = jsonToYaml(value);
+        for (const s of Object.values(value)) expect(yaml).toContain(`'${s}'`);
+        expect(yamlToJson(yaml)).toEqual(value);
     });
 
     it('returns undefined for an unknown host/slug pair', () => {

@@ -47,10 +47,6 @@ export const SQL_TOOL_TRANSLATIONS_DE: Partial<Record<SqlToolSlug, SqlToolGuideT
                 q: 'Vergleicht es ganze Anweisungen oder einzelne Zeilen?',
                 a: 'Zeilen, nach der Formatierung — dieselbe Einheit, die git diff für Code verwendet. Eine Änderung innerhalb einer einzelnen Zeile (wie eine umbenannte Spalte) markiert die gesamte Zeile als geändert, nicht nur den geänderten Teil davon.',
             },
-            {
-                q: 'Werden meine Abfragen irgendwohin hochgeladen?',
-                a: 'Nein. Sowohl Formatierung als auch Diff laufen in deinem Browser, was hier wichtig ist, da der Vergleich zweier Versionen einer Abfrage oft bedeutet, zwei Versionen mit echten Tabellen- und Spaltennamen darin zu vergleichen.',
-            },
         ],
     },
 };

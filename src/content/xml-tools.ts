@@ -50,7 +50,7 @@ export interface XmlToolGuide {
     updated: string;
 }
 
-const UPDATED = '2026-09-21';
+const UPDATED = '2026-10-09';
 
 const BOOKSTORE_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <bookstore>
@@ -170,10 +170,6 @@ export const XML_TOOL_GUIDES: Record<XmlToolSlug, XmlToolGuide> = {
             {
                 q: 'Are positions 0-indexed or 1-indexed?',
                 a: '1-indexed, matching real XPath: [1] is the first match, not the second. This is a common source of off-by-one mistakes for anyone used to 0-indexed languages.',
-            },
-            {
-                q: 'Is my XML uploaded anywhere?',
-                a: 'No. Both parsing and evaluation run in your browser.',
             },
         ],
         updated: UPDATED,

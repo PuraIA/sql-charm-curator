@@ -16,6 +16,7 @@ import { JSON_GUIDE_LIST, JSON_GUIDE_SLUGS, getJsonGuide } from '@/content/json-
 import { XML_GUIDE_LIST, XML_GUIDE_SLUGS, getXmlGuide } from '@/content/xml-guides';
 import { CONVERTER_GUIDES, getConverterGuide } from '@/content/converter-guides';
 import { XML_TOOL_SLUGS, getXmlToolGuide } from '@/content/xml-tools';
+import { BLOG_POSTS, BLOG_SLUGS, getBlogPost } from '@/content/blog';
 
 /** Converter guide slugs, split by which host namespace (/json/ or /xml/) they live under. */
 const CONVERTER_SLUGS_BY_HOST = Object.keys(CONVERTER_GUIDES).reduce<Record<'json' | 'xml', string[]>>(
@@ -59,6 +60,8 @@ export const PRERENDER_ROUTES: string[] = [
     ...XML_GUIDE_SLUGS.map(slug => `/xml/${slug}`),
     ...CONVERTER_SLUGS_BY_HOST.xml.map(slug => `/xml/${slug}`),
     ...XML_TOOL_SLUGS.map(slug => `/xml/${slug}`),
+    '/blog',
+    ...BLOG_SLUGS.map(slug => `/blog/${slug}`),
     '/about',
     '/contact',
     '/privacy',
@@ -371,6 +374,45 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
         }
     }
 
+    if (path.startsWith('/blog/')) {
+        const post = getBlogPost(path.slice('/blog/'.length));
+        if (post) {
+            const title = `${post.title} | Pretty Format`;
+            return {
+                title,
+                description: post.description,
+                keywords: post.keywords,
+                ogTitle: post.title,
+                ogDescription: post.description,
+                twitterTitle: post.title,
+                twitterDescription: post.description,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'BlogPosting',
+                        headline: post.title,
+                        description: post.description,
+                        url: canonical,
+                        mainEntityOfPage: canonical,
+                        datePublished: post.published,
+                        dateModified: post.updated ?? post.published,
+                        inLanguage: 'en',
+                        keywords: post.tags.join(', '),
+                        author: ORGANIZATION,
+                        publisher: ORGANIZATION,
+                    },
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'Blog', path: '/blog' },
+                        { name: post.title, path: `/blog/${post.slug}` },
+                    ]),
+                ],
+            };
+        }
+    }
+
     switch (path) {
         case '/':
             return {
@@ -548,6 +590,43 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
                 ],
             };
 
+        case '/blog': {
+            const title = 'Blog - Field Notes on SQL, JSON and XML Tooling | Pretty Format';
+            const description =
+                'Articles from building Pretty Format: formatter edge cases found while testing real queries, data-format conversion trade-offs, and engineering notes on the tools.';
+            return {
+                title,
+                description,
+                keywords: 'sql formatting blog, xml json conversion, xpath, developer tools articles',
+                ogTitle: title,
+                ogDescription: description,
+                twitterTitle: title,
+                twitterDescription: description,
+                canonical,
+                robots: INDEXABLE,
+                jsonLd: [
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'Blog',
+                        name: 'Pretty Format Blog',
+                        url: canonical,
+                        description,
+                        publisher: ORGANIZATION,
+                        blogPost: BLOG_POSTS.map(post => ({
+                            '@type': 'BlogPosting',
+                            headline: post.title,
+                            url: `${SITE_URL}/blog/${post.slug}`,
+                            datePublished: post.published,
+                        })),
+                    },
+                    breadcrumb([
+                        { name: 'Home', path: '/' },
+                        { name: 'Blog', path: '/blog' },
+                    ]),
+                ],
+            };
+        }
+
         case '/about': {
             const title = `${t('aboutTitle')} | Pretty Format`;
             return {
@@ -684,6 +763,26 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
             };
         }
     }
+}
+
+/**
+ * When a route's content last changed in a meaningful way, for the sitemap's <lastmod>.
+ * Guide pages and posts carry a reviewed date in their content module; hub and policy
+ * pages have none, so they get no <lastmod> rather than the build date — a date that
+ * changes on every deploy is one search engines learn to ignore.
+ */
+export function lastModifiedFor(pathname: string): string | undefined {
+    const path = normalize(pathname);
+    const [, section, slug] = path.split('/');
+    if (!slug) return undefined;
+    if (section === 'blog') {
+        const post = getBlogPost(slug);
+        return post ? post.updated ?? post.published : undefined;
+    }
+    if (section === 'sql') return (getSqlToolGuide(slug) ?? getDialectGuide(slug))?.updated;
+    if (section === 'json') return (getConverterGuide('json', slug) ?? getJsonGuide(slug))?.updated;
+    if (section === 'xml') return (getXmlToolGuide(slug) ?? getConverterGuide('xml', slug) ?? getXmlGuide(slug))?.updated;
+    return undefined;
 }
 
 /** `/sql/` and `/SQL` resolve to the same route as `/sql`. */

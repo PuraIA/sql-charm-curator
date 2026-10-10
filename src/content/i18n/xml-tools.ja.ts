@@ -79,10 +79,6 @@ export const XML_TOOL_TRANSLATIONS_JA: Partial<Record<XmlToolSlug, XmlToolGuideT
                 q: '位置は0から数えますか、それとも1から数えますか？',
                 a: '実際の XPath と同じく1から数えます：[1] は2番目ではなく最初のマッチです。これは0から数える言語に慣れている人にとって、よくある off-by-one の間違いの原因です。',
             },
-            {
-                q: '私の XML はどこかにアップロードされますか？',
-                a: 'いいえ。パースと評価はどちらもあなたのブラウザ内で実行されます。',
-            },
         ],
     },
 };

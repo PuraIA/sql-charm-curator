@@ -47,10 +47,6 @@ export const XML_TRANSLATIONS_DE: Partial<Record<XmlGuideSlug, XmlGuideTranslati
                 q: 'Spart das Minifizieren so viel, wie gzip es ohnehin schon täte?',
                 a: 'Weniger, als die rohe Byte-Anzahl vermuten lässt, wenn die Antwort bereits komprimiert ist — gzip behandelt wiederholten Leerraum ohnehin effizient. Minifizieren zählt am meisten bei Nutzlasten, die nicht komprimiert sind, wie manche SOAP-Anfragen und interne Serviceaufrufe.',
             },
-            {
-                q: 'Wird mein XML irgendwohin gesendet?',
-                a: 'Nein. Formatieren und Minifizieren laufen beide in deinem Browser. Es wird nichts hochgeladen, was wichtig ist, da XML-Nutzlasten wie das obige SOAP-Beispiel oft interne Servicenamen tragen.',
-            },
         ],
     },
 
@@ -110,10 +106,6 @@ export const XML_TRANSLATIONS_DE: Partial<Record<XmlGuideSlug, XmlGuideTranslati
             {
                 q: 'Kann ein Dokument mehr als ein Wurzelelement haben?',
                 a: 'Nein. Ein wohlgeformtes XML-Dokument hat genau ein Element, das alles andere enthält. Zwei Geschwisterelemente auf oberster Ebene brauchen ein gemeinsames umschließendes Elternelement.',
-            },
-            {
-                q: 'Wird mein XML zur Prüfung hochgeladen?',
-                a: 'Nein. Die Validierung läuft über den eigenen DOMParser deines Browsers, lokal — es wird nichts irgendwohin gesendet.',
             },
         ],
     },

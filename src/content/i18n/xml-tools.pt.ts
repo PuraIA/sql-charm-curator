@@ -79,10 +79,6 @@ export const XML_TOOL_TRANSLATIONS_PT: Partial<Record<XmlToolSlug, XmlToolGuideT
                 q: 'As posições começam em 0 ou em 1?',
                 a: 'Começam em 1, seguindo o XPath real: [1] é a primeira correspondência, não a segunda. Essa é uma fonte comum de erros por um deslocamento para quem está acostumado com linguagens que começam em 0.',
             },
-            {
-                q: 'Meu XML é enviado para algum lugar?',
-                a: 'Não. Tanto a interpretação quanto a avaliação rodam no seu navegador.',
-            },
         ],
     },
 };

@@ -1,5 +1,33 @@
 # Checklist de prontidão para reenvio ao Google AdSense
 
+## Atualização 2026-10-09 — reprovado novamente
+
+O reenvio feito após a verificação abaixo foi **reprovado de novo por "Conteúdo de baixo valor"**, agora como único item sinalizado (os problemas técnicos não aparecem mais). O AdSense bloqueou novas tentativas até **2026-10-16**.
+
+Conclusão: a checklist técnica abaixo estava correta, mas não era o critério que faltava. A política cita "valor único substancial", "curadoria e manutenção estrutural contínuas" e "interesse genuíno do usuário", e aponta para as políticas de conteúdo superficial/em escala. Duas correções sobre o que este documento afirmava:
+
+- **A contagem de palavras da tabela estava inflada**: incluía o texto do JSON-LD e da navegação. A prosa real das páginas de guia ficava entre 567 e 1085 palavras.
+- **A recomendação "apto" foi prematura**: ela avaliou SEO técnico, não diferenciação de conteúdo nem maturidade/tráfego do site.
+
+### O que mudou depois disso (branch `feat/blog-and-content-depth`)
+
+- **Blog (`/blog`)** com três artigos de estrutura própria, baseados no que foi descoberto construindo o site — não no molde dos guias. Toda saída de ferramenta citada é gerada pela ferramenta real no build, e cada afirmação tem teste (`src/content/blog/blog.test.ts`).
+- **Removida `/xml/to-yaml`** (301 → `/xml/to-json`): a própria introdução dizia que a página existia porque "xml to yaml" é uma busca, não porque a conversão fosse diferente — a definição de página-porta.
+- **Removida a FAQ "meu conteúdo é enviado a algum lugar?"** das 15 páginas de guia (e das 90 traduções): a mesma pergunta, com outras palavras, em todas as páginas.
+- **Conteúdo novo e verificado** onde a página ficou curta: o "problema da Noruega" em `/json/to-yaml` e o caso `name` → `NAME` no Oracle (descoberto nesta rodada).
+- **`lastmod` do sitemap** agora vem da data real de revisão do conteúdo, não da data do build (que mudava todas as URLs a cada deploy).
+- **Política de Privacidade** mostrava "última atualização: hoje" (`new Date()`); agora mostra a data real da última alteração.
+
+### Antes de reenviar em 16/10
+
+- Conferir o tráfego real no Search Console (Desempenho → cliques/impressões). O GA4 do site só carrega após interação ou 5 s, então subconta visitas curtas.
+- Pedir indexação de `/blog` e dos três artigos na Inspeção de URL.
+- Não reenviar sem mudança de substância: o limite de tentativas já foi atingido uma vez.
+
+---
+
+## Verificação original (2026-09-29)
+
 **Data desta verificação:** 2026-09-29
 **Verificado contra:** produção (`https://www.prettyformat.com`), pós-deploy da branch `feat/ssg-seo-adsense` (mergeada em `main` via PR #33/#35, deploy confirmado em 2026-09-22).
 
@@ -69,6 +97,6 @@
 2. **Sitemap legado**: `sql.prettyformat.com/sitemap.xml`, cadastrado no Search Console em 2026-01-26, ainda aparece como "Processado" mesmo o subdomínio agora sendo só um redirect 301 para `/sql`. Recomendado remover essa entrada manualmente no Search Console (não é algo que o código deste repositório controle).
 3. **Conteúdo de blog/guias**: deixado para depois por decisão explícita durante o desenvolvimento — não é bloqueante para este reenvio, mas seria o investimento natural se o Google rejeitar de novo por profundidade de conteúdo.
 
-## Recomendação
+## Recomendação (original, 2026-09-29 — ver atualização no topo)
 
 Apto para solicitar reavaliação do AdSense. Nenhum item da checklist técnica falhou; os problemas que motivaram a reprovação original (conteúdo genérico, título/descrição duplicados, soft-404) foram corrigidos e verificados diretamente em produção.

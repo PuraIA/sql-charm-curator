@@ -47,10 +47,6 @@ export const XML_TRANSLATIONS_PT: Partial<Record<XmlGuideSlug, XmlGuideTranslati
                 q: 'Minificar economiza tanto quanto o gzip já economizaria?',
                 a: 'Menos do que a contagem bruta de bytes sugere, se a resposta já estiver comprimida — o gzip lida com espaço em branco repetido de forma eficiente por conta própria. Minificar importa mais para payloads que não são comprimidos, como algumas requisições SOAP e chamadas internas de serviço.',
             },
-            {
-                q: 'Meu XML é enviado para algum lugar?',
-                a: 'Não. Formatar e minificar rodam ambos no seu navegador. Nada é enviado, o que importa já que payloads XML como o exemplo SOAP acima costumam carregar nomes internos de serviços.',
-            },
         ],
     },
 
@@ -110,10 +106,6 @@ export const XML_TRANSLATIONS_PT: Partial<Record<XmlGuideSlug, XmlGuideTranslati
             {
                 q: 'Um documento pode ter mais de um elemento raiz?',
                 a: 'Não. Um documento XML bem formado tem exatamente um elemento contendo tudo o mais. Dois elementos irmãos de nível superior precisam de um pai comum que os envolva.',
-            },
-            {
-                q: 'Meu XML é enviado para verificação?',
-                a: 'Não. A validação roda através do próprio DOMParser do seu navegador, localmente — nada é enviado a lugar nenhum.',
             },
         ],
     },

@@ -47,10 +47,6 @@ export const JSON_TRANSLATIONS_DE: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: 'Hilft das, wenn meine API-Antworten bereits gzip-komprimiert sind?',
                 a: 'Weniger, als man erwarten könnte. Gzip komprimiert wiederholten Leerraum bereits effizient, sodass Minifizieren vor der Kompression eine geringere zusätzliche Ersparnis bringt, als die obige Byte-Zahl vermuten lässt. Es zählt mehr bei unkomprimierten Nutzlasten.',
             },
-            {
-                q: 'Wird mein JSON irgendwohin hochgeladen?',
-                a: 'Nein. JSON.parse() und JSON.stringify() laufen in deinem Browser. Es wird nichts an einen Server gesendet, was wichtig ist, wenn die Nutzlast echte Kunden- oder Kontodaten enthält.',
-            },
         ],
     },
 
@@ -115,10 +111,6 @@ export const JSON_TRANSLATIONS_DE: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: 'Kann ich JSON mit Kommentaren darin validieren (JSONC)?',
                 a: 'Nicht mit diesem Werkzeug — es prüft gegen standardmäßiges JSON (RFC 8259), das keine Kommentarsyntax hat. Entferne zuerst die Kommentare, wenn du mit einer JSONC-Konfigurationsdatei arbeitest.',
             },
-            {
-                q: 'Wird mein JSON irgendwohin gesendet, um geprüft zu werden?',
-                a: 'Nein. Die Validierung läuft über das eigene JSON.parse() deines Browsers, lokal. Es wird nichts hochgeladen.',
-            },
         ],
     },
 
@@ -171,10 +163,6 @@ export const JSON_TRANSLATIONS_DE: Partial<Record<JsonGuideSlug, JsonGuideTransl
             {
                 q: 'Kann ich meinen eigenen Namen für das Wurzel-Interface festlegen?',
                 a: 'Das generierte Wurzel-Interface heißt standardmäßig Root, wenn du das JSON im Werkzeug bearbeitest. Diese Seite benennt es nach dem, was das Beispiel darstellt (ApiUser), rein zur besseren Lesbarkeit im Beispiel.',
-            },
-            {
-                q: 'Wird mein JSON an einen Server gesendet, um die Typen zu erzeugen?',
-                a: 'Nein. Der Generator läuft in deinem Browser und lädt niemals hoch, was du einfügst, was wichtig ist, da eine echte API-Antwort genau das ist, was du hier einfügen würdest.',
             },
         ],
     },

@@ -47,10 +47,6 @@ export const JSON_TRANSLATIONS_ES: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: '¿Esto ayudará si las respuestas de mi API ya están en gzip?',
                 a: 'Menos de lo que podrías esperar. Gzip ya comprime el espacio en blanco repetido de forma eficiente, así que minificar antes de comprimir produce un ahorro extra menor de lo que sugiere el conteo de bytes de arriba. Importa más para payloads sin comprimir.',
             },
-            {
-                q: '¿Se sube mi JSON a algún lugar?',
-                a: 'No. JSON.parse() y JSON.stringify() se ejecutan en tu navegador. No se envía nada a un servidor, lo cual importa si el payload contiene datos reales de clientes o de cuentas.',
-            },
         ],
     },
 
@@ -115,10 +111,6 @@ export const JSON_TRANSLATIONS_ES: Partial<Record<JsonGuideSlug, JsonGuideTransl
                 q: '¿Puedo validar JSON con comentarios dentro (JSONC)?',
                 a: 'No con esta herramienta — comprueba contra el JSON estándar (RFC 8259), que no tiene sintaxis de comentarios. Quita los comentarios primero si trabajas con un archivo de configuración JSONC.',
             },
-            {
-                q: '¿Se envía mi JSON a algún lugar para comprobarse?',
-                a: 'No. La validación se ejecuta mediante el propio JSON.parse() de tu navegador, de forma local. No se sube nada.',
-            },
         ],
     },
 
@@ -171,10 +163,6 @@ export const JSON_TRANSLATIONS_ES: Partial<Record<JsonGuideSlug, JsonGuideTransl
             {
                 q: '¿Puedo establecer mi propio nombre de interfaz raíz?',
                 a: 'La interfaz raíz generada se llama Root por defecto cuando editas el JSON en la herramienta. Esta página la nombra según lo que representa el ejemplo (ApiUser) puramente por legibilidad en el ejemplo.',
-            },
-            {
-                q: '¿Se envía mi JSON a un servidor para generar los tipos?',
-                a: 'No. El generador se ejecuta en tu navegador y nunca sube lo que pegas, lo cual importa dado que una respuesta real de API es exactamente lo que pegarías aquí.',
             },
         ],
     },

@@ -47,10 +47,6 @@ export const XML_TRANSLATIONS_ZH: Partial<Record<XmlGuideSlug, XmlGuideTranslati
                 q: '压缩能节省的字节数和 gzip 已经能节省的一样多吗？',
                 a: '如果响应已经被压缩，实际节省会比原始字节数所暗示的要少——gzip 本身就能高效处理重复的空白。压缩对未被压缩的负载最有意义，比如某些 SOAP 请求和内部服务调用。',
             },
-            {
-                q: '我的 XML 会被发送到什么地方吗？',
-                a: '不会。格式化和压缩都在你的浏览器中运行。没有任何内容会被上传，这一点很重要，因为像上面的 SOAP 示例这样的 XML 负载通常携带内部服务名称。',
-            },
         ],
     },
 
@@ -110,10 +106,6 @@ export const XML_TRANSLATIONS_ZH: Partial<Record<XmlGuideSlug, XmlGuideTranslati
             {
                 q: '一个文档可以有多于一个根元素吗？',
                 a: '不可以。一个格式良好的 XML 文档只能有一个包含其他一切内容的元素。两个顶层的兄弟元素需要一个共同的父元素来包裹它们。',
-            },
-            {
-                q: '我的 XML 会被上传去做检查吗？',
-                a: '不会。校验通过浏览器自身的 DOMParser 在本地运行——没有任何内容会被发送到任何地方。',
             },
         ],
     },
