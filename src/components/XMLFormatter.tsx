@@ -16,6 +16,10 @@ import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
 import { PlainCode } from './PlainCode';
+import { DownloadButton, OpenFileButton, RunShortcutHint, ShareButton } from './ToolIOButtons';
+import { useShareLink } from '@/hooks/use-share-link';
+import { useFileDrop } from '@/hooks/use-file-drop';
+import { isRunShortcut } from '@/utils/file-io';
 import { minifyXml, prettyPrintXml } from '@/utils/xml-utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -96,7 +100,6 @@ export function XMLFormatter({
             const formatted = prettyPrintXml(inputXML);
             const result = compactMode ? minifyXml(formatted) : formatted;
             setOutputXML(result);
-            toast.success(t('xmlToastSuccess', 'XML formatado com sucesso!'));
         } catch (error) {
             setIsValid(false);
             setOutputXML('');
@@ -112,6 +115,22 @@ export function XMLFormatter({
         }
     }, [activeTab, formatXML, inputXML]);
 
+    const share = useShareLink<{ input: string; compactMode: boolean }>('xml', state => {
+        setInputXML(state.input ?? '');
+        setOutputXML('');
+        setIsValid(true);
+        setCompactMode(Boolean(state.compactMode));
+        setActiveTab('formatted');
+    });
+
+    const loadText = useCallback((text: string) => {
+        setInputXML(text);
+        setOutputXML('');
+        setIsValid(true);
+        setActiveTab('formatted');
+    }, []);
+    const { isDragging, dropProps } = useFileDrop(loadText);
+
     const copyToClipboard = useCallback(async () => {
         if (!outputXML) return;
 
@@ -121,7 +140,7 @@ export function XMLFormatter({
             toast.success(t('toastCopied', 'Copiado para a área de transferência!'));
             setTimeout(() => setCopied(false), 2000);
         } catch {
-            toast.error('Erro ao copiar');
+            toast.error(t('toastCopyError'));
         }
     }, [outputXML, t]);
 
@@ -184,6 +203,8 @@ export function XMLFormatter({
                     <Trash2 className="w-4 h-4" />
                     {t('clear', 'Limpar')}
                 </Button>
+                <OpenFileButton accept=".xml,.xsd,.wsdl,.svg,.txt,application/xml,text/xml,text/plain" onText={loadText} />
+                <ShareButton onShare={() => share({ input: inputXML, compactMode })} disabled={!inputXML.trim()} />
                 <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-lg border border-border/50 h-10">
                     <Label htmlFor="xml-compact-mode" className="text-sm cursor-pointer whitespace-nowrap">
                         {t('compactMode', 'Modo Compacto')}
@@ -224,13 +245,21 @@ export function XMLFormatter({
                                     </span>
                                 )}
                             </span>
+                            <RunShortcutHint />
                         </div>
                         <Textarea
                             value={inputXML}
                             onChange={(e) => setInputXML(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (isRunShortcut(e)) {
+                                    e.preventDefault();
+                                    setActiveTab('formatted');
+                                }
+                            }}
+                            {...dropProps}
                             placeholder={t('xmlPastePlaceholder', 'Cole seu XML aqui...')}
                             className={`min-h-[450px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50 ${!isValid ? 'border-destructive focus:ring-destructive/50' : ''
-                                }`}
+                                } ${isDragging ? 'ring-2 ring-primary' : ''}`}
                             aria-label={t('xmlOriginal', 'XML Original')}
                         />
                     </TabsContent>
@@ -240,20 +269,23 @@ export function XMLFormatter({
                             <span className="text-xs text-muted-foreground">
                                 {outputXML.length} {t('characters', 'caracteres')}
                             </span>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={copyToClipboard}
-                                disabled={!outputXML}
-                                className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
-                            >
-                                {copied ? (
-                                    <Check className="w-4 h-4 mr-1 text-success" />
-                                ) : (
-                                    <Copy className="w-4 h-4 mr-1" />
-                                )}
-                                {copied ? t('copied', 'Copiado!') : t('copy', 'Copiar')}
-                            </Button>
+                            <div className="flex items-center gap-1">
+                                <DownloadButton filename="formatted.xml" text={outputXML} mimeType="application/xml" />
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={copyToClipboard}
+                                    disabled={!outputXML}
+                                    className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
+                                >
+                                    {copied ? (
+                                        <Check className="w-4 h-4 mr-1 text-success" />
+                                    ) : (
+                                        <Copy className="w-4 h-4 mr-1" />
+                                    )}
+                                    {copied ? t('copied', 'Copiado!') : t('copy', 'Copiar')}
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="min-h-[450px] code-editor overflow-hidden rounded-md border border-input bg-muted/30">

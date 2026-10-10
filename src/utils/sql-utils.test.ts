@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compactParenthesesFormat, superCompactSQL, compactWhereClauses, formatSqlWithFallback } from './sql-utils';
-import { dialectLabels, sampleQueries, type Dialect } from '@/components/SQLFormatter';
+import { dialectLabels, type Dialect } from '@/components/SQLFormatter';
+import { sampleQueries } from '@/content/sql-samples';
 import { DIALECT_GUIDE_LIST } from '@/content/sql-dialects';
 
 describe('compactParenthesesFormat', () => {

@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Trash2, AlertTriangle, Hash } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { ToolLayout } from './ToolLayout';
+import { OpenFileButton, ShareButton } from './ToolIOButtons';
+import { useShareLink } from '@/hooks/use-share-link';
+import { useFileDrop } from '@/hooks/use-file-drop';
 import { AdPlaceholder } from './AdPlaceholder';
 import { evaluateXPath, type XPathMatch } from '@/utils/xpath-lite';
 
@@ -24,6 +28,13 @@ export function XPathTester({
 }: XPathTesterProps = {}) {
     const [xml, setXml] = useState(initialXml);
     const [expression, setExpression] = useState(initialExpression);
+    const { t } = useTranslation();
+
+    const share = useShareLink<{ xml: string; expression: string }>('xpath', state => {
+        setXml(state.xml ?? '');
+        setExpression(state.expression ?? '');
+    });
+    const { isDragging, dropProps } = useFileDrop(setXml);
 
     // evaluateXPath is pure and synchronous — this project's own parser and evaluator,
     // not a browser-only API — so this is correct on the very first render, including
@@ -53,9 +64,9 @@ export function XPathTester({
             subtitle={subtitle ?? 'Evaluate an XPath expression against your XML and see every match, live.'}
             toolContent={content ?? DEFAULT_CONTENT}
         >
-            <div className="flex justify-center gap-2 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
                 <Button variant="outline" onClick={loadSample} className="gap-2 border-primary/20 hover:bg-primary/10">
-                    Load Example
+                    {t('loadExample')}
                 </Button>
                 <Button
                     variant="outline"
@@ -63,8 +74,10 @@ export function XPathTester({
                     className="gap-2 border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
                 >
                     <Trash2 className="w-4 h-4" />
-                    Clear
+                    {t('clear')}
                 </Button>
+                <OpenFileButton accept=".xml,.xsd,.wsdl,.svg,.txt,application/xml,text/xml,text/plain" onText={setXml} />
+                <ShareButton onShare={() => share({ xml, expression })} disabled={!xml.trim()} />
             </div>
 
             <div className="glass-card p-5 animate-slide-up mb-8">
@@ -72,25 +85,26 @@ export function XPathTester({
                 <Textarea
                     value={xml}
                     onChange={e => setXml(e.target.value)}
-                    placeholder="Paste your XML here..."
-                    className="min-h-[280px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
-                    aria-label="XML input"
+                    {...dropProps}
+                    placeholder={t('xmlPastePlaceholder')}
+                    className={`min-h-[280px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50 ${isDragging ? 'ring-2 ring-primary' : ''}`}
+                    aria-label="XML"
                 />
             </div>
 
             <div className="glass-card p-5 animate-slide-up mb-12">
-                <span className="text-sm font-medium mb-3 block">XPath expression</span>
+                <span className="text-sm font-medium mb-3 block">{t('xpathExpressionLabel')}</span>
                 <Input
                     value={expression}
                     onChange={e => setExpression(e.target.value)}
                     placeholder="/bookstore/book[@category='children']/title"
                     className="font-mono text-sm bg-secondary/50 border-border mb-6 focus-visible:ring-2 focus-visible:ring-primary/50"
-                    aria-label="XPath expression"
+                    aria-label={t('xpathExpressionLabel')}
                 />
 
                 {!result ? (
                     <div className="p-6 text-muted-foreground italic min-h-[100px] rounded-md border border-input bg-muted/30">
-                        Paste XML above and type an XPath expression to see what it matches.
+                        {t('xpathEmpty')}
                     </div>
                 ) : !result.ok ? (
                     <div className="p-6 flex items-start gap-3 rounded-md border border-input bg-muted/30">
@@ -102,17 +116,17 @@ export function XPathTester({
                         <Hash className="w-5 h-5 text-primary shrink-0" />
                         <p className="text-sm">
                             <span className="font-mono text-lg font-bold">{result.value.value}</span>{' '}
-                            <span className="text-muted-foreground">match{result.value.value === 1 ? '' : 'es'}</span>
+                            <span className="text-muted-foreground">{t('xpathMatchWord', { count: result.value.value })}</span>
                         </p>
                     </div>
                 ) : result.value.matches.length === 0 ? (
                     <div className="p-6 text-muted-foreground italic rounded-md border border-input bg-muted/30">
-                        No matches.
+                        {t('xpathNoMatches')}
                     </div>
                 ) : (
                     <div className="rounded-md border border-input bg-muted/30 overflow-hidden">
                         <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b border-border/50">
-                            {result.value.matches.length} match{result.value.matches.length === 1 ? '' : 'es'}
+                            {t('xpathMatches', { count: result.value.matches.length })}
                         </div>
                         <ul className="divide-y divide-border/50">
                             {result.value.matches.map((match, i) => (
