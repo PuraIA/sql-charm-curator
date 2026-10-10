@@ -345,5 +345,10 @@
   "blogMinRead": "{{count}} Min. Lesezeit",
   "blogBackToIndex": "Alle Artikel",
   "blogRelatedTools": "In diesem Artikel erwähnte Werkzeuge",
-  "blogMoreArticles": "Weitere Artikel"
+  "blogMoreArticles": "Weitere Artikel",
+  "homeDirectoryTitle": "Alle Werkzeuge und Anleitungen",
+  "homeDirectoryIntro": "Jede Seite öffnet das Werkzeug für eine bestimmte Aufgabe eingerichtet, gefolgt von Referenznotizen dazu — wie die Ausgabe aussieht, was es abdeckt und wo es an Grenzen stößt.",
+  "homeLatestArticlesTitle": "Neueste Artikel",
+  "homeAllArticlesLink": "Alle Artikel",
+  "guideFromBlogTitle": "Aus dem Blog"
 }

@@ -1,6 +1,7 @@
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { AdPlaceholder } from '@/components/AdPlaceholder';
+import { HomeDirectory } from '@/components/HomeDirectory';
 import { useTranslation } from 'react-i18next';
 import { Database, Braces, Code2, ArrowRight, ShieldCheck, Zap, Sparkles, MousePointerClick, Clock, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -123,6 +124,8 @@ const Home = () => {
                         </Link>
                     ))}
                 </section>
+
+                <HomeDirectory />
 
                 {/* Ad between Tools Grid and Why Section */}
                 <div className="mb-12">

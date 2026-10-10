@@ -345,5 +345,10 @@
   "blogMinRead": "{{count}} min de lecture",
   "blogBackToIndex": "Tous les articles",
   "blogRelatedTools": "Outils mentionnés dans cet article",
-  "blogMoreArticles": "Plus d’articles"
+  "blogMoreArticles": "Plus d’articles",
+  "homeDirectoryTitle": "Tous les outils et guides",
+  "homeDirectoryIntro": "Chaque page ouvre l’outil configuré pour une tâche précise, suivi de notes de référence : à quoi ressemble la sortie, ce qu’il prend en charge et où il atteint ses limites.",
+  "homeLatestArticlesTitle": "Articles récents",
+  "homeAllArticlesLink": "Tous les articles",
+  "guideFromBlogTitle": "Sur le blog"
 }

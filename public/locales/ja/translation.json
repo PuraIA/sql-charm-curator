@@ -345,5 +345,10 @@
   "blogMinRead": "約 {{count}} 分で読めます",
   "blogBackToIndex": "すべての記事",
   "blogRelatedTools": "この記事で紹介したツール",
-  "blogMoreArticles": "その他の記事"
+  "blogMoreArticles": "その他の記事",
+  "homeDirectoryTitle": "すべてのツールとガイド",
+  "homeDirectoryIntro": "各ページは特定の作業向けに設定されたツールを開き、その後に参考情報が続きます——出力がどうなるか、何に対応しているか、どこに限界があるか。",
+  "homeLatestArticlesTitle": "最新の記事",
+  "homeAllArticlesLink": "すべての記事",
+  "guideFromBlogTitle": "ブログより"
 }

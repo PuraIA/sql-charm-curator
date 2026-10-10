@@ -345,5 +345,10 @@
   "blogMinRead": "{{count}} min read",
   "blogBackToIndex": "All articles",
   "blogRelatedTools": "Tools mentioned in this article",
-  "blogMoreArticles": "More articles"
+  "blogMoreArticles": "More articles",
+  "homeDirectoryTitle": "Every tool and guide",
+  "homeDirectoryIntro": "Each page opens the tool set up for one specific job, followed by reference notes for it — what the output looks like, what it handles, and where it falls short.",
+  "homeLatestArticlesTitle": "Latest articles",
+  "homeAllArticlesLink": "All articles",
+  "guideFromBlogTitle": "From the blog"
 }
