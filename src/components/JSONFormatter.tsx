@@ -37,6 +37,10 @@ import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
 import { PlainCode } from './PlainCode';
+import { DownloadButton, OpenFileButton, RunShortcutHint, ShareButton } from './ToolIOButtons';
+import { useShareLink } from '@/hooks/use-share-link';
+import { useFileDrop } from '@/hooks/use-file-drop';
+import { isRunShortcut } from '@/utils/file-io';
 import { jsonToTypeScript } from '@/utils/json-to-ts';
 // Editorial content is imported eagerly: it has to exist in the prerendered HTML.
 import { JSONContent } from './JSONContent';
@@ -52,6 +56,12 @@ export interface JSONFormatterOptions {
     sortKeys: boolean;
     removeWhitespace: boolean;
     escapeUnicode: boolean;
+}
+
+/** What a share link carries for this tool. */
+interface JsonShareState {
+    input: string;
+    options: JSONFormatterOptions;
 }
 
 export const formatStyleLabels: Record<FormatStyle, string> = {
@@ -353,7 +363,6 @@ export function JSONFormatter({
             // escapeUnicode entirely, since neither means anything for an interface.
             if (options.formatStyle === 'typescript') {
                 setOutputJSON(jsonToTypeScript(parsed, tsRootName));
-                toast.success(t('jsonToastSuccess', 'JSON formatado com sucesso!'));
                 return;
             }
 
@@ -389,7 +398,6 @@ export function JSONFormatter({
             }
 
             setOutputJSON(formatted);
-            toast.success(t('jsonToastSuccess', 'JSON formatado com sucesso!'));
         } catch (error) {
             setIsValid(false);
             setOutputJSON('');
@@ -406,6 +414,26 @@ export function JSONFormatter({
         }
     }, [activeTab, options, formatJSON, inputJSON]);
 
+    const share = useShareLink<JsonShareState>('json', state => {
+        setInputJSON(state.input ?? '');
+        setOutputJSON('');
+        setIsValid(true);
+        setOptions(prev => ({
+            ...prev,
+            ...state.options,
+            formatStyle: state.options?.formatStyle in formatStyleLabels ? state.options.formatStyle : prev.formatStyle,
+        }));
+        setActiveTab('formatted');
+    });
+
+    const loadText = useCallback((text: string) => {
+        setInputJSON(text);
+        setOutputJSON('');
+        setIsValid(true);
+        setActiveTab('formatted');
+    }, []);
+    const { isDragging, dropProps } = useFileDrop(loadText);
+
     const copyToClipboard = useCallback(async () => {
         if (!outputJSON) return;
 
@@ -415,7 +443,7 @@ export function JSONFormatter({
             toast.success(t('toastCopied', 'Copiado para a área de transferência!'));
             setTimeout(() => setCopied(false), 2000);
         } catch {
-            toast.error('Erro ao copiar');
+            toast.error(t('toastCopyError'));
         }
     }, [outputJSON, t]);
 
@@ -542,7 +570,7 @@ export function JSONFormatter({
                 )}
             </div>
 
-            <div className="flex justify-center gap-2 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
                 <Button
                     variant="outline"
                     onClick={loadSample}
@@ -559,6 +587,8 @@ export function JSONFormatter({
                     <Trash2 className="w-4 h-4" />
                     {t('clear', 'Limpar')}
                 </Button>
+                <OpenFileButton accept=".json,.txt,application/json,text/plain" onText={loadText} />
+                <ShareButton onShare={() => share({ input: inputJSON, options })} disabled={!inputJSON.trim()} />
             </div>
 
             {/* Main Formatter area */}
@@ -590,13 +620,21 @@ export function JSONFormatter({
                                     </span>
                                 )}
                             </span>
+                            <RunShortcutHint />
                         </div>
                         <Textarea
                             value={inputJSON}
                             onChange={(e) => setInputJSON(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (isRunShortcut(e)) {
+                                    e.preventDefault();
+                                    setActiveTab('formatted');
+                                }
+                            }}
+                            {...dropProps}
                             placeholder={t('jsonPastePlaceholder', 'Cole seu JSON aqui...')}
                             className={`min-h-[450px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50 ${!isValid ? 'border-destructive focus:ring-destructive/50' : ''
-                                }`}
+                                } ${isDragging ? 'ring-2 ring-primary' : ''}`}
                             aria-label={t('jsonOriginal', 'JSON Original')}
                         />
                     </TabsContent>
@@ -606,20 +644,27 @@ export function JSONFormatter({
                             <span className="text-xs text-muted-foreground">
                                 {outputJSON.length} {t('characters', 'caracteres')}
                             </span>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={copyToClipboard}
-                                disabled={!outputJSON}
-                                className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
-                            >
-                                {copied ? (
-                                    <Check className="w-4 h-4 mr-1 text-success" />
+                            <div className="flex items-center gap-1">
+                                {options.formatStyle === 'typescript' ? (
+                                    <DownloadButton filename="types.ts" text={outputJSON} mimeType="text/typescript" />
                                 ) : (
-                                    <Copy className="w-4 h-4 mr-1" />
+                                    <DownloadButton filename="formatted.json" text={outputJSON} mimeType="application/json" />
                                 )}
-                                {copied ? t('copied', 'Copiado!') : t('copy', 'Copiar')}
-                            </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={copyToClipboard}
+                                    disabled={!outputJSON}
+                                    className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
+                                >
+                                    {copied ? (
+                                        <Check className="w-4 h-4 mr-1 text-success" />
+                                    ) : (
+                                        <Copy className="w-4 h-4 mr-1" />
+                                    )}
+                                    {copied ? t('copied', 'Copiado!') : t('copy', 'Copiar')}
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Formatted Output */}

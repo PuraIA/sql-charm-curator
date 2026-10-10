@@ -47,7 +47,7 @@ export const SQLInfo = () => {
 
             <section className="mb-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
                 <h2 className="text-2xl font-bold mb-6 text-center">{t('supportedDialects')}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {Object.entries(dialectLabels).map(([key, label]) => {
                         const guide = GUIDE_BY_DIALECT.get(key as Dialect);
                         const body = (

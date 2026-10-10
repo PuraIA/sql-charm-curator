@@ -467,6 +467,7 @@ export function getPageSeo(pathname: string, t: Translate): PageSeo {
                         'Oracle PL/SQL formatting',
                         'SQL Server T-SQL formatting',
                         'BigQuery formatting',
+                        'Snowflake, Redshift, SQLite, MariaDB, Db2, Spark SQL, Hive, Trino, DuckDB and SingleStoreDB formatting',
                         'Customizable keyword casing',
                         'Adjustable indentation',
                     ]),

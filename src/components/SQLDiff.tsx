@@ -10,6 +10,10 @@ import {
 } from '@/components/ui/select';
 import { Copy, Check, Trash2, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { DownloadButton, ShareButton } from './ToolIOButtons';
+import { useShareLink } from '@/hooks/use-share-link';
+import { useFileDrop } from '@/hooks/use-file-drop';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
 import { dialectLabels, dialectIcons, type Dialect } from './SQLFormatter';
@@ -30,6 +34,18 @@ const FORMAT_OPTIONS: Omit<SqlFormatOptions, 'dialect'> = {
     denseOperators: false,
     newlineBeforeSemicolon: false,
 };
+
+/** What a share link carries for this tool. */
+interface DiffShareState {
+    dialect: Dialect;
+    before: string;
+    after: string;
+}
+
+/** Unified-diff-style text: one line per op, prefixed with "+", "-" or a space. */
+function diffAsText(diff: DiffOp[]): string {
+    return diff.map(op => `${op.type === 'add' ? '+' : op.type === 'remove' ? '-' : ' '} ${op.value}`).join('\n');
+}
 
 export interface SQLDiffProps {
     initialDialect?: Dialect;
@@ -60,6 +76,7 @@ export function SQLDiff({
     const [formattedAfter, setFormattedAfter] = useState(initialFormattedAfter);
     const [error, setError] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const { t } = useTranslation();
 
     // Formatting itself is async (sql-formatter is dynamically imported), so it can
     // only run client-side, in this effect — the same reason SQLFormatter.tsx re-runs
@@ -117,18 +134,26 @@ export function SQLDiff({
         setAfterSql('');
     }, []);
 
+    const share = useShareLink<DiffShareState>('sql-diff', state => {
+        if (state.dialect in dialectLabels) setDialect(state.dialect);
+        setBeforeSql(state.before ?? '');
+        setAfterSql(state.after ?? '');
+    });
+
+    const beforeDrop = useFileDrop(setBeforeSql);
+    const afterDrop = useFileDrop(setAfterSql);
+
     const copyDiff = useCallback(async () => {
         if (diff.length === 0) return;
-        const text = diff.map(op => `${op.type === 'add' ? '+' : op.type === 'remove' ? '-' : ' '} ${op.value}`).join('\n');
         try {
-            await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(diffAsText(diff));
             setCopied(true);
-            toast.success('Diff copied to clipboard!');
+            toast.success(t('diffCopied'));
             setTimeout(() => setCopied(false), 2000);
         } catch {
-            toast.error('Failed to copy');
+            toast.error(t('toastCopyError'));
         }
-    }, [diff]);
+    }, [diff, t]);
 
     return (
         <ToolLayout
@@ -139,7 +164,7 @@ export function SQLDiff({
             <div className="flex flex-wrap items-center justify-center gap-3 mb-6 animate-fade-in">
                 <div className="flex items-center gap-2 bg-secondary/50 p-1.5 rounded-lg border border-border/50">
                     <Select value={dialect} onValueChange={v => setDialect(v as Dialect)}>
-                        <SelectTrigger aria-label="Dialect" className="h-9 w-[180px] border-none bg-transparent focus:ring-0 shadow-none">
+                        <SelectTrigger aria-label={t('selectDialect')} className="h-9 w-[180px] border-none bg-transparent focus:ring-0 shadow-none">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -156,9 +181,9 @@ export function SQLDiff({
                 </div>
             </div>
 
-            <div className="flex justify-center gap-2 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
                 <Button variant="outline" onClick={loadSample} className="gap-2 border-primary/20 hover:bg-primary/10">
-                    Load Example
+                    {t('loadExample')}
                 </Button>
                 <Button
                     variant="outline"
@@ -166,30 +191,36 @@ export function SQLDiff({
                     className="gap-2 border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
                 >
                     <Trash2 className="w-4 h-4" />
-                    Clear
+                    {t('clear')}
                 </Button>
+                <ShareButton
+                    onShare={() => share({ dialect, before: beforeSql, after: afterSql })}
+                    disabled={!beforeSql.trim() && !afterSql.trim()}
+                />
             </div>
 
             <div className="glass-card p-5 animate-slide-up mb-8">
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
-                        <span className="text-sm font-medium mb-3 block">Before</span>
+                        <span className="text-sm font-medium mb-3 block">{t('diffBefore')}</span>
                         <Textarea
                             value={beforeSql}
                             onChange={e => setBeforeSql(e.target.value)}
-                            placeholder="Paste the original query..."
-                            className="min-h-[220px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
-                            aria-label="Before SQL"
+                            {...beforeDrop.dropProps}
+                            placeholder={t('diffBeforePlaceholder')}
+                            className={`min-h-[220px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50 ${beforeDrop.isDragging ? 'ring-2 ring-primary' : ''}`}
+                            aria-label={t('diffBefore')}
                         />
                     </div>
                     <div>
-                        <span className="text-sm font-medium mb-3 block">After</span>
+                        <span className="text-sm font-medium mb-3 block">{t('diffAfter')}</span>
                         <Textarea
                             value={afterSql}
                             onChange={e => setAfterSql(e.target.value)}
-                            placeholder="Paste the changed query..."
-                            className="min-h-[220px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
-                            aria-label="After SQL"
+                            {...afterDrop.dropProps}
+                            placeholder={t('diffAfterPlaceholder')}
+                            className={`min-h-[220px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50 ${afterDrop.isDragging ? 'ring-2 ring-primary' : ''}`}
+                            aria-label={t('diffAfter')}
                         />
                     </div>
                 </div>
@@ -198,7 +229,7 @@ export function SQLDiff({
             <div className="glass-card p-5 animate-slide-up mb-12">
                 <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-medium">
-                        Diff
+                        {t('diffTitle')}
                         {(added > 0 || removed > 0) && (
                             <span className="ml-3 text-xs font-mono">
                                 <span className="text-green-600 dark:text-green-400">+{added}</span>{' '}
@@ -206,23 +237,26 @@ export function SQLDiff({
                             </span>
                         )}
                     </span>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={copyDiff}
-                        disabled={diff.length === 0}
-                        className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
-                    >
-                        {copied ? <Check className="w-4 h-4 mr-1 text-success" /> : <Copy className="w-4 h-4 mr-1" />}
-                        {copied ? 'Copied!' : 'Copy diff'}
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        <DownloadButton filename="changes.diff" text={diff.length ? diffAsText(diff) : ''} mimeType="text/x-diff" />
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={copyDiff}
+                            disabled={diff.length === 0}
+                            className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
+                        >
+                            {copied ? <Check className="w-4 h-4 mr-1 text-success" /> : <Copy className="w-4 h-4 mr-1" />}
+                            {copied ? t('copied') : t('diffCopy')}
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="min-h-[200px] rounded-md border border-input bg-muted/30 overflow-x-auto">
                     {error ? (
                         <div className="p-6 flex items-start gap-3">
                             <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
-                            <p className="text-sm text-destructive">Couldn't format one of the queries: {error}</p>
+                            <p className="text-sm text-destructive">{t('diffFormatError', { error })}</p>
                         </div>
                     ) : diff.length > 0 ? (
                         <pre className="p-4 text-xs font-mono leading-relaxed">
@@ -246,7 +280,7 @@ export function SQLDiff({
                         </pre>
                     ) : (
                         <div className="p-6 text-muted-foreground italic">
-                            Paste a query on each side to see what changed between them.
+                            {t('diffEmpty')}
                         </div>
                     )}
                 </div>

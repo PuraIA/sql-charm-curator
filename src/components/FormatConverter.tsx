@@ -10,16 +10,33 @@ import {
 } from '@/components/ui/select';
 import { Copy, Check, Trash2, ArrowLeftRight, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from './theme-provider';
 import { ToolLayout } from './ToolLayout';
 import { AdPlaceholder } from './AdPlaceholder';
 import { PlainCode } from './PlainCode';
+import { DownloadButton, OpenFileButton, ShareButton } from './ToolIOButtons';
+import { useShareLink } from '@/hooks/use-share-link';
+import { useFileDrop } from '@/hooks/use-file-drop';
 import { convert, DATA_FORMAT_LABELS, type DataFormat } from '@/utils/format-convert';
 import { SAMPLE_CONFIG_JSON, SAMPLE_CONFIG_XML, SAMPLE_CONFIG_YAML } from '@/content/converter-samples';
 // Genuinely deferrable: only reachable once there's a result to display.
 const LazySyntaxHighlighter = lazy(() => import('./LazySyntaxHighlighter').then(module => ({ default: module.LazySyntaxHighlighter })));
 
 const FORMATS: DataFormat[] = ['json', 'xml', 'yaml'];
+
+const FILE_TYPES: Record<DataFormat, { accept: string; ext: string; mime: string }> = {
+    json: { accept: '.json,.txt,application/json,text/plain', ext: 'json', mime: 'application/json' },
+    xml: { accept: '.xml,.txt,application/xml,text/xml,text/plain', ext: 'xml', mime: 'application/xml' },
+    yaml: { accept: '.yaml,.yml,.txt,text/plain', ext: 'yaml', mime: 'application/yaml' },
+};
+
+/** What a share link carries for this tool. */
+interface ConverterShareState {
+    from: DataFormat;
+    to: DataFormat;
+    input: string;
+}
 
 const SAMPLES: Record<DataFormat, string> = {
     json: SAMPLE_CONFIG_JSON,
@@ -50,6 +67,7 @@ export function FormatConverter({
     const [input, setInput] = useState(initialInput);
     const [copied, setCopied] = useState(false);
     const { theme } = useTheme();
+    const { t } = useTranslation();
 
     // convert() is pure and synchronous, so this is correct on the very first render —
     // both in the browser and during the build-time prerender — with no separate
@@ -73,17 +91,28 @@ export function FormatConverter({
         setInput('');
     }, []);
 
+    const share = useShareLink<ConverterShareState>('convert', state => {
+        if (FORMATS.includes(state.from)) setFromFormat(state.from);
+        if (FORMATS.includes(state.to)) setToFormat(state.to);
+        setInput(state.input ?? '');
+    });
+
+    const { isDragging, dropProps } = useFileDrop(setInput);
+
     const copyToClipboard = useCallback(async () => {
         if (!result.output) return;
         try {
             await navigator.clipboard.writeText(result.output);
             setCopied(true);
-            toast.success('Copied to clipboard!');
+            toast.success(t('toastCopied'));
             setTimeout(() => setCopied(false), 2000);
         } catch {
-            toast.error('Failed to copy');
+            toast.error(t('toastCopyError'));
         }
-    }, [result.output]);
+    }, [result.output, t]);
+
+    const fromLabel = DATA_FORMAT_LABELS[fromFormat];
+    const toLabel = DATA_FORMAT_LABELS[toFormat];
 
     return (
         <ToolLayout
@@ -92,23 +121,23 @@ export function FormatConverter({
             toolContent={content ?? DEFAULT_CONTENT}
         >
             <div className="flex flex-wrap items-center justify-center gap-3 mb-6 animate-fade-in">
-                <FormatSelect value={fromFormat} onChange={setFromFormat} label="From" />
+                <FormatSelect value={fromFormat} onChange={setFromFormat} label={t('converterFrom')} />
                 <Button
                     variant="outline"
                     size="icon"
                     onClick={swap}
                     className="border-primary/20 hover:bg-primary/10 shrink-0"
-                    aria-label="Swap direction"
-                    title="Swap direction"
+                    aria-label={t('converterSwap')}
+                    title={t('converterSwap')}
                 >
                     <ArrowLeftRight className="w-4 h-4" />
                 </Button>
-                <FormatSelect value={toFormat} onChange={setToFormat} label="To" />
+                <FormatSelect value={toFormat} onChange={setToFormat} label={t('converterTo')} />
             </div>
 
-            <div className="flex justify-center gap-2 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
                 <Button variant="outline" onClick={loadSample} className="gap-2 border-primary/20 hover:bg-primary/10">
-                    Load Example
+                    {t('loadExample')}
                 </Button>
                 <Button
                     variant="outline"
@@ -116,39 +145,49 @@ export function FormatConverter({
                     className="gap-2 border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
                 >
                     <Trash2 className="w-4 h-4" />
-                    Clear
+                    {t('clear')}
                 </Button>
+                <OpenFileButton accept={FILE_TYPES[fromFormat].accept} onText={setInput} />
+                <ShareButton onShare={() => share({ from: fromFormat, to: toFormat, input })} disabled={!input.trim()} />
             </div>
 
             <div className="glass-card p-5 animate-slide-up mb-12">
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-medium">{DATA_FORMAT_LABELS[fromFormat]} input</span>
-                            <span className="text-xs text-muted-foreground">{input.length} characters</span>
+                            <span className="text-sm font-medium">{t('converterInputLabel', { format: fromLabel })}</span>
+                            <span className="text-xs text-muted-foreground">{input.length} {t('characters')}</span>
                         </div>
                         <Textarea
                             value={input}
                             onChange={e => setInput(e.target.value)}
-                            placeholder={`Paste your ${DATA_FORMAT_LABELS[fromFormat]} here...`}
-                            className="min-h-[420px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50"
-                            aria-label={`${DATA_FORMAT_LABELS[fromFormat]} input`}
+                            {...dropProps}
+                            placeholder={t('converterPastePlaceholder', { format: fromLabel })}
+                            className={`min-h-[420px] font-mono text-sm bg-secondary/50 border-border resize-none scrollbar-thin focus:ring-2 focus:ring-primary/50 ${isDragging ? 'ring-2 ring-primary' : ''}`}
+                            aria-label={t('converterInputLabel', { format: fromLabel })}
                         />
                     </div>
 
                     <div>
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-medium">{DATA_FORMAT_LABELS[toFormat]} result</span>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={copyToClipboard}
-                                disabled={!result.output}
-                                className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
-                            >
-                                {copied ? <Check className="w-4 h-4 mr-1 text-success" /> : <Copy className="w-4 h-4 mr-1" />}
-                                {copied ? 'Copied!' : 'Copy'}
-                            </Button>
+                            <span className="text-sm font-medium">{t('converterResultLabel', { format: toLabel })}</span>
+                            <div className="flex items-center gap-1">
+                                <DownloadButton
+                                    filename={`converted.${FILE_TYPES[toFormat].ext}`}
+                                    text={result.output ?? ''}
+                                    mimeType={FILE_TYPES[toFormat].mime}
+                                />
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={copyToClipboard}
+                                    disabled={!result.output}
+                                    className="hover:bg-primary/20 hover:text-primary disabled:opacity-50"
+                                >
+                                    {copied ? <Check className="w-4 h-4 mr-1 text-success" /> : <Copy className="w-4 h-4 mr-1" />}
+                                    {copied ? t('copied') : t('copy')}
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="min-h-[420px] code-editor overflow-hidden rounded-md border border-input bg-muted/30">
@@ -167,7 +206,7 @@ export function FormatConverter({
                                 </Suspense>
                             ) : (
                                 <div className="p-6 text-muted-foreground italic min-h-[420px]">
-                                    Paste something in the {DATA_FORMAT_LABELS[fromFormat]} panel to see it converted here.
+                                    {t('converterEmpty', { format: fromLabel })}
                                 </div>
                             )}
                         </div>
