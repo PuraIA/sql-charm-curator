@@ -176,9 +176,9 @@ export const JSON_GUIDES: Record<JsonGuideSlug, JsonGuide> = {
         slug: 'minify',
         name: 'Minify JSON',
         tagline: 'Strip every byte that only exists for human eyes, verified against JSON.stringify.',
-        seoTitle: 'JSON Minifier - Compact and Minify JSON Online',
+        seoTitle: 'JSON Minify Online – Free JSON Minifier, Nothing Uploaded',
         seoDescription:
-            'Free online JSON minifier. Removes whitespace, newlines and indentation from JSON while keeping data and key order intact. Runs entirely in your browser.',
+            'Minify JSON to one line: whitespace goes, every key, value and key order stays. Uses your browser’s own JSON.stringify, so nothing is uploaded.',
         seoKeywords:
             'json minifier, minify json, compact json, json compress online, remove whitespace json, json to one line',
         h1: 'JSON Minifier',

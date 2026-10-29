@@ -221,9 +221,9 @@ RETURNING
         name: 'MySQL & MariaDB',
         icon: '🐬',
         tagline: 'Backtick identifiers, index hints and two-argument LIMIT, preserved exactly.',
-        seoTitle: 'MySQL Formatter - Format MySQL and MariaDB Queries Online',
+        seoTitle: 'MySQL Query Formatter Online – MySQL & MariaDB',
         seoDescription:
-            'Free online MySQL and MariaDB formatter. Handles backtick identifiers, index hints, GROUP_CONCAT, ON DUPLICATE KEY UPDATE and the two-argument LIMIT. Runs in your browser.',
+            'Format MySQL and MariaDB queries online. Backticks, index hints, GROUP_CONCAT and LIMIT offset, count stay intact, and table names are never re-cased.',
         seoKeywords:
             'mysql formatter, mariadb formatter, format mysql query, mysql beautifier, pretty print mysql, sql formatter mysql online',
         h1: 'MySQL & MariaDB Formatter',
@@ -617,9 +617,9 @@ FETCH FIRST
         name: 'BigQuery',
         icon: '🔍',
         tagline: 'Qualified backtick names, UNNEST, SELECT * EXCEPT and QUALIFY.',
-        seoTitle: 'BigQuery SQL Formatter - Format GoogleSQL Queries Online',
+        seoTitle: 'BigQuery SQL Formatter – QUALIFY, UNNEST, SAFE_CAST',
         seoDescription:
-            'Free online BigQuery formatter for GoogleSQL. Handles backtick-qualified table names, UNNEST and STRUCT, SELECT * EXCEPT, QUALIFY, wildcard tables and SAFE functions.',
+            'Format BigQuery GoogleSQL online. Backtick project.dataset.table names, UNNEST, SELECT * EXCEPT, QUALIFY and SAFE_CAST stay intact. Runs in your browser.',
         seoKeywords:
             'bigquery formatter, googlesql formatter, format bigquery query, bigquery sql beautifier, standard sql formatter, bigquery pretty print',
         h1: 'BigQuery SQL Formatter',
