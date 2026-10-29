@@ -68,3 +68,22 @@ describe('getPageSeo', () => {
         expect(typesFor('/')).toContain('WebSite');
     });
 });
+
+/**
+ * Pages already on Google's first page, whose title and description were rewritten
+ * around the queries Search Console shows for them (October 2026). Kept within what
+ * Google displays so the end of the description is not cut off in the result.
+ */
+describe('search snippets tuned from Search Console queries', () => {
+    it.each(['/json/minify', '/sql/bigquery', '/sql/mysql'])('%s fits in the displayed snippet', route => {
+        const { title, description } = getPageSeo(route, t);
+        expect(title.length).toBeLessThanOrEqual(60);
+        expect(description.length).toBeLessThanOrEqual(155);
+    });
+
+    it('lead with the query people actually type', () => {
+        expect(getPageSeo('/json/minify', t).title).toMatch(/^JSON Minify\b/);
+        expect(getPageSeo('/sql/bigquery', t).title).toMatch(/QUALIFY/);
+        expect(getPageSeo('/sql/mysql', t).title).toMatch(/^MySQL Query Formatter/);
+    });
+});
